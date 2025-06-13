@@ -15,7 +15,35 @@ const loginSchema = Joi.object({
 	password: Joi.string().required(),
 });
 
+const updateProfileSchema = Joi.object({
+	first_name: Joi.string().pattern(nameRegex).optional(),
+	last_name: Joi.string().pattern(nameRegex).optional(),
+	email: Joi.string().email().optional(),
+	birth_date: Joi.date().iso().optional(),
+	profile_image_url: Joi.string().uri().optional(),
+}).min(1);
+
+const updatePrivacySchema = Joi.object({
+	show_name: Joi.boolean().optional(),
+	show_email: Joi.boolean().optional(),
+	show_birth_date: Joi.boolean().optional(),
+	show_location: Joi.boolean().optional(),
+}).min(1);
+
+const updateLocationSchema = Joi.object({
+	current_location: Joi.string().required(),
+});
+
+const updatePasswordSchema = Joi.object({
+	new_password: Joi.string().min(8).pattern(/[0-9]/).required(),
+	confirm_new_password: Joi.string().valid(Joi.ref("new_password")).required(),
+}).with("new_password", "confirm_new_password");
+
 module.exports = {
 	registerSchema,
 	loginSchema,
+	updateProfileSchema,
+	updatePrivacySchema,
+	updateLocationSchema,
+	updatePasswordSchema,
 };

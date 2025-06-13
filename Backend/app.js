@@ -1,4 +1,5 @@
 const express = require("express");
+
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
@@ -25,6 +26,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
+	console.error(err.stack);
 	res.status(500).json({
 		message: "Internal Server Error",
 	});

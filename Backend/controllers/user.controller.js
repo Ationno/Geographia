@@ -1,45 +1,124 @@
 const { User } = require("../database/models");
 const bcrypt = require("bcrypt");
 
-const getProfile = async (req, res) => {
+const getMyProfile = async (req, res) => {
 	const user = await User.findByPk(req.userId);
-	res.json(user);
+	if (!user) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
+	const { password, ...userWithoutPassword } = user.toJSON();
+	res.json(userWithoutPassword);
+};
+
+const getProfile = async (req, res) => {
+	const user = await User.findByPk(req.params.id);
+	if (!user) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
+	const { password, ...userWithoutPassword } = user.toJSON();
+	res.json(userWithoutPassword);
 };
 
 const updateProfile = async (req, res) => {
-	await User.update(req.body, { where: { id: req.userId } });
-	res.sendStatus(200);
+	const existingFields = [
+		"first_name",
+		"last_name",
+		"email",
+		"birth_date",
+		"profile_image_url",
+	];
+
+	const updateFields = {};
+
+	for (const field of existingFields) {
+		if (req.body[field] !== undefined) {
+			updateFields[field] = req.body[field];
+		}
+	}
+
+	if (req.body.email) {
+		const existingUser = await User.findOne({
+			where: { email: req.body.email },
+		});
+		if (existingUser && existingUser.id !== req.userId) {
+			return res.status(400).json({ error: "Email already in use" });
+		}
+	}
+
+	const user = await User.update(updateFields, { where: { id: req.userId } });
+
+	if (!user[0]) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
+	res.status(200).json({
+		message: "Profile updated successfully",
+		profile: {
+			...updateFields,
+			id: req.userId,
+		},
+	});
 };
 
 const updatePrivacy = async (req, res) => {
-	const { show_name, show_email, show_birth_date, show_location } = req.body;
-	await User.update(
-		{ show_name, show_email, show_birth_date, show_location },
-		{ where: { id: req.userId } }
-	);
-	res.sendStatus(200);
+	const existingFields = [
+		"show_name",
+		"show_email",
+		"show_birth_date",
+		"show_location",
+	];
+
+	const updateFields = {};
+
+	for (const field of existingFields) {
+		if (req.body[field] !== undefined) {
+			updateFields[field] = req.body[field];
+		}
+	}
+
+	const user = await User.update(updateFields, { where: { id: req.userId } });
+	if (!user[0]) {
+		return res.status(404).json({ error: "User not found" });
+	}
+	res.status(200).json({
+		message: "Privacy settings updated successfully",
+	});
 };
 
 const updateLocation = async (req, res) => {
 	const { current_location } = req.body;
 	await User.update({ current_location }, { where: { id: req.userId } });
-	res.sendStatus(200);
+	res.status(200).json({
+		message: "Location updated successfully",
+	});
 };
 
 const changePassword = async (req, res) => {
-	const { newPassword } = req.body;
-	const hashed = await bcrypt.hash(newPassword, 10);
+	const { new_password } = req.body;
+	const hashed = await bcrypt.hash(new_password, 10);
 	await User.update({ password: hashed }, { where: { id: req.userId } });
-	res.sendStatus(200);
+	res.status(200).json({
+		message: "Password changed successfully",
+	});
 };
 
 const deleteUser = async (req, res) => {
+	//eliminar publicaciones, comentarios, etc. asociados al usuario
+
+	const user = await User.findByPk(req.userId);
+	if (!user) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
 	await User.destroy({ where: { id: req.userId } });
 	res.sendStatus(204);
 };
 
 module.exports = {
 	getProfile,
+	getMyProfile,
 	updateProfile,
 	updatePrivacy,
 	updateLocation,
