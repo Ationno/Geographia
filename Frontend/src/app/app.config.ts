@@ -1,9 +1,22 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideMapboxGL } from 'ngx-mapbox-gl';
 
 import { routes } from './app.routes';
-import { provideClientHydration } from '@angular/platform-browser';
+import {
+    provideClientHydration,
+    withEventReplay,
+} from '@angular/platform-browser';
+import { dot } from 'node:test/reporters';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes), provideClientHydration()]
+    providers: [
+        provideZoneChangeDetection({ eventCoalescing: true }),
+        provideRouter(routes),
+        provideClientHydration(withEventReplay()),
+        provideMapboxGL({
+            accessToken:
+                'pk.eyJ1IjoiYXRpb25ubyIsImEiOiJjbWJzOXYzMngwaTlvMmlwbGptcjg5a2pxIn0.dBmqrvZVikhq_pj5475ZIg',
+        }),
+    ],
 };
