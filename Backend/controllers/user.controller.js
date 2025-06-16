@@ -133,9 +133,9 @@ const deleteUser = async (req, res) => {
 	}
 
 	// Just in case there is no onDelete cascade set up in the database
-	// await Comment.destroy({ where: { userId: req.userId } });
-	// await Rating.destroy({ where: { userId: req.userId } });
-	// await Location.destroy({ where: { userId: req.userId } });
+	await Comment.destroy({ where: { UserId: req.userId } });
+	await Rating.destroy({ where: { UserId: req.userId } });
+	await Location.destroy({ where: { UserId: req.userId } });
 
 	await user.destroy();
 
