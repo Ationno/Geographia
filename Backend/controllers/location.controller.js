@@ -4,6 +4,7 @@ const { Location } = require("../database/models");
 const { Rating } = require("../database/models");
 const { Tag } = require("../database/models");
 const { User } = require("../database/models");
+const { Comment } = require("../database/models");
 
 const { Op } = require("sequelize");
 
@@ -331,10 +332,10 @@ const deleteLocation = async (req, res) => {
 			.json({ error: "You do not have permission to delete this location" });
 	}
 
-	// Just in case there is no onDelete cascade set up in the database
 	await Comment.destroy({ where: { locationId: location.id } });
 	await Rating.destroy({ where: { locationId: location.id } });
 
+	await location.setTags([]);
 	await location.destroy();
 	res.status(204).send();
 };
