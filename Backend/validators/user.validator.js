@@ -31,7 +31,8 @@ const updatePrivacySchema = Joi.object({
 }).min(1);
 
 const updateLocationSchema = Joi.object({
-	current_location: Joi.string().required(),
+	latitude: Joi.number().min(-90).max(90).required(),
+	longitude: Joi.number().min(-180).max(180).required(),
 });
 
 const updatePasswordSchema = Joi.object({

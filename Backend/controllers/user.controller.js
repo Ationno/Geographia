@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 
 const getMyProfile = async (req, res) => {
 	const user = await User.findByPk(req.userId);
+
 	if (!user) {
 		return res.status(404).json({ error: "User not found" });
 	}
@@ -13,6 +14,7 @@ const getMyProfile = async (req, res) => {
 
 const getProfile = async (req, res) => {
 	const user = await User.findByPk(req.params.id);
+
 	if (!user) {
 		return res.status(404).json({ error: "User not found" });
 	}
@@ -55,10 +57,7 @@ const updateProfile = async (req, res) => {
 
 	res.status(200).json({
 		message: "Profile updated successfully",
-		profile: {
-			...updateFields,
-			id: req.userId,
-		},
+		profile: updateFields,
 	});
 };
 
@@ -79,17 +78,28 @@ const updatePrivacy = async (req, res) => {
 	}
 
 	const user = await User.update(updateFields, { where: { id: req.userId } });
+
 	if (!user[0]) {
 		return res.status(404).json({ error: "User not found" });
 	}
 	res.status(200).json({
 		message: "Privacy settings updated successfully",
+		privacy: updateFields,
 	});
 };
 
 const updateLocation = async (req, res) => {
-	const { current_location } = req.body;
-	await User.update({ current_location }, { where: { id: req.userId } });
+	const { latitude, longitude } = req.body;
+
+	const user = await User.update(
+		{ latitude, longitude },
+		{ where: { id: req.userId } }
+	);
+
+	if (!user[0]) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
 	res.status(200).json({
 		message: "Location updated successfully",
 	});
@@ -98,7 +108,15 @@ const updateLocation = async (req, res) => {
 const changePassword = async (req, res) => {
 	const { new_password } = req.body;
 	const hashed = await bcrypt.hash(new_password, 10);
-	await User.update({ password: hashed }, { where: { id: req.userId } });
+	const user = await User.update(
+		{ password: hashed },
+		{ where: { id: req.userId } }
+	);
+
+	if (!user[0]) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
 	res.status(200).json({
 		message: "Password changed successfully",
 	});
@@ -108,11 +126,13 @@ const deleteUser = async (req, res) => {
 	//eliminar publicaciones, comentarios, etc. asociados al usuario
 
 	const user = await User.findByPk(req.userId);
+
 	if (!user) {
 		return res.status(404).json({ error: "User not found" });
 	}
 
-	await User.destroy({ where: { id: req.userId } });
+	await user.destroy();
+
 	res.sendStatus(204);
 };
 

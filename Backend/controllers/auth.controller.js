@@ -18,7 +18,17 @@ const register = async (req, res) => {
 		birth_date,
 		password: hashedPassword,
 	});
-	res.status(201).json(user);
+
+	res.status(201).json({
+		message: "User registered successfully",
+		user: {
+			id: user.id,
+			first_name: user.first_name,
+			last_name: user.last_name,
+			email: user.email,
+			birth_date: user.birth_date,
+		},
+	});
 };
 
 const login = async (req, res) => {
@@ -26,7 +36,9 @@ const login = async (req, res) => {
 	const user = await User.findOne({ where: { email } });
 	if (!user || !(await bcrypt.compare(password, user.password)))
 		return res.status(401).json({ error: "Unauthorized" });
-	const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+	const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+		expiresIn: process.env.JWT_EXPIRATION || "1h",
+	});
 	res.json({ token });
 };
 

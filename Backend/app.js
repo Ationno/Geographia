@@ -4,6 +4,8 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 
+const sequelize = require("./database/db");
+
 app.use(cors());
 app.use(express.json());
 
@@ -11,6 +13,12 @@ const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const locationRoutes = require("./routes/location.routes");
 const commentRoutes = require("./routes/comment.routes");
+
+if (process.env.NODE_ENV === "reset") {
+	sequelize.sync({ force: true }).then(() => {
+		console.log("Database reset and synced successfully");
+	});
+}
 
 app.get("/", (req, res) => {
 	res.status(200).json({ message: "Welcome to the API" });

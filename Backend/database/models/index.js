@@ -2,6 +2,7 @@ const User = require("./user.model");
 const Location = require("./location.model");
 const Comment = require("./comment.model");
 const Tag = require("./tag.model");
+const Rating = require("./rating.model");
 
 User.hasMany(Location);
 Location.belongsTo(User);
@@ -15,4 +16,10 @@ Comment.belongsTo(User);
 Location.belongsToMany(Tag, { through: "location_tags" });
 Tag.belongsToMany(Location, { through: "location_tags" });
 
-module.exports = { User, Location, Comment, Tag };
+Rating.belongsTo(User);
+Rating.belongsTo(Location);
+
+User.hasMany(Rating);
+Location.hasMany(Rating);
+
+module.exports = { User, Location, Comment, Tag, Rating };
