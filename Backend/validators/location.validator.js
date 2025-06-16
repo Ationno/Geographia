@@ -18,7 +18,12 @@ const updateLocationSchema = Joi.object({
 	details: Joi.string().max(1000).optional(),
 }).min(1);
 
+const ratingSchema = Joi.object({
+	score: Joi.number().integer().min(1).max(5).required(),
+});
+
 module.exports = {
 	createLocationSchema,
 	updateLocationSchema,
+	ratingSchema,
 };

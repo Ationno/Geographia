@@ -1,4 +1,7 @@
 const { User } = require("../database/models");
+const { Comment } = require("../database/models");
+const { Rating } = require("../database/models");
+const { Location } = require("../database/models");
 const bcrypt = require("bcrypt");
 
 const getMyProfile = async (req, res) => {
@@ -123,13 +126,16 @@ const changePassword = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-	//eliminar publicaciones, comentarios, etc. asociados al usuario
-
 	const user = await User.findByPk(req.userId);
 
 	if (!user) {
 		return res.status(404).json({ error: "User not found" });
 	}
+
+	// Just in case there is no onDelete cascade set up in the database
+	// await Comment.destroy({ where: { userId: req.userId } });
+	// await Rating.destroy({ where: { userId: req.userId } });
+	// await Location.destroy({ where: { userId: req.userId } });
 
 	await user.destroy();
 
