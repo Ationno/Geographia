@@ -17,6 +17,7 @@ const register = async (req, res) => {
 		email,
 		birth_date,
 		password: hashedPassword,
+		profile_image_url: "/uploads/default_profile.jpg",
 	});
 
 	res.status(201).json({

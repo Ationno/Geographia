@@ -20,7 +20,7 @@ const updateProfileSchema = Joi.object({
 	last_name: Joi.string().pattern(nameRegex).optional(),
 	email: Joi.string().email().optional(),
 	birth_date: Joi.date().iso().optional(),
-	profile_image_url: Joi.string().uri().optional(),
+	remove_profile_image: Joi.boolean().optional().default(false),
 }).min(1);
 
 const updatePrivacySchema = Joi.object({
