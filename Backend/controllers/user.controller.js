@@ -60,7 +60,7 @@ const updateProfile = async (req, res) => {
 
 	res.status(200).json({
 		message: "Profile updated successfully",
-		profile: updateFields,
+		updateFields,
 	});
 };
 
@@ -105,6 +105,10 @@ const updateLocation = async (req, res) => {
 
 	res.status(200).json({
 		message: "Location updated successfully",
+		location: {
+			latitude,
+			longitude,
+		},
 	});
 };
 
@@ -132,7 +136,6 @@ const deleteUser = async (req, res) => {
 		return res.status(404).json({ error: "User not found" });
 	}
 
-	// Just in case there is no onDelete cascade set up in the database
 	await Comment.destroy({ where: { UserId: req.userId } });
 	await Rating.destroy({ where: { UserId: req.userId } });
 	await Location.destroy({ where: { UserId: req.userId } });

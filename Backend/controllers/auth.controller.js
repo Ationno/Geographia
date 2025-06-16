@@ -34,7 +34,12 @@ const register = async (req, res) => {
 const login = async (req, res) => {
 	const { email, password } = req.body;
 	const user = await User.findOne({ where: { email } });
-	if (!user || !(await bcrypt.compare(password, user.password)))
+
+	if (!user) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
+	if (!(await bcrypt.compare(password, user.password)))
 		return res.status(401).json({ error: "Unauthorized" });
 	const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRATION || "1h",

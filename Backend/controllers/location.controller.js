@@ -173,7 +173,6 @@ const updateLocation = async (req, res) => {
 		message: "Location updated successfully",
 		location: {
 			...updateFields,
-			tags: updateFields.tags,
 		},
 	});
 };
