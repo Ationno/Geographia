@@ -62,7 +62,7 @@ const isLocationNearby = async (
 };
 
 const createLocation = async (req, res) => {
-	const { name, latitude, longitude, images, tags, details } = req.body;
+	const { name, latitude, longitude, images, tags, details, type } = req.body;
 
 	const user = await User.findByPk(req.userId);
 
@@ -83,9 +83,10 @@ const createLocation = async (req, res) => {
 		longitude,
 		images,
 		details,
+		type,
 	});
 
-	if (tags.length > 0) {
+	if (tags && tags.length > 0) {
 		const tagInstances = await Promise.all(
 			tags.map(async (tagName) => {
 				const [tag] = await Tag.findOrCreate({ where: { name: tagName } });
@@ -105,7 +106,8 @@ const createLocation = async (req, res) => {
 			longitude: location.longitude,
 			images: location.images,
 			details: location.details,
-			tags: tags,
+			tags: tags ? tags : [],
+			type: location.type,
 		},
 	});
 };
@@ -118,6 +120,7 @@ const updateLocation = async (req, res) => {
 		"images",
 		"details",
 		"tags",
+		"type",
 	];
 
 	const updateFields = {};
@@ -409,6 +412,98 @@ const updateRating = async (req, res) => {
 	});
 };
 
+const getRuralLocations = async (req, res) => {
+	const ruralLocations = await Location.findAll({
+		where: { type: "rural" },
+		attributes: {
+			include: [
+				[
+					Sequelize.fn(
+						"COALESCE",
+						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
+						0
+					),
+					"averageRating",
+				],
+			],
+		},
+		include: [
+			{
+				model: Rating,
+				attributes: [],
+			},
+			{
+				model: Tag,
+				attributes: ["name"],
+				through: { attributes: [] },
+			},
+		],
+		group: [
+			"Location.id",
+			"Tags.id",
+			"Tags->location_tags.LocationId",
+			"Tags->location_tags.TagId",
+		],
+	});
+	const formattedLocations = ruralLocations.map((loc) => {
+		const locJSON = loc.toJSON();
+
+		return {
+			...locJSON,
+			tags: locJSON.Tags.map((tag) => tag.name),
+			Tags: undefined,
+		};
+	});
+
+	res.status(200).json(formattedLocations);
+};
+
+const getGeographicLocations = async (req, res) => {
+	const geographicLocations = await Location.findAll({
+		where: { type: "geographic" },
+		attributes: {
+			include: [
+				[
+					Sequelize.fn(
+						"COALESCE",
+						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
+						0
+					),
+					"averageRating",
+				],
+			],
+		},
+		include: [
+			{
+				model: Rating,
+				attributes: [],
+			},
+			{
+				model: Tag,
+				attributes: ["name"],
+				through: { attributes: [] },
+			},
+		],
+		group: [
+			"Location.id",
+			"Tags.id",
+			"Tags->location_tags.LocationId",
+			"Tags->location_tags.TagId",
+		],
+	});
+	const formattedLocations = geographicLocations.map((loc) => {
+		const locJSON = loc.toJSON();
+
+		return {
+			...locJSON,
+			tags: locJSON.Tags.map((tag) => tag.name),
+			Tags: undefined,
+		};
+	});
+
+	res.status(200).json(formattedLocations);
+};
+
 module.exports = {
 	createLocation,
 	updateLocation,
@@ -418,4 +513,6 @@ module.exports = {
 	deleteLocation,
 	addRating,
 	updateRating,
+	getRuralLocations,
+	getGeographicLocations,
 };

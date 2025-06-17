@@ -9,6 +9,7 @@ const createLocationSchema = Joi.object({
 	images: Joi.array().items(Joi.string().uri()).required(), //check this later
 	details: Joi.string().max(1000).optional(),
 	tags: Joi.array().items(Joi.string().pattern(nameRegex)).optional(),
+	type: Joi.string().valid("geographic", "rural").required(),
 });
 
 const updateLocationSchema = Joi.object({
@@ -18,6 +19,7 @@ const updateLocationSchema = Joi.object({
 	images: Joi.array().items(Joi.string().uri()).optional(), //check this later
 	details: Joi.string().max(1000).optional(),
 	tags: Joi.array().items(Joi.string().pattern(nameRegex)).optional(),
+	type: Joi.string().valid("geographic", "rural").optional(),
 }).min(1);
 
 const ratingSchema = Joi.object({
