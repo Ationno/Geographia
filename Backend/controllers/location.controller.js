@@ -5,6 +5,8 @@ const { Rating } = require("../database/models");
 const { Tag } = require("../database/models");
 const { User } = require("../database/models");
 const { Comment } = require("../database/models");
+const path = require("path");
+const fs = require("fs");
 
 const { Op } = require("sequelize");
 
@@ -61,8 +63,22 @@ const isLocationNearby = async (
 	return false;
 };
 
+const deleteOldImages = async (images) => {
+	if (!images) {
+		return;
+	}
+	images.forEach((imageUrl) => {
+		const oldImagePath = path.join(__dirname, "..", imageUrl);
+		fs.unlink(oldImagePath, (err) => {
+			if (err) {
+				console.error("Error deleting an old image:", err.message);
+			}
+		});
+	});
+};
+
 const createLocation = async (req, res) => {
-	const { name, latitude, longitude, images, tags, details, type } = req.body;
+	const { name, latitude, longitude, tags, details, type } = req.body;
 
 	const user = await User.findByPk(req.userId);
 
@@ -76,14 +92,20 @@ const createLocation = async (req, res) => {
 		return res.status(409).json({ error: "Location already exists" });
 	}
 
+	if (req.files && req.files.length > 0) {
+		images = req.files.map((file) => `/uploads/${file.filename}`);
+	} else {
+		return res.status(400).json({ error: "No images provided" });
+	}
+
 	const location = await Location.create({
 		UserId: req.userId,
 		name,
 		latitude,
 		longitude,
-		images,
 		details,
 		type,
+		images,
 	});
 
 	if (tags && tags.length > 0) {
@@ -97,6 +119,10 @@ const createLocation = async (req, res) => {
 		await location.addTags(tagInstances);
 	}
 
+	const imagesURL = images.map((image) => {
+		return `${req.protocol}://${req.get("host")}${image}`;
+	});
+
 	res.status(201).json({
 		message: "Location created successfully",
 		location: {
@@ -108,6 +134,7 @@ const createLocation = async (req, res) => {
 			details: location.details,
 			tags: tags ? tags : [],
 			type: location.type,
+			images: imagesURL,
 		},
 	});
 };
@@ -160,6 +187,11 @@ const updateLocation = async (req, res) => {
 		}
 	}
 
+	if (req.files && req.files.length > 0) {
+		deleteOldImages(location.images);
+		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
+	}
+
 	await location.update(updateFields);
 	if (updateFields.tags) {
 		const tagInstances = await Promise.all(
@@ -170,6 +202,12 @@ const updateLocation = async (req, res) => {
 		);
 
 		await location.setTags(tagInstances);
+	}
+
+	if (updateFields.images) {
+		updateFields.images = updateFields.images.map((image) => {
+			return `${req.protocol}://${req.get("host")}${image}`;
+		});
 	}
 
 	res.status(200).json({
@@ -213,6 +251,98 @@ const getAllLocations = async (req, res) => {
 		],
 	});
 	const formattedLocations = locations.map((loc) => {
+		const locJSON = loc.toJSON();
+
+		return {
+			...locJSON,
+			tags: locJSON.Tags.map((tag) => tag.name),
+			Tags: undefined,
+		};
+	});
+
+	res.status(200).json(formattedLocations);
+};
+
+const getRuralLocations = async (req, res) => {
+	const ruralLocations = await Location.findAll({
+		where: { type: "rural" },
+		attributes: {
+			include: [
+				[
+					Sequelize.fn(
+						"COALESCE",
+						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
+						0
+					),
+					"averageRating",
+				],
+			],
+		},
+		include: [
+			{
+				model: Rating,
+				attributes: [],
+			},
+			{
+				model: Tag,
+				attributes: ["name"],
+				through: { attributes: [] },
+			},
+		],
+		group: [
+			"Location.id",
+			"Tags.id",
+			"Tags->location_tags.LocationId",
+			"Tags->location_tags.TagId",
+		],
+	});
+	const formattedLocations = ruralLocations.map((loc) => {
+		const locJSON = loc.toJSON();
+
+		return {
+			...locJSON,
+			tags: locJSON.Tags.map((tag) => tag.name),
+			Tags: undefined,
+		};
+	});
+
+	res.status(200).json(formattedLocations);
+};
+
+const getGeographicLocations = async (req, res) => {
+	const geographicLocations = await Location.findAll({
+		where: { type: "geographic" },
+		attributes: {
+			include: [
+				[
+					Sequelize.fn(
+						"COALESCE",
+						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
+						0
+					),
+					"averageRating",
+				],
+			],
+		},
+		include: [
+			{
+				model: Rating,
+				attributes: [],
+			},
+			{
+				model: Tag,
+				attributes: ["name"],
+				through: { attributes: [] },
+			},
+		],
+		group: [
+			"Location.id",
+			"Tags.id",
+			"Tags->location_tags.LocationId",
+			"Tags->location_tags.TagId",
+		],
+	});
+	const formattedLocations = geographicLocations.map((loc) => {
 		const locJSON = loc.toJSON();
 
 		return {
@@ -412,107 +542,15 @@ const updateRating = async (req, res) => {
 	});
 };
 
-const getRuralLocations = async (req, res) => {
-	const ruralLocations = await Location.findAll({
-		where: { type: "rural" },
-		attributes: {
-			include: [
-				[
-					Sequelize.fn(
-						"COALESCE",
-						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
-						0
-					),
-					"averageRating",
-				],
-			],
-		},
-		include: [
-			{
-				model: Rating,
-				attributes: [],
-			},
-			{
-				model: Tag,
-				attributes: ["name"],
-				through: { attributes: [] },
-			},
-		],
-		group: [
-			"Location.id",
-			"Tags.id",
-			"Tags->location_tags.LocationId",
-			"Tags->location_tags.TagId",
-		],
-	});
-	const formattedLocations = ruralLocations.map((loc) => {
-		const locJSON = loc.toJSON();
-
-		return {
-			...locJSON,
-			tags: locJSON.Tags.map((tag) => tag.name),
-			Tags: undefined,
-		};
-	});
-
-	res.status(200).json(formattedLocations);
-};
-
-const getGeographicLocations = async (req, res) => {
-	const geographicLocations = await Location.findAll({
-		where: { type: "geographic" },
-		attributes: {
-			include: [
-				[
-					Sequelize.fn(
-						"COALESCE",
-						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
-						0
-					),
-					"averageRating",
-				],
-			],
-		},
-		include: [
-			{
-				model: Rating,
-				attributes: [],
-			},
-			{
-				model: Tag,
-				attributes: ["name"],
-				through: { attributes: [] },
-			},
-		],
-		group: [
-			"Location.id",
-			"Tags.id",
-			"Tags->location_tags.LocationId",
-			"Tags->location_tags.TagId",
-		],
-	});
-	const formattedLocations = geographicLocations.map((loc) => {
-		const locJSON = loc.toJSON();
-
-		return {
-			...locJSON,
-			tags: locJSON.Tags.map((tag) => tag.name),
-			Tags: undefined,
-		};
-	});
-
-	res.status(200).json(formattedLocations);
-};
-
 module.exports = {
 	createLocation,
 	updateLocation,
 	getAllLocations,
+	getRuralLocations,
+	getGeographicLocations,
 	getLocationById,
 	getMyLocations,
 	deleteLocation,
 	addRating,
 	updateRating,
-	getRuralLocations,
-	getGeographicLocations,
 };
