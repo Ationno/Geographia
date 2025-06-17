@@ -20,11 +20,14 @@ const {
 
 const { asyncHandler } = require("../middlewares/handler.middleware");
 
+const singleUpload = require("../middlewares/singleUpload.middleware");
+
 router.get("/profile/:id", authorization, asyncHandler(getProfile));
 router.get("/me", authorization, asyncHandler(getMyProfile));
 router.put(
 	"/me",
 	authorization,
+	singleUpload("profile_image"),
 	validateRequest(updateProfileSchema),
 	asyncHandler(updateProfile)
 );

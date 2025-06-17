@@ -3,6 +3,20 @@ const { Comment } = require("../database/models");
 const { Rating } = require("../database/models");
 const { Location } = require("../database/models");
 const bcrypt = require("bcrypt");
+const defaultImage = "/uploads/default_profile.jpg";
+const fs = require("fs");
+const path = require("path");
+
+const deleteOldImage = (imageUrl) => {
+	if (imageUrl && imageUrl !== defaultImage) {
+		const oldImagePath = path.join(__dirname, "..", imageUrl);
+		fs.unlink(oldImagePath, (err) => {
+			if (err) {
+				console.error("Error deleting old image:", err.message);
+			}
+		});
+	}
+};
 
 const getMyProfile = async (req, res) => {
 	const user = await User.findByPk(req.userId);
@@ -12,6 +26,13 @@ const getMyProfile = async (req, res) => {
 	}
 
 	const { password, ...userWithoutPassword } = user.toJSON();
+
+	if (userWithoutPassword.profile_image_url) {
+		userWithoutPassword.profile_image_url = `${req.protocol}://${req.get(
+			"host"
+		)}${userWithoutPassword.profile_image_url}`;
+	}
+
 	res.json(userWithoutPassword);
 };
 
@@ -23,6 +44,13 @@ const getProfile = async (req, res) => {
 	}
 
 	const { password, ...userWithoutPassword } = user.toJSON();
+
+	if (userWithoutPassword.profile_image_url) {
+		userWithoutPassword.profile_image_url = `${req.protocol}://${req.get(
+			"host"
+		)}${userWithoutPassword.profile_image_url}`;
+	}
+
 	res.json(userWithoutPassword);
 };
 
@@ -32,10 +60,16 @@ const updateProfile = async (req, res) => {
 		"last_name",
 		"email",
 		"birth_date",
-		"profile_image_url",
+		"role",
 	];
 
 	const updateFields = {};
+
+	const user = await User.findByPk(req.userId);
+
+	if (!user) {
+		return res.status(404).json({ error: "User not found" });
+	}
 
 	for (const field of existingFields) {
 		if (req.body[field] !== undefined) {
@@ -52,15 +86,25 @@ const updateProfile = async (req, res) => {
 		}
 	}
 
-	const user = await User.update(updateFields, { where: { id: req.userId } });
+	if (req.file) {
+		deleteOldImage(user.profile_image_url);
+		updateFields.profile_image_url = `/uploads/${req.file.filename}`;
+	} else if (req.body.remove_profile_image) {
+		deleteOldImage(user.profile_image_url);
+		updateFields.profile_image_url = defaultImage;
+	}
 
-	if (!user[0]) {
-		return res.status(404).json({ error: "User not found" });
+	await User.update(updateFields, { where: { id: req.userId } });
+
+	if (updateFields.profile_image_url) {
+		updateFields.profile_image_url = `${req.protocol}://${req.get("host")}${
+			updateFields.profile_image_url
+		}`;
 	}
 
 	res.status(200).json({
 		message: "Profile updated successfully",
-		profile: updateFields,
+		updateFields,
 	});
 };
 
@@ -105,6 +149,10 @@ const updateLocation = async (req, res) => {
 
 	res.status(200).json({
 		message: "Location updated successfully",
+		location: {
+			latitude,
+			longitude,
+		},
 	});
 };
 
@@ -132,10 +180,9 @@ const deleteUser = async (req, res) => {
 		return res.status(404).json({ error: "User not found" });
 	}
 
-	// Just in case there is no onDelete cascade set up in the database
-	// await Comment.destroy({ where: { userId: req.userId } });
-	// await Rating.destroy({ where: { userId: req.userId } });
-	// await Location.destroy({ where: { userId: req.userId } });
+	await Comment.destroy({ where: { UserId: req.userId } });
+	await Rating.destroy({ where: { UserId: req.userId } });
+	await Location.destroy({ where: { UserId: req.userId } });
 
 	await user.destroy();
 

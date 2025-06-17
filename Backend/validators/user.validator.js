@@ -7,6 +7,7 @@ const registerSchema = Joi.object({
 	last_name: Joi.string().pattern(nameRegex).required(),
 	email: Joi.string().email().required(),
 	birth_date: Joi.date().iso().required(),
+	role: Joi.string().valid("viewer", "uploader").required(),
 	password: Joi.string().min(8).pattern(/[0-9]/).required(),
 });
 
@@ -20,7 +21,7 @@ const updateProfileSchema = Joi.object({
 	last_name: Joi.string().pattern(nameRegex).optional(),
 	email: Joi.string().email().optional(),
 	birth_date: Joi.date().iso().optional(),
-	profile_image_url: Joi.string().uri().optional(),
+	remove_profile_image: Joi.boolean().optional().default(false),
 }).min(1);
 
 const updatePrivacySchema = Joi.object({
