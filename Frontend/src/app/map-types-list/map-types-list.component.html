@@ -1,1 +1,18 @@
-<p>map-types-list works!</p>
+<span class="material-symbols-outlined manage_search" (click)="toggleMenu()"
+    >manage_search</span
+>
+<ul
+    *ngIf="openMenu"
+    [class.visible]="openMenu"
+    [@fadeInOut]
+    class="map-types-menu"
+>
+    <li
+        class="map-types"
+        *ngFor="let type of mapTypes"
+        (click)="selectType(type)"
+        [class.active]="type === selectedType"
+    >
+        {{ type }}
+    </li>
+</ul>

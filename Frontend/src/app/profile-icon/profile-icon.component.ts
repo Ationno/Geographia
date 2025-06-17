@@ -1,12 +1,11 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { trigger, style, transition, animate } from '@angular/animations';
-
 @Component({
-    selector: 'app-map-types-list',
+    selector: 'app-profile-icon',
     imports: [CommonModule],
-    templateUrl: './map-types-list.component.html',
-    styleUrl: './map-types-list.component.css',
+    templateUrl: './profile-icon.component.html',
+    styleUrl: './profile-icon.component.css',
     animations: [
         trigger('fadeInOut', [
             transition(':enter', [
@@ -33,16 +32,40 @@ import { trigger, style, transition, animate } from '@angular/animations';
         ]),
     ],
 })
-export class MapTypesListComponent {
-    openMenu = false;
-    mapTypes = ['SATÉLITE', 'CLIMÁTICA', 'GEOGRÁFICA', 'RURAL'];
-    selectedType: string | null = null;
+export class ProfileIconComponent {
+    visibleMenu = false;
+
+    constructor(private elementRef: ElementRef) {}
 
     toggleMenu() {
-        this.openMenu = !this.openMenu;
+        this.visibleMenu = !this.visibleMenu;
     }
 
-    selectType(type: string) {
-        this.selectedType = type;
+    @HostListener('document:click', ['$event.target'])
+    onClickOutside(target: HTMLElement) {
+        const clickedInside = this.elementRef.nativeElement.contains(target);
+        if (!clickedInside) {
+            this.visibleMenu = false;
+        }
+    }
+
+    editInfo() {
+        console.log('Editar Información');
+    }
+
+    changePassword() {
+        console.log('Cambiar Contraseña');
+    }
+
+    privacity() {
+        console.log('Privacidad');
+    }
+
+    closeSesion() {
+        console.log('Cerrar Sesión');
+    }
+
+    deleteProfile() {
+        console.log('Eliminar Perfil');
     }
 }
