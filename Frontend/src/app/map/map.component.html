@@ -2,4 +2,26 @@
     [style]="'mapbox://styles/mapbox/standard'"
     [zoom]="[4]"
     [center]="[-64.0, -34.0]"
-/>
+    (mapClick)="onMapClick($event)"
+>
+    <mgl-control mglAttribution position="bottom-right" />
+    <mgl-control mglFullscreen position="bottom-right" />
+    <mgl-control
+        mglGeolocate
+        position="bottom-right"
+        (geolocate)="onGeolocate($event)"
+    />
+    <mgl-control mglNavigation position="bottom-right" />
+    <mgl-control mglScale position="bottom-left" />
+    <mgl-popup
+        *ngIf="popup"
+        [lngLat]="popup.coordinates"
+        [closeOnClick]="false"
+        (close)="popup = null"
+        class="custom-popup"
+    >
+        <div class="popup-bubble" (click)="crearPublicacion()">
+            <span class="material-symbols-outlined plus-icon"> close </span>
+        </div>
+    </mgl-popup>
+</mgl-map>

@@ -1,6 +1,45 @@
 @import "mapbox-gl/dist/mapbox-gl.css";
 
+:root {
+    --color-iconos: #0a2c53;
+    --color-primario: #0a2c53;
+    --color-texto: #2d2d2d;
+}
+
 body {
     margin: 0;
     padding: 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    font-size: 2em;
+    color: var(--color-texto);
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 1em;
+    color: var(--color-texto);
+    margin: 0;
+    padding: 0;
+}
+
+.mapboxgl-ctrl-attrib {
+    display: none !important;
 }

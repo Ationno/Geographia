@@ -1,0 +1,53 @@
+<div class="profile-container">
+    <img
+        src="icono.jpg"
+        alt="Imagen de icono de usuario de Agustina"
+        class="icon"
+        (click)="toggleMenu()"
+    />
+
+    <div class="profile-menu" *ngIf="visibleMenu" [@fadeInOut]>
+        <div class="profile-header">
+            <img
+                src="icono.jpg"
+                alt="Imagen de icono de usuario de Agustina"
+                class="profile-avatar"
+            />
+            <div class="user-info">
+                <div class="user-name">AGUSTINA ROJAS</div>
+                <div class="user-email">agusrojasmc&#64;gmail.com</div>
+            </div>
+        </div>
+        <ul class="profile-options">
+            <li (click)="editInfo()">
+                <div class="icon-container">
+                    <span class="material-symbols-outlined"> edit </span>
+                </div>
+                <p>EDITAR INFORMACION</p>
+            </li>
+            <li (click)="changePassword()">
+                <div class="icon-container">
+                    <span class="material-symbols-outlined"> lock </span>
+                </div>
+                <p>CAMBIAR CONTRASEÑA</p>
+            </li>
+
+            <li (click)="privacity()">
+                <div class="icon-container">
+                    <span class="material-symbols-outlined"> security </span>
+                </div>
+                <p>PRIVACIDAD</p>
+            </li>
+            <li (click)="closeSesion()">
+                <div class="icon-container">
+                    <span class="material-symbols-outlined"> logout </span>
+                </div>
+                <p>CERRAR SESION</p>
+            </li>
+            <li (click)="deleteProfile()">
+                <span class="material-symbols-outlined delete"> delete </span>
+                <p>ELIMINAR PERFIL</p>
+            </li>
+        </ul>
+    </div>
+</div>

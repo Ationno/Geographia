@@ -1,0 +1,25 @@
+<div class="search-bar-wrapper">
+    <div class="search-bar-container">
+        <span class="material-symbols-outlined search">search</span>
+        <input
+            type="text"
+            placeholder="Búsqueda..."
+            [(ngModel)]="searchTerm"
+            (focus)="onFocus()"
+            (blur)="onBlur()"
+        />
+    </div>
+
+    <div class="recents-dropdown" [@fadeInOut] *ngIf="showRecents">
+        <h1>RECIENTES</h1>
+        <div
+            class="recent-item"
+            *ngFor="let recent of recentSearches"
+            (click)="selectRecent(recent)"
+        >
+            <img [src]="recent.src" [alt]="recent.alt" class="recent-icon" />
+            <p class="recent-title">{{ recent.name }}</p>
+            <p class="recent-location">{{ recent.location }}</p>
+        </div>
+    </div>
+</div>
