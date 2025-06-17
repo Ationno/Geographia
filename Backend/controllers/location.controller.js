@@ -46,7 +46,6 @@ const isLocationNearby = async (
 	});
 
 	for (const loc of nearbyLocations) {
-		console.log(locationIdToIgnore, loc.id);
 		if (locationIdToIgnore && loc.id === locationIdToIgnore) {
 			continue;
 		}
