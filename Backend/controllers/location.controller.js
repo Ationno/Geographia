@@ -77,7 +77,7 @@ const deleteOldImages = async (images) => {
 };
 
 const createLocation = async (req, res) => {
-	const { name, latitude, longitude, tags, details, type } = req.body;
+	const { name, address, latitude, longitude, tags, details, type } = req.body;
 
 	const user = await User.findByPk(req.userId);
 
@@ -100,6 +100,7 @@ const createLocation = async (req, res) => {
 	const location = await Location.create({
 		UserId: req.userId,
 		name,
+		address,
 		latitude,
 		longitude,
 		details,
@@ -127,6 +128,7 @@ const createLocation = async (req, res) => {
 		location: {
 			id: location.id,
 			name: location.name,
+			address: location.address,
 			latitude: location.latitude,
 			longitude: location.longitude,
 			images: location.images,
@@ -141,6 +143,7 @@ const createLocation = async (req, res) => {
 const updateLocation = async (req, res) => {
 	const existingFields = [
 		"name",
+		"address",
 		"latitude",
 		"longitude",
 		"images",

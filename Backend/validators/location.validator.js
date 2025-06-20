@@ -4,6 +4,7 @@ const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
 
 const createLocationSchema = Joi.object({
 	name: Joi.string().pattern(nameRegex).required(),
+	address: Joi.string().max(255).required(),
 	latitude: Joi.number().min(-90).max(90).required(),
 	longitude: Joi.number().min(-180).max(180).required(),
 	details: Joi.string().max(1000).optional(),
@@ -13,6 +14,7 @@ const createLocationSchema = Joi.object({
 
 const updateLocationSchema = Joi.object({
 	name: Joi.string().pattern(nameRegex).optional(),
+	address: Joi.string().max(255).optional(),
 	latitude: Joi.number().min(-90).max(90).optional(),
 	longitude: Joi.number().min(-180).max(180).optional(),
 	details: Joi.string().max(1000).optional(),

@@ -51,6 +51,21 @@ const getProfile = async (req, res) => {
 		)}${userWithoutPassword.profile_image_url}`;
 	}
 
+	if (!userWithoutPassword.show_location) {
+		delete userWithoutPassword.latitude;
+		delete userWithoutPassword.longitude;
+	}
+	if (!userWithoutPassword.show_email) {
+		delete userWithoutPassword.email;
+	}
+	if (!userWithoutPassword.show_birth_date) {
+		delete userWithoutPassword.birth_date;
+	}
+	if (!userWithoutPassword.show_name) {
+		delete userWithoutPassword.first_name;
+		delete userWithoutPassword.last_name;
+	}
+
 	res.json(userWithoutPassword);
 };
 

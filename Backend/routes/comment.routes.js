@@ -6,7 +6,16 @@ const {
 	getCommentsByLocation,
 } = require("../controllers/comment.controller");
 
-router.post("/:locationId", authorization, addComment);
-router.get("/:locationId", authorization, getCommentsByLocation);
+const { asyncHandler } = require("../middlewares/handler.middleware");
+const { createCommentSchema } = require("../validators/comment.validator");
+const { validateRequest } = require("../middlewares/validate.middleware");
+
+router.post(
+	"/:locationId",
+	authorization,
+	validateRequest(createCommentSchema),
+	asyncHandler(addComment)
+);
+router.get("/:locationId", authorization, asyncHandler(getCommentsByLocation));
 
 module.exports = router;
