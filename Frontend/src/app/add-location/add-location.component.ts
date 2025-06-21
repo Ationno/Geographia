@@ -4,6 +4,10 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { trigger, style, transition, animate } from '@angular/animations';
+import { MapboxService } from '../mapbox.service';
+import { catchError, finalize, of } from 'rxjs';
+import { ViewChild, ElementRef } from '@angular/core';
 
 @Component({
     selector: 'app-add-location',
@@ -11,22 +15,52 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
     imports: [ReactiveFormsModule, CommonModule],
     templateUrl: './add-location.component.html',
     styleUrls: ['./add-location.component.css'],
+    animations: [
+        trigger('fadeInOut', [
+            transition(':enter', [
+                style({
+                    opacity: 0,
+                }),
+                animate('400ms ease-out', style({ opacity: 1 })),
+            ]),
+            transition(':leave', [
+                animate(
+                    '400ms ease-in',
+                    style({
+                        opacity: 0,
+                    })
+                ),
+            ]),
+        ]),
+    ],
 })
 export class AddLocationComponent {
+    @ViewChild('tagInputElement')
+    tagInputElement!: ElementRef<HTMLInputElement>;
+
     form: FormGroup;
     selectedImages: File[] = [];
     lat!: number;
     lng!: number;
+    selectedImagePreviews: string[] = [];
 
-    constructor(private router: Router, private route: ActivatedRoute) {
+    tags: string[] = [];
+    isEditingTags = false;
+    tagInputControl = new FormControl('');
+
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private mapboxService: MapboxService
+    ) {
         this.form = new FormGroup({
             name: new FormControl('', [Validators.required]),
             address: new FormControl('', [Validators.required]),
             latitude: new FormControl(null, [Validators.required]),
             longitude: new FormControl(null, [Validators.required]),
             images: new FormControl([], [Validators.required]),
-            tags: new FormControl([], [Validators.required]),
-            details: new FormControl('', [Validators.required]),
+            tags: new FormControl([]),
+            details: new FormControl(''),
             type: new FormControl('', [Validators.required]),
         });
     }
@@ -35,8 +69,33 @@ export class AddLocationComponent {
         this.route.queryParams.subscribe((params) => {
             this.lat = +params['lat'];
             this.lng = +params['lng'];
-            console.log('Lat:', this.lat, 'Lng:', this.lng);
         });
+
+        this.fetchAddress();
+
+        this.form.patchValue({
+            latitude: this.lat,
+            longitude: this.lng,
+        });
+    }
+
+    fetchAddress(): void {
+        this.mapboxService
+            .reverseGeocode(this.lng, this.lat)
+            .pipe(
+                catchError((error) => {
+                    console.error('Geocoding error:', error);
+                    return of(null);
+                }),
+                finalize(() => {})
+            )
+            .subscribe((response) => {
+                if (response?.features?.length > 0) {
+                    const address =
+                        response.features[0].properties.full_address;
+                    this.form.patchValue({ address });
+                }
+            });
     }
 
     closeAddLocation() {
@@ -51,6 +110,15 @@ export class AddLocationComponent {
                 images: this.selectedImages,
             });
             this.form.get('images')?.updateValueAndValidity();
+
+            this.selectedImagePreviews = [];
+            for (const file of this.selectedImages) {
+                const reader = new FileReader();
+                reader.onload = (e: any) => {
+                    this.selectedImagePreviews.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
         }
     }
 
@@ -60,18 +128,40 @@ export class AddLocationComponent {
         }
     }
 
-    addTag(tag: string) {
-        if (!tag.trim()) return;
-        const tags = this.form.get('tags')?.value || [];
-        if (!tags.includes(tag)) {
-            tags.push(tag);
-            this.form.patchValue({ tags: tags });
+    onTagsFocus() {
+        this.isEditingTags = true;
+        this.tagInputControl.setValue(
+            this.tags.map((tag) => `#${tag}`).join(' ')
+        );
+    }
+
+    onTagsBlur() {
+        const raw = this.tagInputControl.value || '';
+
+        if (!raw.includes('#')) {
+            this.isEditingTags = false;
+            return;
         }
+
+        const parsed = raw
+            .split('#')
+            .map((t) => t.trim())
+            .filter((t) => t !== '');
+
+        this.tags = parsed;
+        this.form.get('tags')?.setValue(this.tags);
+        this.isEditingTags = false;
     }
 
     deleteTag(index: number) {
-        const tags = this.form.get('etiquetas')?.value || [];
-        tags.splice(index, 1);
-        this.form.patchValue({ tags: tags });
+        this.tags.splice(index, 1);
+        this.form.get('tags')?.setValue(this.tags);
+    }
+
+    enableTagEdit() {
+        this.isEditingTags = true;
+        setTimeout(() => {
+            this.tagInputElement.nativeElement.focus();
+        }, 0);
     }
 }

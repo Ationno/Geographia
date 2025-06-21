@@ -9,6 +9,7 @@ import {
     withEventReplay,
 } from '@angular/platform-browser';
 import { dot } from 'node:test/reporters';
+import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -20,5 +21,6 @@ export const appConfig: ApplicationConfig = {
                 'pk.eyJ1IjoiYXRpb25ubyIsImEiOiJjbWJzOXYzMngwaTlvMmlwbGptcjg5a2pxIn0.dBmqrvZVikhq_pj5475ZIg',
         }),
         provideAnimations(),
+        provideHttpClient(),
     ],
 };

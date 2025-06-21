@@ -1,50 +1,130 @@
 <div class="backdrop" (click)="closeAddLocation()">
-    <div class="modal" (click)="$event.stopPropagation()">
-        <h1>AGREGAR LOCACIÓN</h1>
+    <div [@fadeInOut] class="modal" (click)="$event.stopPropagation()">
+        <h1 style="margin-bottom: 2px">AGREGAR LOCACIÓN</h1>
+        <p class="required-fields">
+            Los campos marcados con <span class="required">*</span> son
+            obligatorios.
+        </p>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <label for="nombre">Nombre:</label>
-            <input id="nombre" type="text" formControlName="nombre" />
+            <div class="form-group">
+                <div class="form-row">
+                    <label for="name">NOMBRE*</label>
+                    <input
+                        placeholder="Nombre de la locación"
+                        #name
+                        id="name"
+                        type="text"
+                        formControlName="name"
+                    />
+                </div>
 
-            <label for="archivos">Imágenes:</label>
-            <input
-                id="archivos"
-                type="file"
-                multiple
-                (change)="onFileChange($event)"
-                accept="image/*"
-            />
-
-            <div>
-                <strong>Imágenes seleccionadas:</strong>
-                <ul>
-                    <li *ngFor="let image of this.selectedImages">
-                        {{ image.name }}
-                    </li>
-                </ul>
+                <div class="form-row">
+                    <label for="address">DIRECCIÓN*</label>
+                    <input
+                        readonly
+                        id="address"
+                        type="text"
+                        formControlName="address"
+                        class="readonly-input"
+                    />
+                </div>
             </div>
 
-            <label for="etiquetas">Etiquetas:</label>
-            <input id="etiquetas" type="text" #inputEtiqueta />
-            <button
-                type="button"
-                (click)="addTag(inputEtiqueta.value); inputEtiqueta.value = ''"
-            >
-                Agregar
-            </button>
+            <div class="form-row">
+                <label for="images">IMÁGENES*</label>
 
-            <div>
-                <span
-                    *ngFor="
-                        let tag of form.get('etiquetas')?.value;
-                        let i = index
-                    "
+                <label for="images" class="upload-label">
+                    <span class="material-symbols-outlined upload-button">
+                        add_photo_alternate
+                    </span>
+                    Agregar imágenes desde el dispositivo
+                </label>
+
+                <input
+                    id="images"
+                    type="file"
+                    multiple
+                    (change)="onFileChange($event)"
+                    accept="image/*"
+                    hidden
+                />
+
+                <div>
+                    <div class="image-preview">
+                        <img
+                            *ngFor="let image of selectedImagePreviews"
+                            [src]="image"
+                            alt="preview"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="etiquetas">ETIQUETAS</label>
+
+                <input
+                    *ngIf="isEditingTags"
+                    id="etiquetas"
+                    type="text"
+                    [formControl]="tagInputControl"
+                    (blur)="onTagsBlur()"
+                    (focus)="onTagsFocus()"
+                    #tagInputElement
+                />
+                <div
+                    *ngIf="!isEditingTags"
+                    class="tags-container"
+                    (click)="enableTagEdit()"
                 >
-                    {{ tag }}
-                    <button type="button" (click)="deleteTag(i)">x</button>
-                </span>
+                    <span class="tag placeholder" *ngIf="tags.length === 0">
+                        Agrega etiquetas usando #
+                    </span>
+
+                    <span
+                        class="tag"
+                        *ngFor="let tag of tags; let i = index"
+                        (click)="deleteTag(i); $event.stopPropagation()"
+                    >
+                        {{ tag }} <span class="remove">&times;</span>
+                    </span>
+                </div>
             </div>
 
-            <button type="submit" [disabled]="form.invalid">Enviar</button>
+            <div class="form-row">
+                <label for="details">DETALLES</label>
+                <textarea
+                    id="details"
+                    formControlName="details"
+                    placeholder="Agregar detalles de la locación"
+                    rows="4"
+                ></textarea>
+            </div>
+
+            <div class="form-row">
+                <label for="type">TIPO DE PUBLICACIÓN*</label>
+                <select id="type" formControlName="type">
+                    <option value="" disabled selected>
+                        Selecciona un tipo
+                    </option>
+                    <option value="Rural">Rural</option>
+                    <option value="Geográfica">Geográfica</option>
+                    <option value="Histórica">Histórica</option>
+                </select>
+            </div>
+
+            <div class="buttons">
+                <button class="button" type="submit" [disabled]="form.invalid">
+                    Enviar
+                </button>
+                <button
+                    class="button cancel"
+                    type="button"
+                    (click)="closeAddLocation()"
+                >
+                    Cancelar
+                </button>
+            </div>
         </form>
     </div>
 </div>

@@ -18,9 +18,8 @@
         [lngLat]="popup.coordinates"
         [closeOnClick]="false"
         (close)="popup = null"
-        class="custom-popup"
     >
-        <div class="popup-bubble" (click)="addLocation()" [@fadeInOut]>
+        <div class="popup-bubble" (click)="addLocation()">
             <span class="material-symbols-outlined plus-icon"> close </span>
         </div>
     </mgl-popup>
