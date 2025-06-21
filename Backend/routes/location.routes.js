@@ -5,13 +5,13 @@ const {
 	createLocation,
 	updateLocation,
 	getAllLocations,
+	getRuralLocations,
+	getGeographicLocations,
 	getLocationById,
 	getMyLocations,
 	deleteLocation,
 	addRating,
 	updateRating,
-	getRuralLocations,
-	getGeographicLocations,
 } = require("../controllers/location.controller");
 
 const { asyncHandler } = require("../middlewares/handler.middleware");
@@ -24,10 +24,13 @@ const { validateRequest } = require("../middlewares/validate.middleware");
 
 const { requireUploader } = require("../middlewares/role.middleware");
 
+const upload = require("../middlewares/upload.middleware");
+
 router.post(
 	"/create",
 	authorization,
 	requireUploader,
+	upload.array("images", 20),
 	validateRequest(createLocationSchema),
 	asyncHandler(createLocation)
 );
@@ -35,6 +38,7 @@ router.put(
 	"/location/:id",
 	authorization,
 	requireUploader,
+	upload.array("images", 20),
 	validateRequest(updateLocationSchema),
 	asyncHandler(updateLocation)
 );
