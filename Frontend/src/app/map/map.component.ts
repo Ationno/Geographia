@@ -12,6 +12,8 @@ import {
 } from 'ngx-mapbox-gl';
 import { MapMouseEvent } from 'mapbox-gl';
 import { MglMapResizeDirective } from '../mgl-map-resize.directive';
+import { trigger, style, transition, animate } from '@angular/animations';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-map',
@@ -29,9 +31,29 @@ import { MglMapResizeDirective } from '../mgl-map-resize.directive';
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.css',
+    animations: [
+        trigger('fadeInOut', [
+            transition(':enter', [
+                style({
+                    opacity: 0,
+                }),
+                animate('400ms ease-out', style({ opacity: 1 })),
+            ]),
+            transition(':leave', [
+                animate(
+                    '400ms ease-in',
+                    style({
+                        opacity: 0,
+                    })
+                ),
+            ]),
+        ]),
+    ],
 })
 export class MapComponent {
     popup: { coordinates: [number, number] } | null = null;
+
+    constructor(private router: Router) {}
 
     onMapClick(event: mapboxgl.MapMouseEvent) {
         if (this.popup) {
@@ -43,11 +65,13 @@ export class MapComponent {
         }
     }
 
-    crearPublicacion() {
-        console.log(
-            'Abrir formulario de publicación en',
-            this.popup?.coordinates
-        );
+    addLocation() {
+        this.router.navigate([{ outlets: { popup: ['addLocation'] } }], {
+            queryParams: {
+                lat: this.popup?.coordinates[1],
+                lng: this.popup?.coordinates[0],
+            },
+        });
         this.popup = null;
     }
 

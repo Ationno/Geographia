@@ -1,0 +1,50 @@
+<div class="backdrop" (click)="closeAddLocation()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <h1>AGREGAR LOCACIÓN</h1>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <label for="nombre">Nombre:</label>
+            <input id="nombre" type="text" formControlName="nombre" />
+
+            <label for="archivos">Imágenes:</label>
+            <input
+                id="archivos"
+                type="file"
+                multiple
+                (change)="onFileChange($event)"
+                accept="image/*"
+            />
+
+            <div>
+                <strong>Imágenes seleccionadas:</strong>
+                <ul>
+                    <li *ngFor="let image of this.selectedImages">
+                        {{ image.name }}
+                    </li>
+                </ul>
+            </div>
+
+            <label for="etiquetas">Etiquetas:</label>
+            <input id="etiquetas" type="text" #inputEtiqueta />
+            <button
+                type="button"
+                (click)="addTag(inputEtiqueta.value); inputEtiqueta.value = ''"
+            >
+                Agregar
+            </button>
+
+            <div>
+                <span
+                    *ngFor="
+                        let tag of form.get('etiquetas')?.value;
+                        let i = index
+                    "
+                >
+                    {{ tag }}
+                    <button type="button" (click)="deleteTag(i)">x</button>
+                </span>
+            </div>
+
+            <button type="submit" [disabled]="form.invalid">Enviar</button>
+        </form>
+    </div>
+</div>

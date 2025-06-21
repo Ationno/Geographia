@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { MapComponent } from './map/map.component';
 import { MapTypesListComponent } from './map-types-list/map-types-list.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { ProfileIconComponent } from './profile-icon/profile-icon.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
     selector: 'app-root',
     imports: [
-        MapComponent,
+        RouterOutlet,
         MapTypesListComponent,
         SearchBarComponent,
         ProfileIconComponent,
