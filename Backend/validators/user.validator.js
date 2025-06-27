@@ -37,6 +37,7 @@ const updateLocationSchema = Joi.object({
 });
 
 const updatePasswordSchema = Joi.object({
+	actual_password: Joi.string().min(8).pattern(/[0-9]/).required(),
 	new_password: Joi.string().min(8).pattern(/[0-9]/).required(),
 	confirm_new_password: Joi.string().valid(Joi.ref("new_password")).required(),
 }).with("new_password", "confirm_new_password");

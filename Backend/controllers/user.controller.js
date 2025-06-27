@@ -172,16 +172,26 @@ const updateLocation = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-	const { new_password } = req.body;
+	const { actual_password, new_password } = req.body;
 	const hashed = await bcrypt.hash(new_password, 10);
-	const user = await User.update(
-		{ password: hashed },
-		{ where: { id: req.userId } }
-	);
 
-	if (!user[0]) {
+	const user = await User.findByPk(req.userId);
+
+	if (!user) {
 		return res.status(404).json({ error: "User not found" });
 	}
+
+	if (await bcrypt.compare(actual_password, user.password)) {
+		return res.status(400).json({ error: "Actual password is incorrect" });
+	}
+
+	if (await bcrypt.compare(new_password, user.password)) {
+		return res
+			.status(400)
+			.json({ error: "New password cannot be the same as the old one" });
+	}
+
+	await user.update({ password: hashed });
 
 	res.status(200).json({
 		message: "Password changed successfully",
