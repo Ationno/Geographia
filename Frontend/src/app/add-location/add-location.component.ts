@@ -99,7 +99,7 @@ export class AddLocationComponent {
     }
 
     closeAddLocation() {
-        this.router.navigate([{ outlets: { popup: null } }]);
+        this.router.navigate(['/map']);
     }
 
     onFileChange(event: any) {

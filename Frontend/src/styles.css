@@ -9,6 +9,8 @@
     --color-button-disabled: #ccc;
     --color-button-cancel: #f44336;
     --color-button-cancel-hover: #d32f2f;
+    --color-subtitulos: #666;
+    --color-secundario: #2c530a;
 }
 
 body {
@@ -34,7 +36,7 @@ h1 {
     color: var(--color-texto);
     margin: 0;
     padding: 0;
-    margin-bottom: 16px;
+    margin-bottom: 4px;
 }
 
 p {
@@ -46,16 +48,46 @@ p {
     padding: 0;
 }
 
+.backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Form Styles */
+
 .required-fields {
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
     font-size: 0.9em;
-    color: #f44336; /* rojo para campos obligatorios */
-    margin-bottom: 8px;
+    color: #f44336;
+    margin-bottom: 18px;
+    margin-top: 4px;
     font-style: italic;
 }
 
-/* Form Styles */
+.information-fields {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 0.9em;
+    color: #1976d2;
+    margin-top: 4px;
+    margin-bottom: 18px;
+    font-style: italic;
+}
+
+.error {
+    color: red;
+    font-size: 0.85em;
+    font-family: "Montserrat", sans-serif;
+    margin-top: 8px;
+}
 
 .modal {
     background: white;
@@ -77,7 +109,7 @@ label {
 
 input {
     font-family: "Montserrat", sans-serif;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 1em;
     color: var(--color-texto);
     padding: 8px 4px;

@@ -1,0 +1,62 @@
+<div class="backdrop" (click)="cancelEdit()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <h1 style="margin-bottom: 2px">PRIVACIDAD</h1>
+        <p class="information-fields">Configurá qué datos deseás compartir.</p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <h3 for="">LOCACIÓN</h3>
+            <div class="form-row">
+                <label class="switch">
+                    <input type="checkbox" formControlName="show_location" />
+                    <span class="slider round"></span>
+                </label>
+                <p>Compartir mi locación actual</p>
+            </div>
+            <h3 for="">FECHA DE NACIMIENTO</h3>
+            <div class="form-row">
+                <label class="switch">
+                    <input type="checkbox" formControlName="show_birth_date" />
+                    <span class="slider round"></span>
+                </label>
+                <p>Compartir mi fecha de nacimiento</p>
+            </div>
+            <h3 for="">NOMBRE Y APELLIDO</h3>
+            <div class="form-row">
+                <label class="switch">
+                    <input type="checkbox" formControlName="show_name" />
+                    <span class="slider round"></span>
+                </label>
+                <p>Compartir mi nombre y apellido</p>
+            </div>
+            <h3 for="">CORREO ELECTRONICO</h3>
+            <div class="form-row">
+                <label class="switch">
+                    <input type="checkbox" formControlName="show_email" />
+                    <span class="slider round"></span>
+                </label>
+                <p>Compartir mi correo electrónico</p>
+            </div>
+
+            <p *ngIf="errorMessage" class="error">
+                {{ errorMessage }}
+            </p>
+
+            <div class="buttons">
+                <button
+                    class="button"
+                    type="submit"
+                    [disabled]="form.invalid || isLoading"
+                >
+                    Guardar
+                </button>
+                <button
+                    class="button cancel"
+                    type="button"
+                    (click)="cancelEdit()"
+                >
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

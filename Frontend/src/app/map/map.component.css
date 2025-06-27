@@ -59,3 +59,27 @@ mgl-map {
 ::ng-deep .mapboxgl-popup-close-button {
     display: none;
 }
+
+app-map-types-list {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+}
+
+app-search-bar {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+app-profile-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+}

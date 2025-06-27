@@ -14,6 +14,11 @@ import { MapMouseEvent } from 'mapbox-gl';
 import { MglMapResizeDirective } from '../mgl-map-resize.directive';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { Router } from '@angular/router';
+import { MapTypesListComponent } from '../map-types-list/map-types-list.component';
+import { SearchBarComponent } from '../search-bar/search-bar.component';
+import { ProfileIconComponent } from '../profile-icon/profile-icon.component';
+import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-map',
@@ -28,6 +33,10 @@ import { Router } from '@angular/router';
         GeolocateControlDirective,
         NavigationControlDirective,
         ScaleControlDirective,
+        MapTypesListComponent,
+        SearchBarComponent,
+        ProfileIconComponent,
+        RouterOutlet,
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.css',
@@ -53,7 +62,7 @@ import { Router } from '@angular/router';
 export class MapComponent {
     popup: { coordinates: [number, number] } | null = null;
 
-    constructor(private router: Router) {}
+    constructor(private router: Router, private route: ActivatedRoute) {}
 
     onMapClick(event: mapboxgl.MapMouseEvent) {
         if (this.popup) {
@@ -66,12 +75,22 @@ export class MapComponent {
     }
 
     addLocation() {
-        this.router.navigate([{ outlets: { popup: ['addLocation'] } }], {
-            queryParams: {
-                lat: this.popup?.coordinates[1],
-                lng: this.popup?.coordinates[0],
-            },
-        });
+        this.router.navigate(
+            [
+                '/map',
+                {
+                    outlets: {
+                        popup: ['addLocation'],
+                    },
+                },
+            ],
+            {
+                queryParams: {
+                    lat: this.popup?.coordinates[1],
+                    lng: this.popup?.coordinates[0],
+                },
+            }
+        );
         this.popup = null;
     }
 

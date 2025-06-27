@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener } from '@angular/core';
 import { trigger, style, transition, animate } from '@angular/animations';
+import { Router } from '@angular/router';
 @Component({
     selector: 'app-profile-icon',
     imports: [CommonModule],
@@ -35,7 +36,7 @@ import { trigger, style, transition, animate } from '@angular/animations';
 export class ProfileIconComponent {
     visibleMenu = false;
 
-    constructor(private elementRef: ElementRef) {}
+    constructor(private elementRef: ElementRef, private router: Router) {}
 
     toggleMenu() {
         this.visibleMenu = !this.visibleMenu;
@@ -49,16 +50,22 @@ export class ProfileIconComponent {
         }
     }
 
-    editInfo() {
-        console.log('Editar Información');
+    editProfile() {
+        this.router.navigate(['/map', { outlets: { popup: ['editProfile'] } }]);
     }
 
     changePassword() {
-        console.log('Cambiar Contraseña');
+        this.router.navigate([
+            '/map',
+            { outlets: { popup: ['changePassword'] } },
+        ]);
     }
 
     privacity() {
-        console.log('Privacidad');
+        this.router.navigate([
+            '/map',
+            { outlets: { popup: ['privacySettings'] } },
+        ]);
     }
 
     closeSesion() {
