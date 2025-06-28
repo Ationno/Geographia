@@ -7,6 +7,7 @@
     [zoom]="[4]"
     [center]="[-64.0, -34.0]"
     (mapClick)="onMapClick($event)"
+    [maxBounds]="argentinaBounds"
 >
     <mgl-control mglAttribution position="bottom-right" />
     <mgl-control mglFullscreen position="bottom-right" />

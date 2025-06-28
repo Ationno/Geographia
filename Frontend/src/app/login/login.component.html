@@ -13,7 +13,7 @@
 
             <div class="tab-switch">
                 <span class="active">Inicio</span>
-                <span class="inactive">Registro</span>
+                <span class="inactive" (click)="goToRegister()">Registro</span>
             </div>
 
             <form>
@@ -22,7 +22,7 @@
                     <input
                         type="email"
                         id="email"
-                        placeholder="Correo Electronico..."
+                        placeholder="Correo Electrónico..."
                     />
                 </div>
 
@@ -87,9 +87,9 @@
                                 <path fill="none" d="M0 0h48v48H0z"></path>
                             </svg>
                         </div>
-                        <span style="display: none">Sign in with Google</span>
                     </div>
                 </button>
+                <span class="google-info">Inicia Sesión con Google</span>
             </form>
         </div>
     </div>

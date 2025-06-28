@@ -1,0 +1,13 @@
+<div class="backdrop" (click)="cancel()">
+    <div [@fadeInOut] class="modal" (click)="$event.stopPropagation()">
+        <div class="title">
+            <span class="material-symbols-outlined logout"> logout </span>
+            <h1>CERRAR SESION</h1>
+        </div>
+        <p class="subtitle">¿Esta seguro que desea cerrar sesión?</p>
+        <div class="buttons">
+            <button class="button">SALIR</button>
+            <button class="button cancel" (click)="cancel()">CANCELAR</button>
+        </div>
+    </div>
+</div>

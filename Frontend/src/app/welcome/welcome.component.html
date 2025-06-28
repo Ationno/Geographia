@@ -1,1 +1,20 @@
-<p>welcome works!</p>
+<div
+    class="welcome-container fade-in"
+    [style.backgroundImage]="'url(' + currentImage + ')'"
+>
+    <div class="overlay"></div>
+
+    <div class="content">
+        <h1 class="app-title">GEOGRAPHIA</h1>
+        <p class="subtitle">
+            Una plataforma <span class="highlight">colaborativa</span> para
+            registrar, georeferenciar y compartir datos
+            <span class="highlight">medioambientales</span> y
+            <span class="highlight">territoriales</span> en Argentina.
+        </p>
+        <p class="branding">
+            “Cartografiando el territorio desde el conocimiento colectivo.”
+        </p>
+        <button class="button button-welcome" (click)="map()">DESCUBRE</button>
+    </div>
+</div>

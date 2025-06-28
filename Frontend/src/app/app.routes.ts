@@ -7,6 +7,8 @@ import { PrivacySettingsComponent } from './privacy-settings/privacy-settings.co
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
+import { CloseSesionComponent } from './close-sesion/close-sesion.component';
 
 export const routes: Routes = [
     {
@@ -44,6 +46,16 @@ export const routes: Routes = [
                 path: 'privacySettings',
                 outlet: 'popup',
                 component: PrivacySettingsComponent,
+            },
+            {
+                path: 'deleteConfirmation',
+                outlet: 'popup',
+                component: DeleteConfirmationComponent,
+            },
+            {
+                path: 'closeSesion',
+                outlet: 'popup',
+                component: CloseSesionComponent,
             },
         ],
     },

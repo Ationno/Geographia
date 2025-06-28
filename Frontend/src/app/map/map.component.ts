@@ -61,6 +61,10 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MapComponent {
     popup: { coordinates: [number, number] } | null = null;
+    argentinaBounds: mapboxgl.LngLatBoundsLike = [
+        [-73.5, -56.0],
+        [-52.5, -20.0],
+    ];
 
     constructor(private router: Router, private route: ActivatedRoute) {}
 

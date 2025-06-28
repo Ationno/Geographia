@@ -11,6 +11,7 @@
     --color-button-cancel-hover: #d32f2f;
     --color-subtitulos: #666;
     --color-secundario: #2c530a;
+    --color-secundario-hover: #1f3a07;
 }
 
 body {
@@ -58,6 +59,15 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.subtitle {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 1.2em;
+    color: var(--color-subtitulos);
+    margin-top: 8px;
+    margin-bottom: 16px;
 }
 
 /* Form Styles */

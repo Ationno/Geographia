@@ -69,10 +69,13 @@ export class ProfileIconComponent {
     }
 
     closeSesion() {
-        console.log('Cerrar Sesión');
+        this.router.navigate(['/map', { outlets: { popup: ['closeSesion'] } }]);
     }
 
     deleteProfile() {
-        console.log('Eliminar Perfil');
+        this.router.navigate([
+            '/map',
+            { outlets: { popup: ['deleteConfirmation'] } },
+        ]);
     }
 }
