@@ -9,6 +9,8 @@ import { RegisterComponent } from './register/register.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
 import { CloseSesionComponent } from './close-sesion/close-sesion.component';
+import { LocationComponent } from './location/location.component';
+import { ResumeLocationComponent } from './resume-location/resume-location.component';
 
 export const routes: Routes = [
     {
@@ -56,6 +58,16 @@ export const routes: Routes = [
                 path: 'closeSesion',
                 outlet: 'popup',
                 component: CloseSesionComponent,
+            },
+            {
+                path: 'resumeLocation',
+                outlet: 'popup',
+                component: ResumeLocationComponent,
+            },
+            {
+                path: 'location',
+                outlet: 'popup',
+                component: LocationComponent,
             },
         ],
     },

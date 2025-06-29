@@ -1,0 +1,11 @@
+<div class="backdrop" (click)="cancel()">
+    <div [@fadeInOut]>
+        <button class="button" (click)="goToLocationDetails()">
+            MAS INFORMACIÓN
+        </button>
+        <div class="modal" (click)="$event.stopPropagation()">
+            <h1>{{ location.name }}</h1>
+            <p>{{ location.address }}</p>
+        </div>
+    </div>
+</div>

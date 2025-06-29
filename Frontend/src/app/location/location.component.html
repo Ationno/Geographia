@@ -1,0 +1,87 @@
+<div class="backdrop" (click)="cancel()">
+    <div [@fadeInOut] class="modal" (click)="$event.stopPropagation()">
+        <div class="info-left">
+            <p class="date">{{ location.createdAt }}</p>
+
+            <div class="title-section">
+                <h2>{{ location.title }}</h2>
+                <img
+                    [src]="location.user.profilePic"
+                    alt="User"
+                    class="profile-pic"
+                />
+            </div>
+
+            <p class="location">{{ location.location }}</p>
+
+            <div class="rating">
+                <span
+                    *ngFor="let star of [1, 2, 3, 4, 5]"
+                    class="material-symbols-outlined"
+                    [class.filled]="star <= location.rating"
+                >
+                    star
+                </span>
+            </div>
+
+            <div class="carousel">
+                <button class="arrow" (click)="prevImage()">‹</button>
+                <img [src]="images[currentImageIndex]" alt="Location" />
+                <button class="arrow" (click)="nextImage()">›</button>
+            </div>
+
+            <div class="dots">
+                <span
+                    *ngFor="let img of images; let i = index"
+                    [class.active]="i === currentImageIndex"
+                    (click)="selectImage(i)"
+                ></span>
+            </div>
+
+            <p class="description">{{ location.description }}</p>
+
+            <div class="tags">
+                <span class="type-tag">{{ location.type }}</span>
+                <span *ngFor="let tag of location.tags" class="tag">{{
+                    tag
+                }}</span>
+            </div>
+        </div>
+
+        <div class="comments-right">
+            <div class="comments-header">
+                <h3>COMENTARIOS</h3>
+                <span class="material-symbols-outlined"> chat </span>
+            </div>
+
+            <div class="comment" *ngFor="let c of comments">
+                <img [src]="c.user.profilePic" alt="User" class="comment-pic" />
+                <div class="comment-body">
+                    <div class="comment-meta">
+                        <strong>{{ c.user.name }}</strong>
+                        <small>{{ c.user.lastLocation }} • {{ c.date }}</small>
+                    </div>
+                    <p class="comment-text">{{ c.text }}</p>
+                </div>
+            </div>
+
+            <form
+                [formGroup]="commentForm"
+                (ngSubmit)="onSubmitComment()"
+                class="comment-form"
+            >
+                <img
+                    [src]="userLoggedIn.profilePic"
+                    alt="Me"
+                    class="comment-pic"
+                />
+                <input
+                    type="text"
+                    formControlName="text"
+                    placeholder="Escribe un comentario..."
+                />
+                <button type="submit" hidden></button>
+            </form>
+        </div>
+    </div>
+</div>

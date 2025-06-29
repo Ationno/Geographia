@@ -8,6 +8,7 @@
     [center]="[-64.0, -34.0]"
     (mapClick)="onMapClick($event)"
     [maxBounds]="argentinaBounds"
+    [logoPosition]="'bottom-right'"
 >
     <mgl-control mglAttribution position="bottom-right" />
     <mgl-control mglFullscreen position="bottom-right" />
@@ -17,7 +18,18 @@
         (geolocate)="onGeolocate($event)"
     />
     <mgl-control mglNavigation position="bottom-right" />
-    <mgl-control mglScale position="bottom-left" />
+    <mgl-control mglScale position="bottom-right" />
+
+    <mgl-popup
+        *ngFor="let loc of locations"
+        [lngLat]="loc.coordinates"
+        [closeOnClick]="false"
+    >
+        <div class="popup-bubble popup-location" (click)="goToLocation(loc.id)">
+            <img [src]="loc.image" alt="Locación" class="popup-image" />
+        </div>
+    </mgl-popup>
+
     <mgl-popup
         *ngIf="popup"
         [lngLat]="popup.coordinates"

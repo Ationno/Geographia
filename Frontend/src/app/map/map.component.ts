@@ -61,9 +61,31 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MapComponent {
     popup: { coordinates: [number, number] } | null = null;
+
     argentinaBounds: mapboxgl.LngLatBoundsLike = [
         [-73.5, -56.0],
         [-52.5, -20.0],
+    ];
+
+    locations = [
+        {
+            id: 1,
+            title: 'Glaciar Perito Moreno',
+            coordinates: [-73.05, -50.5] as [number, number],
+            image: 'Perito.jpg',
+        },
+        {
+            id: 2,
+            title: 'Quebrada de Humahuaca',
+            coordinates: [-65.5, -23.2] as [number, number],
+            image: 'Salta.jpg',
+        },
+        {
+            id: 3,
+            title: 'Esteros del Iberá',
+            coordinates: [-57.2, -28.5] as [number, number],
+            image: 'Andes.jpg',
+        },
     ];
 
     constructor(private router: Router, private route: ActivatedRoute) {}
@@ -96,6 +118,24 @@ export class MapComponent {
             }
         );
         this.popup = null;
+    }
+
+    goToLocation(locationId: number) {
+        this.router.navigate(
+            [
+                '/map',
+                {
+                    outlets: {
+                        popup: ['resumeLocation'],
+                    },
+                },
+            ],
+            {
+                queryParams: {
+                    locationId: locationId,
+                },
+            }
+        );
     }
 
     onGeolocate(position: GeolocationPosition) {

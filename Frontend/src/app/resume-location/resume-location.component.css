@@ -1,0 +1,31 @@
+:host {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 100dvw;
+    display: flex;
+    align-items: end;
+    justify-content: left;
+    z-index: 2000;
+}
+
+.backdrop {
+    background-color: transparent;
+    align-items: start;
+    justify-content: end;
+    flex-direction: column;
+}
+
+.modal {
+    display: block;
+    width: 90%;
+    max-width: 400px;
+    max-height: 200px;
+    font-family: "Montserrat", sans-serif;
+    margin: 0px 0px 24px 24px;
+}
+
+.button {
+    margin: 0px 0px 12px 24px;
+}
