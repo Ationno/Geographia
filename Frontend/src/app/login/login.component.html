@@ -1,51 +1,108 @@
-<div class="login-container">
+<div
+    class="login-container"
+    role="main"
+    aria-label="Formulario de inicio de sesión"
+>
     <div class="login-form-section">
         <div class="header">
-            <div class="company-name">GEOGRAPHIA</div>
+            <div class="company-name" tabindex="0">GEOGRAPHIA</div>
         </div>
 
         <div class="form-content">
-            <h2 class="title">Inicio</h2>
-            <p class="subtitle">
+            <h2 class="title" tabindex="0">Inicio</h2>
+            <p class="subtitle" tabindex="0">
                 Iniciando sesión estás aceptando nuestros
-                <a href="#">Términos y Políticas de Privacidad</a>
+                <a href="#" aria-describedby="privacy-desc"
+                    >Términos y Políticas de Privacidad</a
+                >
             </p>
+            <span id="privacy-desc" class="sr-only"
+                >Al hacer clic acepta los términos y condiciones de la
+                aplicación.</span
+            >
 
-            <div class="tab-switch">
-                <span class="active">Inicio</span>
-                <span class="inactive" (click)="goToRegister()">Registro</span>
-            </div>
+            <nav
+                class="tab-switch"
+                role="tablist"
+                aria-label="Navegación de pestañas"
+            >
+                <button
+                    class="active"
+                    role="tab"
+                    aria-selected="true"
+                    tabindex="-1"
+                >
+                    Inicio
+                </button>
+                <button
+                    class="inactive"
+                    role="tab"
+                    aria-selected="false"
+                    tabindex="0"
+                    (click)="goToRegister()"
+                    (keydown.enter)="goToRegister()"
+                >
+                    Registro
+                </button>
+            </nav>
 
-            <form>
+            <form aria-labelledby="login-form-title" novalidate>
                 <div class="email-wrapper">
-                    <span class="material-symbols-outlined"> mail </span>
+                    <label for="email" class="sr-only"
+                        >Correo Electrónico</label
+                    >
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        mail
+                    </span>
                     <input
                         type="email"
                         id="email"
                         placeholder="Correo Electrónico..."
+                        required
+                        aria-required="true"
+                        autocomplete="email"
                     />
                 </div>
 
                 <div class="password-wrapper">
-                    <span class="material-symbols-outlined"> lock </span>
+                    <label for="password" class="sr-only">Contraseña</label>
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        lock
+                    </span>
                     <input
                         [type]="showPassword ? 'text' : 'password'"
                         id="password"
                         placeholder="Contraseña..."
+                        required
+                        aria-required="true"
+                        autocomplete="current-password"
                     />
                     <button
                         type="button"
                         class="toggle-password"
+                        [attr.aria-label]="
+                            showPassword
+                                ? 'Ocultar contraseña'
+                                : 'Mostrar contraseña'
+                        "
                         (click)="togglePassword()"
                     >
-                        <span class="material-symbols-outlined">
+                        <span
+                            class="material-symbols-outlined"
+                            aria-hidden="true"
+                        >
                             {{ showPassword ? "visibility_off" : "visibility" }}
                         </span>
                     </button>
                 </div>
 
                 <div class="options">
-                    <input name="remember" type="checkbox" />
+                    <input
+                        id="remember"
+                        name="remember"
+                        type="checkbox"
+                        aria-label="Recordar Contraseña"
+                    />
                     <label for="remember">Recordar contraseña</label>
                 </div>
 
@@ -57,11 +114,20 @@
                     Iniciar
                 </button>
 
-                <button class="gsi-material-button">
+                <button
+                    type="button"
+                    class="gsi-material-button"
+                    aria-label="Iniciar sesión con Google"
+                >
                     <div class="gsi-material-button-state"></div>
                     <div class="gsi-material-button-content-wrapper">
-                        <div class="gsi-material-button-icon">
+                        <div
+                            class="gsi-material-button-icon"
+                            aria-hidden="true"
+                        >
                             <svg
+                                tabindex="0"
+                                aria-label="Icono de Google"
                                 version="1.1"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 48 48"
@@ -89,12 +155,18 @@
                         </div>
                     </div>
                 </button>
-                <span class="google-info">Inicia Sesión con Google</span>
+                <span class="google-info" tabindex="0"
+                    >Inicia Sesión con Google</span
+                >
             </form>
         </div>
     </div>
 
     <div class="login-image-section">
-        <img src="/map.jpeg" alt="Imagen derecha" />
+        <img
+            src="/map.jpeg"
+            alt="Mapa geográfico como imagen decorativa"
+            role="presentation"
+        />
     </div>
 </div>

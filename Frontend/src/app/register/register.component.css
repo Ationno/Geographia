@@ -248,3 +248,86 @@ input {
     text-align: center;
     margin-top: 4px;
 }
+
+/* Utilidad para ocultar texto solo visualmente, pero accesible para lectores de pantalla */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .register-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .register-form-section {
+        padding: 2rem 1rem 3rem 1rem !important;
+        max-width: 100%;
+    }
+
+    .form-content {
+        padding: 2rem 1rem 0 1rem !important;
+        max-width: 100%;
+    }
+
+    .title {
+        font-size: 3em !important;
+    }
+
+    .tab-switch {
+        font-size: 1.2em !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .register-image-section {
+        height: 200px;
+        flex: none;
+    }
+
+    .register-image-section img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    form {
+        padding: 0 1rem;
+    }
+
+    .email-wrapper,
+    .password-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .email-wrapper > span,
+    .password-wrapper > span {
+        border-bottom: none;
+        padding: 0 0 4px 0;
+    }
+
+    input {
+        width: 100% !important;
+        font-size: 1.1em !important;
+    }
+
+    .toggle-password {
+        position: static;
+        margin-top: 4px;
+    }
+
+    .button.register-button,
+    .gsi-material-button {
+        max-width: 100% !important;
+    }
+}

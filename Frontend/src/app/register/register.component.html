@@ -1,55 +1,144 @@
-<div class="register-container">
-    <div class="register-form-section">
-        <div class="header">
-            <div class="company-name">GEOGRAPHIA</div>
-        </div>
+<div class="register-container" lang="es">
+    <section
+        class="register-form-section"
+        aria-label="Formulario de registro de Geographia"
+    >
+        <header class="header">
+            <h1 class="company-name" tabindex="0">GEOGRAPHIA</h1>
+        </header>
 
         <div class="form-content">
-            <h2 class="title">Registro</h2>
-            <p class="subtitle">
-                Registrandote estás aceptando nuestros
-                <a href="#">Términos y Políticas de Privacidad</a>
+            <h2 class="title" tabindex="0">Registro</h2>
+            <p class="subtitle" tabindex="0">
+                Registrándote estás aceptando nuestros
+                <a
+                    href="#"
+                    rel="noopener noreferrer"
+                    aria-describedby="terms-desc"
+                    >Términos y Políticas de Privacidad</a
+                >
             </p>
+            <span id="terms-desc" class="sr-only"
+                >Se abrirá en una nueva ventana</span
+            >
 
-            <div class="tab-switch">
-                <span class="inactive" (click)="goToLogin()">Inicio</span>
-                <span class="active">Registro</span>
-            </div>
+            <nav
+                class="tab-switch"
+                role="tablist"
+                aria-label="Navegación entre Inicio y Registro"
+            >
+                <span
+                    class="inactive"
+                    role="tab"
+                    tabindex="0"
+                    aria-selected="false"
+                    (click)="goToLogin()"
+                    (keydown.enter)="goToLogin()"
+                    aria-label="Apreta el boton Enter para ir a la pestaña de Inicio"
+                    >Inicio</span
+                >
+                <span
+                    class="active"
+                    role="tab"
+                    tabindex="-1"
+                    aria-selected="true"
+                    aria-current="page"
+                    >Registro</span
+                >
+            </nav>
 
-            <form>
+            <form aria-label="Formulario de registro" novalidate>
                 <div class="email-wrapper">
-                    <span class="material-symbols-outlined">mail</span>
-                    <input type="email" placeholder="Correo Electrónico..." />
+                    <label for="email" class="sr-only"
+                        >Correo Electrónico</label
+                    >
+                    <span class="material-symbols-outlined" aria-hidden="true"
+                        >mail</span
+                    >
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Correo Electrónico..."
+                        required
+                        autocomplete="email"
+                        aria-required="true"
+                    />
                 </div>
 
                 <div style="display: flex; gap: 12px">
                     <div class="email-wrapper" style="flex: 1">
-                        <span class="material-symbols-outlined">person</span>
-                        <input type="text" placeholder="Nombre..." />
+                        <label for="nombre" class="sr-only">Nombre</label>
+                        <span
+                            class="material-symbols-outlined"
+                            aria-hidden="true"
+                            >person</span
+                        >
+                        <input
+                            id="nombre"
+                            type="text"
+                            placeholder="Nombre..."
+                            required
+                            autocomplete="given-name"
+                            aria-required="true"
+                        />
                     </div>
 
                     <div class="email-wrapper" style="flex: 1">
-                        <span class="material-symbols-outlined">person</span>
-                        <input type="text" placeholder="Apellido..." />
+                        <label for="apellido" class="sr-only">Apellido</label>
+                        <span
+                            class="material-symbols-outlined"
+                            aria-hidden="true"
+                            >person</span
+                        >
+                        <input
+                            id="apellido"
+                            type="text"
+                            placeholder="Apellido..."
+                            required
+                            autocomplete="family-name"
+                            aria-required="true"
+                        />
                     </div>
                 </div>
 
                 <div class="email-wrapper date-wrapper">
-                    <span class="material-symbols-outlined"
+                    <label for="fecha-nacimiento" class="sr-only"
+                        >Fecha de nacimiento</label
+                    >
+                    <span class="material-symbols-outlined" aria-hidden="true"
                         >calendar_month</span
                     >
-                    <input type="date" placeholder="Fecha de nacimiento..." />
+                    <input
+                        id="fecha-nacimiento"
+                        type="date"
+                        placeholder="Fecha de nacimiento..."
+                        required
+                        aria-required="true"
+                    />
                 </div>
 
                 <div class="password-wrapper">
-                    <span class="material-symbols-outlined">lock</span>
+                    <label for="password" class="sr-only">Contraseña</label>
+                    <span class="material-symbols-outlined" aria-hidden="true"
+                        >lock</span
+                    >
                     <input
+                        id="password"
                         [type]="showPassword ? 'text' : 'password'"
                         placeholder="Contraseña..."
+                        required
+                        aria-required="true"
+                        autocomplete="new-password"
                     />
                     <button
                         type="button"
                         class="toggle-password"
+                        [attr.aria-pressed]="showPassword"
+                        [attr.aria-label]="
+                            showPassword
+                                ? 'Ocultar contraseña'
+                                : 'Mostrar contraseña'
+                        "
                         (click)="togglePassword()"
                     >
                         <span class="material-symbols-outlined">
@@ -59,14 +148,29 @@
                 </div>
 
                 <div class="password-wrapper">
-                    <span class="material-symbols-outlined">lock</span>
+                    <label for="repeat-password" class="sr-only"
+                        >Repetir contraseña</label
+                    >
+                    <span class="material-symbols-outlined" aria-hidden="true"
+                        >lock</span
+                    >
                     <input
+                        id="repeat-password"
                         [type]="showRepeatPassword ? 'text' : 'password'"
                         placeholder="Repetir contraseña..."
+                        required
+                        aria-required="true"
+                        autocomplete="new-password"
                     />
                     <button
                         type="button"
                         class="toggle-password"
+                        [attr.aria-pressed]="showRepeatPassword"
+                        [attr.aria-label]="
+                            showRepeatPassword
+                                ? 'Ocultar contraseña'
+                                : 'Mostrar contraseña'
+                        "
                         (click)="toggleRepeatPassword()"
                     >
                         <span class="material-symbols-outlined">
@@ -79,15 +183,27 @@
                     </button>
                 </div>
 
-                <button type="submit" class="button register-button">
+                <button
+                    type="submit"
+                    class="button register-button"
+                    aria-label="Registrarse"
+                >
                     Registrarse
                 </button>
 
-                <button class="gsi-material-button">
+                <button
+                    class="gsi-material-button"
+                    aria-label="Registrarse con Google"
+                >
                     <div class="gsi-material-button-state"></div>
                     <div class="gsi-material-button-content-wrapper">
-                        <div class="gsi-material-button-icon">
+                        <div
+                            class="gsi-material-button-icon"
+                            aria-hidden="true"
+                        >
                             <svg
+                                tabindex="0"
+                                aria-label="Icono de Google"
                                 version="1.1"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 48 48"
@@ -115,12 +231,18 @@
                         </div>
                     </div>
                 </button>
-                <span class="google-info">Registrate con Google</span>
+                <span
+                    class="google-info"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    tabindex="0"
+                    >Regístrate con Google</span
+                >
             </form>
         </div>
-    </div>
+    </section>
 
-    <div class="register-image-section">
-        <img src="/map.jpeg" alt="Imagen derecha" />
-    </div>
+    <section class="register-image-section" aria-hidden="true">
+        <img src="/map.jpeg" alt="Mapa representativo de ubicación" />
+    </section>
 </div>

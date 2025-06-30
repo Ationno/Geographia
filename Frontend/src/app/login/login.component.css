@@ -46,7 +46,6 @@
     gap: 20px;
     font-family: "Montserrat", sans-serif;
     font-weight: 400;
-    font-size: 1.5em;
     margin-bottom: 56px;
     display: flex;
     justify-content: center;
@@ -243,4 +242,98 @@ input {
     color: var(--color-subtitulos);
     text-align: center;
     margin-top: 4px;
+}
+
+.tab-switch button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 1.5em;
+    color: grey;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s, border-color 0.3s;
+}
+
+.tab-switch button.active,
+.tab-switch button:focus {
+    color: var(--color-secundario);
+    border-bottom: 2px solid var(--color-secundario);
+    outline: none;
+}
+
+input:focus,
+button:focus,
+a:focus {
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+    .login-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .login-form-section {
+        padding: 2rem 1rem 3rem 1rem;
+        max-width: 100%;
+    }
+
+    .form-content {
+        padding: 2rem 1rem 0 1rem !important;
+        max-width: 100%;
+    }
+
+    .title {
+        font-size: 3em !important;
+    }
+
+    .tab-switch button {
+        font-size: 1.2em !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .login-image-section {
+        height: 200px;
+        flex: none;
+    }
+
+    .login-image-section img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    form {
+        padding: 0 1rem;
+    }
+
+    .email-wrapper,
+    .password-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .email-wrapper > span,
+    .password-wrapper > span {
+        border-bottom: none;
+        padding: 0 0 4px 0;
+    }
+
+    input {
+        width: 100% !important;
+        font-size: 1.1em !important;
+    }
+
+    .toggle-password {
+        position: static;
+        margin-top: 4px;
+    }
+
+    .button.login-button,
+    .gsi-material-button {
+        max-width: 100% !important;
+    }
 }

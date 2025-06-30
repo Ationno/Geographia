@@ -39,6 +39,7 @@ import { Location } from '../models/location.model';
 export class SearchBarComponent {
     searchTerm = '';
     showRecents = false;
+    private blurTimeout: any;
     recentSearches: Location[] = [
         {
             id: 1,
@@ -62,6 +63,17 @@ export class SearchBarComponent {
             alt: 'Imagen de Cataratas del Iguazú',
         },
     ];
+
+    onWrapperFocus() {
+        clearTimeout(this.blurTimeout);
+        this.showRecents = true;
+    }
+
+    onWrapperBlur() {
+        this.blurTimeout = setTimeout(() => {
+            this.showRecents = false;
+        }, 200);
+    }
 
     onFocus() {
         this.showRecents = true;
