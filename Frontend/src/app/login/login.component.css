@@ -36,11 +36,6 @@
     text-align: center;
 }
 
-.subtitle a {
-    color: var(--color-button);
-    text-decoration: none;
-}
-
 .tab-switch {
     display: flex;
     gap: 20px;
