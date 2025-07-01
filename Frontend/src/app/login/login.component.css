@@ -46,6 +46,7 @@
     gap: 20px;
     font-family: "Montserrat", sans-serif;
     font-weight: 400;
+    font-size: 1.5em;
     margin-bottom: 56px;
     display: flex;
     justify-content: center;
@@ -244,32 +245,6 @@ input {
     margin-top: 4px;
 }
 
-.tab-switch button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: "Montserrat", sans-serif;
-    font-weight: 400;
-    font-size: 1.5em;
-    color: grey;
-    border-bottom: 2px solid transparent;
-    transition: color 0.3s, border-color 0.3s;
-}
-
-.tab-switch button.active,
-.tab-switch button:focus {
-    color: var(--color-secundario);
-    border-bottom: 2px solid var(--color-secundario);
-    outline: none;
-}
-
-input:focus,
-button:focus,
-a:focus {
-    outline: 3px solid var(--color-primario);
-    outline-offset: 2px;
-}
-
 @media (max-width: 900px) {
     .login-container {
         flex-direction: column;
@@ -277,7 +252,7 @@ a:focus {
     }
 
     .login-form-section {
-        padding: 2rem 1rem 3rem 1rem;
+        padding: 2rem 1rem 3rem 1rem !important;
         max-width: 100%;
     }
 
@@ -290,7 +265,7 @@ a:focus {
         font-size: 3em !important;
     }
 
-    .tab-switch button {
+    .tab-switch {
         font-size: 1.2em !important;
         margin-bottom: 2rem !important;
     }
