@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     MapComponent as MglMapComponent,
@@ -13,12 +13,13 @@ import {
 import { MapMouseEvent } from 'mapbox-gl';
 import { MglMapResizeDirective } from '../mgl-map-resize.directive';
 import { trigger, style, transition, animate } from '@angular/animations';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { MapTypesListComponent } from '../map-types-list/map-types-list.component';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
 import { ProfileIconComponent } from '../profile-icon/profile-icon.component';
 import { RouterOutlet } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-map',
@@ -61,6 +62,10 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MapComponent {
     popup: { coordinates: [number, number] } | null = null;
+    private routerSub!: Subscription;
+
+    @ViewChild('firstFocusElement', { static: true })
+    firstFocusElement!: ElementRef<HTMLDivElement>;
 
     argentinaBounds: mapboxgl.LngLatBoundsLike = [
         [-73.5, -56.0],
@@ -87,6 +92,19 @@ export class MapComponent {
             image: 'Andes.jpg',
         },
     ];
+
+    ngOnInit() {
+        this.routerSub = this.router.events
+            .pipe(filter((event) => event instanceof NavigationEnd))
+            .subscribe((event) => {
+                if (this.router.url === '/map') {
+                    console.log('Map component initialized');
+                    setTimeout(() => {
+                        this.firstFocusElement.nativeElement.focus();
+                    }, 0);
+                }
+            });
+    }
 
     constructor(private router: Router, private route: ActivatedRoute) {}
 

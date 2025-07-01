@@ -5,19 +5,19 @@
     height: 100dvh;
     width: 100dvw;
     display: flex;
-    align-items: flex-end; /* align-items: end -> flex-end es la sintaxis correcta */
-    justify-content: flex-start; /* left => flex-start */
+    align-items: flex-end;
+    justify-content: flex-start;
     z-index: 2000;
-    padding: 16px; /* un poco de espacio interior para no pegarse a bordes */
+    padding: 16px;
     box-sizing: border-box;
 }
 
 .backdrop {
     background-color: transparent;
-    display: flex; /* para que align-items y justify-content funcionen */
+    display: flex;
     flex-direction: column;
-    align-items: flex-start; /* start => flex-start */
-    justify-content: flex-end; /* end => flex-end */
+    align-items: flex-start;
+    justify-content: flex-end;
     width: 100%;
     height: 100%;
 }

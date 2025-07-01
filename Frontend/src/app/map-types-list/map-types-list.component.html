@@ -1,4 +1,13 @@
-<span class="material-symbols-outlined manage_search" (click)="toggleMenu()"
+<span
+    class="material-symbols-outlined manage_search"
+    tabindex="0"
+    (click)="toggleMenu()"
+    (keydown.enter)="toggleMenu()"
+    [attr.aria-label]="
+        openMenu
+            ? 'Cerrar menú de tipos de mapa'
+            : 'Abrir menú de tipos de mapa'
+    "
     >manage_search</span
 >
 <ul

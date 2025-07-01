@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -18,6 +18,9 @@ export class PrivacySettingsComponent implements OnInit {
     isLoading = false;
     errorMessage: string | null = null;
 
+    @ViewChild('firstFocusElement', { static: true })
+    firstFocusElement!: ElementRef<HTMLHeadingElement>;
+
     constructor(private userService: UserService, private router: Router) {
         this.form = new FormGroup({
             show_location: new FormControl(false),
@@ -29,6 +32,10 @@ export class PrivacySettingsComponent implements OnInit {
 
     ngOnInit(): void {
         this.isLoading = true;
+
+        setTimeout(() => {
+            this.firstFocusElement.nativeElement.focus();
+        }, 0);
 
         this.userService
             .getPrivacySettings()

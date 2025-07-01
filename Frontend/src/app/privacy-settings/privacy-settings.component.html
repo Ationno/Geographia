@@ -1,43 +1,108 @@
-<div class="backdrop" (click)="cancelEdit()">
-    <div class="modal" (click)="$event.stopPropagation()">
-        <h1 style="margin-bottom: 2px">PRIVACIDAD</h1>
-        <p class="information-fields">Configurá qué datos deseás compartir.</p>
+<div
+    class="backdrop"
+    role="button"
+    (click)="cancelEdit()"
+    (keydown.escape)="cancelEdit()"
+>
+    <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+        (click)="$event.stopPropagation()"
+    >
+        <h1
+            id="modal-title"
+            style="margin-bottom: 2px"
+            tabindex="0"
+            #firstFocusElement
+        >
+            PRIVACIDAD
+        </h1>
+        <p id="modal-description" class="information-fields" tabindex="0">
+            Configurá qué datos deseás compartir.
+        </p>
 
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <h3 for="">LOCACIÓN</h3>
-            <div class="form-row">
-                <label class="switch">
-                    <input type="checkbox" formControlName="show_location" />
-                    <span class="slider round"></span>
-                </label>
-                <p>Compartir mi locación actual</p>
-            </div>
-            <h3 for="">FECHA DE NACIMIENTO</h3>
-            <div class="form-row">
-                <label class="switch">
-                    <input type="checkbox" formControlName="show_birth_date" />
-                    <span class="slider round"></span>
-                </label>
-                <p>Compartir mi fecha de nacimiento</p>
-            </div>
-            <h3 for="">NOMBRE Y APELLIDO</h3>
-            <div class="form-row">
-                <label class="switch">
-                    <input type="checkbox" formControlName="show_name" />
-                    <span class="slider round"></span>
-                </label>
-                <p>Compartir mi nombre y apellido</p>
-            </div>
-            <h3 for="">CORREO ELECTRONICO</h3>
-            <div class="form-row">
-                <label class="switch">
-                    <input type="checkbox" formControlName="show_email" />
-                    <span class="slider round"></span>
-                </label>
-                <p>Compartir mi correo electrónico</p>
-            </div>
+            <section aria-labelledby="location-title">
+                <h3 id="location-title">LOCACIÓN</h3>
+                <div class="form-row">
+                    <label
+                        class="switch"
+                        [attr.aria-label]="
+                            form.get('show_location')?.value
+                                ? 'Compartir locacion activada'
+                                : 'Compartir locacion desactivada'
+                        "
+                    >
+                        <input
+                            type="checkbox"
+                            formControlName="show_location"
+                        />
+                        <span class="slider round"></span>
+                    </label>
+                    <p>Compartir mi locación actual</p>
+                </div>
+            </section>
 
-            <p *ngIf="errorMessage" class="error">
+            <section aria-labelledby="birthdate-title">
+                <h3 id="birthdate-title">FECHA DE NACIMIENTO</h3>
+                <div class="form-row">
+                    <label
+                        class="switch"
+                        aria-label="Activar o desactivar compartir mi fecha de nacimiento"
+                    >
+                        <input
+                            type="checkbox"
+                            formControlName="show_birth_date"
+                            [attr.aria-checked]="
+                                form.get('show_birth_date')?.value
+                            "
+                        />
+                        <span class="slider round"></span>
+                    </label>
+                    <p>Compartir mi fecha de nacimiento</p>
+                </div>
+            </section>
+
+            <section aria-labelledby="name-title">
+                <h3 id="name-title">NOMBRE Y APELLIDO</h3>
+                <div class="form-row">
+                    <label
+                        class="switch"
+                        aria-label="Activar o desactivar compartir mi nombre y apellido"
+                    >
+                        <input
+                            type="checkbox"
+                            formControlName="show_name"
+                            [attr.aria-checked]="form.get('show_name')?.value"
+                        />
+                        <span class="slider round"></span>
+                    </label>
+                    <p>Compartir mi nombre y apellido</p>
+                </div>
+            </section>
+
+            <section aria-labelledby="email-title">
+                <h3 id="email-title">CORREO ELECTRONICO</h3>
+                <div class="form-row">
+                    <label
+                        class="switch"
+                        aria-label="Activar o desactivar compartir mi correo electrónico"
+                    >
+                        <input
+                            type="checkbox"
+                            formControlName="show_email"
+                            [attr.aria-checked]="form.get('show_email')?.value"
+                        />
+                        <span class="slider round"></span>
+                    </label>
+                    <p>Compartir mi correo electrónico</p>
+                </div>
+            </section>
+
+            <p *ngIf="errorMessage" class="error" role="alert">
                 {{ errorMessage }}
             </p>
 
@@ -46,6 +111,7 @@
                     class="button"
                     type="submit"
                     [disabled]="form.invalid || isLoading"
+                    aria-label="Guardar configuración de privacidad"
                 >
                     Guardar
                 </button>
@@ -53,6 +119,7 @@
                     class="button cancel"
                     type="button"
                     (click)="cancelEdit()"
+                    aria-label="Cancelar y cerrar configuración de privacidad"
                 >
                     Cancelar
                 </button>

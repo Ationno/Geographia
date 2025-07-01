@@ -112,3 +112,41 @@
     padding: 6px;
     color: #d92d20;
 }
+
+.profile-container button.icon {
+    all: unset;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: inline-block;
+    padding: 0;
+}
+
+.profile-container button.icon:focus {
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
+}
+
+.profile-options li:focus {
+    outline: 2px solid var(--color-primario);
+    background-color: #eaeaea;
+}
+
+@media (max-width: 600px) {
+    .profile-menu {
+        width: 90vw;
+        right: 5vw;
+    }
+
+    .profile-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .profile-options li p {
+        font-size: 0.9em;
+    }
+}
