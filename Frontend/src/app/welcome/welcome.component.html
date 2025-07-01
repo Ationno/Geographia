@@ -1,9 +1,5 @@
-<main
-    class="welcome-container fade-in"
-    [style.backgroundImage]="'url(' + currentImage + ')'"
-    role="region"
-    aria-label="Bienvenida a la aplicación Geographia"
->
+<main class="welcome-container fade-in" [style.backgroundImage]="'url(' + currentImage + ')'"
+    aria-label="Bienvenida a la aplicación Geographia">
     <div class="overlay" aria-hidden="true"></div>
 
     <section class="content">
@@ -20,12 +16,8 @@
             “Cartografiando el territorio desde el conocimiento colectivo.”
         </p>
 
-        <button
-            class="button button-welcome"
-            (click)="map()"
-            type="button"
-            aria-label="Descubre la plataforma Geographia apretando este botón."
-        >
+        <button class="button button-welcome" (click)="map()" type="button"
+            aria-label="Descubre la plataforma Geographia apretando este botón.">
             DESCUBRE
         </button>
     </section>
