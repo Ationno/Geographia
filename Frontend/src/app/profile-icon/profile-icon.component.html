@@ -1,54 +1,23 @@
 <div class="profile-container">
     <!-- [attr.aria-label]="'Abrir menú de perfil de usuario ' + userName" -->
-    <button
-        class="icon"
-        (click)="toggleMenu()"
-        aria-haspopup="true"
-        [attr.aria-expanded]="visibleMenu"
-        aria-label="Abrir menú de perfil de usuario Agustina"
-        tabindex="0"
-    >
+    <button class="icon" (click)="toggleMenu()" aria-haspopup="true" [attr.aria-expanded]="visibleMenu"
+        aria-label="Abrir menú de perfil de usuario Agustina" tabindex="0">
         <img src="icono.jpg" alt="Icono de usuario de Agustina" class="icon" />
     </button>
 
-    <div
-        class="profile-menu"
-        *ngIf="visibleMenu"
-        [@fadeInOut]
-        role="menu"
-        aria-label="Menú de perfil de usuario"
-        tabindex="0"
-    >
+    <div class="profile-menu" *ngIf="visibleMenu" [@fadeInOut] aria-label="Menú de perfil de usuario" tabindex="0">
         <div class="profile-header">
-            <img
-                src="icono.jpg"
-                alt="Icono de usuario de Agustina"
-                class="profile-avatar"
-                tabindex="0"
-            />
+            <img src="icono.jpg" alt="Icono de usuario de Agustina" class="profile-avatar" tabindex="0" />
             <div class="user-info">
                 <div class="user-name" tabindex="0">AGUSTINA ROJAS</div>
                 <div class="user-email">
-                    <a tabindex="0" href="mailto:agusrojasmc@gmail.com"
-                        >agusrojasmc&#64;gmail.com</a
-                    >
+                    <a tabindex="0" href="mailto:agusrojasmc@gmail.com">agusrojasmc&#64;gmail.com</a>
                 </div>
             </div>
         </div>
-        <ul
-            class="profile-options"
-            tabindex="0"
-            role="menu"
-            aria-label="Opciones del menú de perfil"
-        >
-            <li
-                tabindex="0"
-                role="menuitem"
-                tabindex="0"
-                (click)="editProfile()"
-                (keydown.enter)="editProfile()"
-                aria-label="Editar perfil de usuario"
-            >
+        <ul class="profile-options" tabindex="0" role="menu" aria-label="Opciones del menú de perfil">
+            <li tabindex="0" role="menuitem" (click)="editProfile()" (keydown.enter)="editProfile()"
+                aria-label="Editar perfil de usuario">
                 <div class="icon-container">
                     <span class="material-symbols-outlined" aria-hidden="true">
                         edit
@@ -56,14 +25,8 @@
                 </div>
                 <p>Editar información</p>
             </li>
-            <li
-                tabindex="0"
-                role="menuitem"
-                tabindex="0"
-                (click)="changePassword()"
-                (keydown.enter)="changePassword()"
-                aria-label="Cambiar contraseña de usuario"
-            >
+            <li tabindex="0" role="menuitem" (click)="changePassword()" (keydown.enter)="changePassword()"
+                aria-label="Cambiar contraseña de usuario">
                 <div class="icon-container">
                     <span class="material-symbols-outlined" aria-hidden="true">
                         lock
@@ -71,14 +34,8 @@
                 </div>
                 <p>Cambiar contraseña</p>
             </li>
-            <li
-                tabindex="0"
-                role="menuitem"
-                tabindex="0"
-                (click)="privacity()"
-                (keydown.enter)="privacity()"
-                aria-label="Configuración de privacidad de usuario"
-            >
+            <li tabindex="0" role="menuitem" (click)="privacity()" (keydown.enter)="privacity()"
+                aria-label="Configuración de privacidad de usuario">
                 <div class="icon-container">
                     <span class="material-symbols-outlined" aria-hidden="true">
                         security
@@ -86,14 +43,8 @@
                 </div>
                 <p>Privacidad</p>
             </li>
-            <li
-                tabindex="0"
-                role="menuitem"
-                tabindex="0"
-                (click)="closeSesion()"
-                (keydown.enter)="closeSesion()"
-                aria-label="Cerrar sesión de usuario"
-            >
+            <li tabindex="0" role="menuitem" (click)="closeSesion()" (keydown.enter)="closeSesion()"
+                aria-label="Cerrar sesión de usuario">
                 <div class="icon-container">
                     <span class="material-symbols-outlined" aria-hidden="true">
                         logout
@@ -101,18 +52,9 @@
                 </div>
                 <p>Cerrar sesión</p>
             </li>
-            <li
-                tabindex="0"
-                role="menuitem"
-                tabindex="0"
-                (click)="deleteProfile()"
-                (keydown.enter)="deleteProfile()"
-                aria-label="Eliminar perfil de usuario"
-            >
-                <span
-                    class="material-symbols-outlined delete"
-                    aria-hidden="true"
-                >
+            <li tabindex="0" role="menuitem" (click)="deleteProfile()" (keydown.enter)="deleteProfile()"
+                aria-label="Eliminar perfil de usuario">
+                <span class="material-symbols-outlined delete" aria-hidden="true">
                     delete
                 </span>
                 <p>Eliminar perfil</p>
