@@ -1,5 +1,5 @@
-<div class="backdrop" role="button" (click)="cancelEdit()" (keydown.escape)="cancelEdit()">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+<div class="backdrop" (click)="cancelEdit()" (keydown.escape)="cancelEdit()">
+    <div cdkTrapFocus class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"
         aria-describedby="modal-description" (click)="$event.stopPropagation()">
         <h1 id="modal-title" style="margin-bottom: 2px" tabindex="0" #firstFocusElement>
             PRIVACIDAD
@@ -12,12 +12,9 @@
             <section aria-labelledby="location-title">
                 <h3 id="location-title">LOCACIÓN</h3>
                 <div class="form-row">
-                    <label class="switch" [attr.aria-label]="
-                            form.get('show_location')?.value
-                                ? 'Compartir locacion activada'
-                                : 'Compartir locacion desactivada'
-                        ">
-                        <input type="checkbox" formControlName="show_location" />
+                    <label class="switch" aria-label="Activar o desactivar compartir mi locación actual">
+                        <input type="checkbox" formControlName="show_location"
+                            [attr.aria-checked]="form.get('show_location')?.value" />
                         <span class="slider round"></span>
                     </label>
                     <p>Compartir mi locación actual</p>

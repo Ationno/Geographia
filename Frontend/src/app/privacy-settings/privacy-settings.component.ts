@@ -5,11 +5,11 @@ import { Router } from '@angular/router';
 import { UserService } from '../user.service'; // Ruta según tu estructura
 import { catchError } from 'rxjs';
 import { of } from 'rxjs';
-
+import { A11yModule } from '@angular/cdk/a11y'; 
 @Component({
     selector: 'app-privacy-settings',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, A11yModule],
     templateUrl: './privacy-settings.component.html',
     styleUrl: './privacy-settings.component.css',
 })
