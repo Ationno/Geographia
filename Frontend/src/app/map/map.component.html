@@ -12,6 +12,18 @@
     [maxBounds]="argentinaBounds"
     [logoPosition]="'bottom-right'"
 >
+    <mgl-geojson-source id="mask" [data]="maskGeoJSON"> </mgl-geojson-source>
+
+    <mgl-layer
+        id="mask-layer"
+        type="fill"
+        source="mask"
+        [paint]="{
+            'fill-color': '#999999',
+            'fill-opacity': 0.5
+        }"
+    ></mgl-layer>
+
     <mgl-control mglAttribution position="bottom-right" />
     <mgl-control mglFullscreen position="bottom-right" />
     <mgl-control

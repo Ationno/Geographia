@@ -9,6 +9,8 @@ import {
     GeolocateControlDirective,
     NavigationControlDirective,
     ScaleControlDirective,
+    GeoJSONSourceComponent,
+    LayerComponent,
 } from 'ngx-mapbox-gl';
 import { MapMouseEvent } from 'mapbox-gl';
 import { MglMapResizeDirective } from '../mgl-map-resize.directive';
@@ -20,6 +22,14 @@ import { ProfileIconComponent } from '../profile-icon/profile-icon.component';
 import { RouterOutlet } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
+import {
+    bboxPolygon,
+    booleanPointInPolygon,
+    difference,
+    featureCollection,
+    point,
+} from '@turf/turf';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-map',
@@ -38,6 +48,8 @@ import { filter, Subscription } from 'rxjs';
         SearchBarComponent,
         ProfileIconComponent,
         RouterOutlet,
+        GeoJSONSourceComponent,
+        LayerComponent,
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.css',
@@ -63,11 +75,12 @@ import { filter, Subscription } from 'rxjs';
 export class MapComponent {
     popup: { coordinates: [number, number] } | null = null;
     private routerSub!: Subscription;
+    maskGeoJSON: any;
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLDivElement>;
 
-    argentinaBounds: mapboxgl.LngLatBoundsLike = [
+    argentinaBounds: [[number, number], [number, number]] = [
         [-73.5, -56.0],
         [-52.5, -20.0],
     ];
@@ -94,6 +107,13 @@ export class MapComponent {
     ];
 
     ngOnInit() {
+        this.http.get('argentina-mask.geojson').subscribe((argentina: any) => {
+            const world = bboxPolygon([-180, -90, 180, 90]);
+            this.maskGeoJSON = difference(
+                featureCollection([world, ...argentina.features])
+            );
+        });
+
         this.routerSub = this.router.events
             .pipe(filter((event) => event instanceof NavigationEnd))
             .subscribe((event) => {
@@ -106,16 +126,32 @@ export class MapComponent {
             });
     }
 
-    constructor(private router: Router, private route: ActivatedRoute) {}
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private http: HttpClient
+    ) {}
 
     onMapClick(event: mapboxgl.MapMouseEvent) {
-        if (this.popup) {
-            this.popup = null;
-        } else {
-            this.popup = {
-                coordinates: [event.lngLat.lng, event.lngLat.lat],
-            };
-        }
+        this.http.get('argentina-mask.geojson').subscribe((argentina: any) => {
+            const clickedPoint = point([event.lngLat.lng, event.lngLat.lat]);
+
+            const withinArgentina = argentina.features.some((feature: any) =>
+                booleanPointInPolygon(clickedPoint, feature)
+            );
+
+            if (!withinArgentina) {
+                return;
+            }
+
+            if (this.popup) {
+                this.popup = null;
+            } else {
+                this.popup = {
+                    coordinates: [event.lngLat.lng, event.lngLat.lat],
+                };
+            }
+        });
     }
 
     addLocation() {

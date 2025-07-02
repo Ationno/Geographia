@@ -15,12 +15,17 @@
     [class.visible]="openMenu"
     [@fadeInOut]
     class="map-types-menu"
+    aria-label="Menú de tipos de mapa"
+    tabindex="0"
 >
     <li
         class="map-types"
         *ngFor="let type of mapTypes"
         (click)="selectType(type)"
         [class.active]="type === selectedType"
+        [attr.aria-selected]="type === selectedType"
+        [attr.aria-label]="'Seleccionar tipo de mapa: ' + type"
+        tabindex="0"
     >
         {{ type }}
     </li>

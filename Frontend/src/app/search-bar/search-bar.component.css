@@ -45,15 +45,19 @@
     margin-top: 8px;
     width: 100%;
     z-index: 10;
-    padding: 10px 20px;
+    padding: 20px;
     max-height: 300px;
     overflow-y: auto;
+}
+
+.recents-dropdown:focus {
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
 }
 
 .recents-dropdown h1 {
     font-size: 1.2rem;
     color: var(--color-texto);
-    padding-top: 10px;
     margin-bottom: 5px;
     font-family: "Montserrat", sans-serif;
 }
@@ -65,7 +69,7 @@
 }
 
 .recent-item {
-    padding: 10px 0px;
+    padding: 8px 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -74,10 +78,14 @@
     outline: none;
 }
 
-.recent-item:hover,
-.recent-item:focus {
+.recent-item:hover {
     background-color: #f0f0f0;
     border-radius: 4px;
+}
+
+.recent-item:focus {
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
 }
 
 .recent-icon {
