@@ -113,6 +113,11 @@
     color: #d92d20;
 }
 
+.profile-menu:focus-visible{
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
+}
+
 .profile-container button.icon {
     all: unset;
     width: 65px;
@@ -130,8 +135,32 @@
     outline-offset: 2px;
 }
 
-.profile-options li:focus {
+.profile-avatar:focus-visible {
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
+}
+
+.user-name:focus-visible{
     outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.user-email a:focus-visible {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.profile-options:focus-visible {
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+.profile-options li:focus-visible {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
     background-color: #eaeaea;
 }
 
