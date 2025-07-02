@@ -6,12 +6,14 @@
     --color-texto: #2d2d2d;
     --color-button: #1976d2;
     --color-button-hover: #1565c0;
-    --color-button-disabled: #ccc;
+    --color-button-disabled: #595959;
     --color-button-cancel: #d32f2f; 
     --color-button-cancel-hover: #b71c1c;
     --color-subtitulos: #666;
     --color-secundario: #2c530a;
     --color-secundario-hover: #1f3a07;
+    --color-error-background: #fddede;
+    --color-error-text: #8f0000;
 }
 
 body {
@@ -76,7 +78,7 @@ p {
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
     font-size: 0.9em;
-    color: #f44336;
+    color: #e00000;
     margin-bottom: 18px;
     margin-top: 4px;
     font-style: italic;
@@ -93,8 +95,11 @@ p {
 }
 
 .error {
-    color: red;
     font-size: 0.85em;
+    color: var(--color-error-text);
+    background-color: var(--color-error-background);
+    padding: 0.5em;
+    border-radius: 4px;
     font-family: "Montserrat", sans-serif;
     margin-top: 8px;
 }

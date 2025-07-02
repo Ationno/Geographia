@@ -127,10 +127,3 @@ button:focus {
     outline: 3px solid #005fcc;
     outline-offset: 2px;
 }
-
-.error {
-    color: #d8000c;
-    background-color: #ffd2d2;
-    padding: 0.5em;
-    border-radius: 4px;
-}
