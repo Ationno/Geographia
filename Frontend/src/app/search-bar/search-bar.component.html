@@ -1,54 +1,17 @@
-<div
-    class="search-bar-wrapper"
-    (focusin)="onWrapperFocus()"
-    (focusout)="onWrapperBlur()"
->
+<div class="search-bar-wrapper" (focusin)="onWrapperFocus()" (focusout)="onWrapperBlur()">
     <div class="search-bar-container">
-        <span class="material-symbols-outlined search" aria-hidden="true"
-            >search</span
-        >
-
-        <input
-            type="text"
-            placeholder="Búsqueda..."
-            [(ngModel)]="searchTerm"
-            aria-label="Barra de búsqueda de lugares y publicaciones"
-            tabindex="0"
-        />
+        <span class="material-symbols-outlined search" aria-hidden="true">search</span>
+        <input type="text" placeholder="Búsqueda..." [(ngModel)]="searchTerm"
+            aria-label="Barra de búsqueda de lugares y publicaciones" tabindex="0" />
     </div>
-
-    <div
-        class="recents-dropdown"
-        [@fadeInOut]
-        *ngIf="showRecents"
-        role="listbox"
-        aria-label="Búsquedas recientes del usuario"
-        tabindex="0"
-    >
+    <div class="recents-dropdown" [@fadeInOut] *ngIf="showRecents" role="listbox"
+        aria-label="Búsquedas recientes del usuario" tabindex="0">
         <h1>RECIENTES</h1>
-
-        <ul>
-            <li
-                class="recent-item"
-                *ngFor="let recent of recentSearches"
-                (click)="selectRecent(recent)"
-                tabindex="0"
-                role="option"
-                [attr.aria-label]="
-                    'Ubicación reciente: ' +
-                    recent.name +
-                    ', ' +
-                    recent.location
-                "
-            >
-                <img
-                    [src]="recent.src"
-                    [alt]="recent.alt || 'Ícono de ubicación reciente'"
-                    class="recent-icon"
-                />
-                <p class="recent-title">{{ recent.name }}</p>
-                <p class="recent-location">{{ recent.location }}</p>
-            </li>
-        </ul>
+        <div class="recent-item" *ngFor="let recent of recentSearches" (click)="selectRecent(recent)" tabindex="0"
+            role="option" [attr.aria-label]="'Ubicación reciente: ' + recent.name + ', ' + recent.location">
+            <img [src]="recent.src" [alt]="recent.alt || 'Ícono de ubicación reciente'" class="recent-icon" />
+            <p class="recent-title">{{ recent.name }}</p>
+            <p class="recent-location">{{ recent.location }}</p>
+        </div>
     </div>
 </div>
