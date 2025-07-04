@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     FormBuilder,
@@ -8,11 +8,12 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({
     selector: 'app-location',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, A11yModule],
     templateUrl: './location.component.html',
     styleUrls: ['./location.component.css'],
     animations: [
@@ -31,6 +32,9 @@ export class LocationComponent implements OnInit {
     currentImageIndex = 0;
 
     commentForm!: FormGroup;
+
+    @ViewChild('firstFocusElement', { static: true })
+    firstFocusElement!: ElementRef<HTMLParagraphElement>;
 
     constructor(private fb: FormBuilder, private router: Router) {}
 
@@ -83,6 +87,10 @@ export class LocationComponent implements OnInit {
         this.commentForm = this.fb.group({
             text: ['', [Validators.required, Validators.maxLength(500)]],
         });
+
+        setTimeout(() => {
+            this.firstFocusElement.nativeElement.focus();
+        }, 0);
     }
 
     nextImage() {

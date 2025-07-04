@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
     FormGroup,
     FormControl,
@@ -10,11 +10,12 @@ import { trigger, style, transition, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({
     selector: 'app-change-password',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, A11yModule],
     templateUrl: './change-password.component.html',
     styleUrls: ['./change-password.component.css'],
     animations: [
@@ -43,6 +44,9 @@ export class ChangePasswordComponent {
 
     actualPasswordFromBackend = 'miPass123';
 
+    @ViewChild('firstFocusElement', { static: true })
+    firstFocusElement!: ElementRef<HTMLParagraphElement>;
+
     constructor(private router: Router) {
         this.form = new FormGroup(
             {
@@ -56,6 +60,12 @@ export class ChangePasswordComponent {
             },
             { validators: this.matchPasswordsValidator }
         );
+    }
+
+    ngOnInit(): void {
+        setTimeout(() => {
+            this.firstFocusElement.nativeElement.focus();
+        }, 0);
     }
 
     passwordComplexityValidator(

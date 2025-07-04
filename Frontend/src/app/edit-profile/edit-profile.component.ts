@@ -8,12 +8,13 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
-import { UserService } from '../user.service'; // tu servicio para conectarte con el backend
+import { UserService } from '../user.service';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({
     selector: 'app-edit-profile',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, A11yModule],
     templateUrl: './edit-profile.component.html',
     styleUrls: ['./edit-profile.component.css'],
     animations: [
@@ -33,18 +34,26 @@ export class EditProfileComponent implements OnInit {
     selectedImagePreview: string | null = null;
     selectedImageFile: File | null = null;
 
+    @ViewChild('firstFocusElement', { static: true })
+    firstFocusElement!: ElementRef<HTMLParagraphElement>;
+
+    @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
     constructor(private router: Router, private userService: UserService) {
         this.form = new FormGroup({
             first_name: new FormControl('', [Validators.required]),
             last_name: new FormControl('', [Validators.required]),
             email: new FormControl('', [Validators.required, Validators.email]),
             birth_date: new FormControl('', [Validators.required]),
-            role: new FormControl('', [Validators.required]),
             profile_image: new FormControl(null),
         });
     }
 
     ngOnInit(): void {
+        setTimeout(() => {
+            this.firstFocusElement.nativeElement.focus();
+        }, 0);
+
         this.userService.getCurrentUser().subscribe({
             next: (data: any) => {
                 this.form.patchValue({
@@ -52,7 +61,6 @@ export class EditProfileComponent implements OnInit {
                     last_name: data.last_name,
                     email: data.email,
                     birth_date: data.birth_date.slice(0, 10),
-                    role: data.role,
                 });
 
                 if (data.profile_image_url) {
@@ -76,6 +84,14 @@ export class EditProfileComponent implements OnInit {
                 this.selectedImagePreview = e.target.result;
             };
             reader.readAsDataURL(file);
+        }
+    }
+
+    handleKeyPress(event: KeyboardEvent) {
+        const keys = ['Enter'];
+        if (keys.includes(event.key)) {
+            event.preventDefault();
+            this.fileInput.nativeElement.click();
         }
     }
 

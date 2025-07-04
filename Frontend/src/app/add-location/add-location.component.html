@@ -1,6 +1,24 @@
-<div class="backdrop" (click)="closeAddLocation()">
-    <div [@fadeInOut] class="modal" (click)="$event.stopPropagation()">
-        <h1 style="margin-bottom: 2px">AGREGAR LOCACIÓN</h1>
+<div
+    class="backdrop"
+    (click)="closeAddLocation()"
+    (keydown.escape)="closeAddLocation()"
+>
+    <div
+        cdkTrapFocus
+        [@fadeInOut]
+        class="modal"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-labelledby="modal-title"
+    >
+        <h1
+            style="margin-bottom: 2px"
+            tabindex="0"
+            id="modal-title"
+            #firstFocusElement
+        >
+            AGREGAR LOCACIÓN
+        </h1>
         <p class="required-fields">
             Los campos marcados con <span class="required">*</span> son
             obligatorios.
@@ -34,13 +52,20 @@
                 <label for="images">IMÁGENES*</label>
 
                 <label for="images" class="upload-label">
-                    <span class="material-symbols-outlined upload-button">
+                    <span
+                        class="material-symbols-outlined upload-button"
+                        tabindex="0"
+                        role="button"
+                        aria-label="Subir imagen de perfil"
+                        (keydown)="handleKeyPress($event)"
+                    >
                         add_photo_alternate
                     </span>
                     Agregar imágenes desde el dispositivo
                 </label>
 
                 <input
+                    #fileInput
                     id="images"
                     type="file"
                     multiple
@@ -70,12 +95,16 @@
                     [formControl]="tagInputControl"
                     (blur)="onTagsBlur()"
                     (focus)="onTagsFocus()"
+                    (keydown.enter)="onTagsBlur()"
                     #tagInputElement
                 />
                 <div
                     *ngIf="!isEditingTags"
                     class="tags-container"
                     (click)="enableTagEdit()"
+                    (keydown.enter)="enableTagEdit()"
+                    tabindex="0"
+                    aria-label="Apretar Enter para editar etiquetas"
                 >
                     <span class="tag placeholder" *ngIf="tags.length === 0">
                         Agrega etiquetas usando #
@@ -85,6 +114,9 @@
                         class="tag"
                         *ngFor="let tag of tags; let i = index"
                         (click)="deleteTag(i); $event.stopPropagation()"
+                        (keydown.enter)="deleteTag(i); $event.stopPropagation()"
+                        tabindex="0"
+                        aria-label="Apretar Enter para eliminar etiqueta"
                     >
                         {{ tag }} <span class="remove">&times;</span>
                     </span>

@@ -8,11 +8,12 @@ import { trigger, style, transition, animate } from '@angular/animations';
 import { MapboxService } from '../mapbox.service';
 import { catchError, finalize, of } from 'rxjs';
 import { ViewChild, ElementRef } from '@angular/core';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({
     selector: 'app-add-location',
     standalone: true,
-    imports: [ReactiveFormsModule, CommonModule],
+    imports: [ReactiveFormsModule, CommonModule, A11yModule],
     templateUrl: './add-location.component.html',
     styleUrls: ['./add-location.component.css'],
     animations: [
@@ -37,6 +38,11 @@ import { ViewChild, ElementRef } from '@angular/core';
 export class AddLocationComponent {
     @ViewChild('tagInputElement')
     tagInputElement!: ElementRef<HTMLInputElement>;
+
+    @ViewChild('firstFocusElement', { static: true })
+    firstFocusElement!: ElementRef<HTMLParagraphElement>;
+
+    @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
     form: FormGroup;
     selectedImages: File[] = [];
@@ -66,6 +72,10 @@ export class AddLocationComponent {
     }
 
     ngOnInit() {
+        setTimeout(() => {
+            this.firstFocusElement.nativeElement.focus();
+        }, 0);
+
         this.route.queryParams.subscribe((params) => {
             this.lat = +params['lat'];
             this.lng = +params['lng'];
@@ -77,6 +87,14 @@ export class AddLocationComponent {
             latitude: this.lat,
             longitude: this.lng,
         });
+    }
+
+    handleKeyPress(event: KeyboardEvent) {
+        const keys = ['Enter'];
+        if (keys.includes(event.key)) {
+            event.preventDefault();
+            this.fileInput.nativeElement.click();
+        }
     }
 
     fetchAddress(): void {

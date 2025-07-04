@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({
     selector: 'app-delete-confirmation',
-    imports: [],
+    imports: [A11yModule],
     templateUrl: './delete-confirmation.component.html',
     styleUrl: './delete-confirmation.component.css',
     animations: [
@@ -27,7 +28,16 @@ import { trigger, style, transition, animate } from '@angular/animations';
     ],
 })
 export class DeleteConfirmationComponent {
+    @ViewChild('firstFocusElement', { static: true })
+    firstFocusElement!: ElementRef<HTMLParagraphElement>;
+
     constructor(private router: Router) {}
+
+    ngOnInit(): void {
+        setTimeout(() => {
+            this.firstFocusElement.nativeElement.focus();
+        }, 0);
+    }
 
     cancel() {
         this.router.navigate(['/map']);
