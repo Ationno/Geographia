@@ -3,6 +3,8 @@
 </div>
 <app-search-bar></app-search-bar>
 <app-profile-icon></app-profile-icon>
+<app-button-list-locations></app-button-list-locations>
+<app-button-add-location></app-button-add-location>
 <router-outlet name="popup"></router-outlet>
 <mgl-map
     [style]="'mapbox://styles/mapbox/standard'"
@@ -12,6 +14,8 @@
     [maxBounds]="argentinaBounds"
     [logoPosition]="'bottom-right'"
     [lang]="'es'"
+    [tabindex]="-1"
+    aria-hidden="true"
 >
     <mgl-geojson-source id="mask" [data]="maskGeoJSON"> </mgl-geojson-source>
 
@@ -25,15 +29,10 @@
         }"
     ></mgl-layer>
 
-    <mgl-control mglAttribution position="bottom-right" />
-    <mgl-control mglFullscreen position="bottom-right" />
-    <mgl-control
-        mglGeolocate
-        position="bottom-right"
-        (geolocate)="onGeolocate($event)"
-    />
-    <mgl-control mglNavigation position="bottom-right" />
-    <mgl-control mglScale position="bottom-right" />
+    <mgl-control mglAttribution />
+    <mgl-control mglFullscreen />
+    <mgl-control mglGeolocate (geolocate)="onGeolocate($event)" />
+    <mgl-control mglNavigation />
 
     <mgl-popup
         *ngFor="let loc of locations"

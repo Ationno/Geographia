@@ -49,6 +49,7 @@ export class AddLocationComponent {
     lat!: number;
     lng!: number;
     selectedImagePreviews: string[] = [];
+    isAccesibility: boolean = false;
 
     tags: string[] = [];
     isEditingTags = false;
@@ -79,6 +80,10 @@ export class AddLocationComponent {
         this.route.queryParams.subscribe((params) => {
             this.lat = +params['lat'];
             this.lng = +params['lng'];
+
+            if (this.lat === -1 || this.lng === -1) {
+                this.isAccesibility = true;
+            }
         });
 
         this.fetchAddress();

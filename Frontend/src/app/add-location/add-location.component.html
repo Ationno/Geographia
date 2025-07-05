@@ -39,11 +39,11 @@
                 <div class="form-row">
                     <label for="address">DIRECCIÓN*</label>
                     <input
-                        readonly
+                        [readOnly]="!isAccesibility"
                         id="address"
                         type="text"
                         formControlName="address"
-                        class="readonly-input"
+                        [class]="isAccesibility ? '' : 'readonly-input'"
                     />
                 </div>
             </div>

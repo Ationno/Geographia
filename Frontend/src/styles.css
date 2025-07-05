@@ -7,7 +7,7 @@
     --color-button: #1976d2;
     --color-button-hover: #1565c0;
     --color-button-disabled: #595959;
-    --color-button-cancel: #d32f2f; 
+    --color-button-cancel: #d32f2f;
     --color-button-cancel-hover: #b71c1c;
     --color-subtitulos: #666;
     --color-secundario: #2c530a;
@@ -217,13 +217,12 @@ select {
 }
 
 .readonly-input {
-    background-color: #f5f5f5; /* gris claro */
-    color: #666; /* texto gris más tenue */
+    background-color: #f5f5f5;
+    color: #666;
     border: 1px solid #ccc;
     cursor: not-allowed;
 }
 
-/* Utilidad para ocultar texto solo visualmente, pero accesible para lectores de pantalla */
 .sr-only {
     position: absolute !important;
     width: 1px !important;
@@ -371,9 +370,9 @@ p:focus-visible,
 span:focus-visible,
 div:focus-visible,
 label:focus-visible,
-input:focus-visible, 
+input:focus-visible,
 textarea:focus-visible,
-select:focus-visible{
+select:focus-visible {
     outline: 3px solid var(--color-primario);
     outline-offset: 2px;
     border-radius: 2px;

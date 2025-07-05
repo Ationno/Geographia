@@ -11,6 +11,7 @@ import { DeleteConfirmationComponent } from './delete-confirmation/delete-confir
 import { CloseSesionComponent } from './close-sesion/close-sesion.component';
 import { LocationComponent } from './location/location.component';
 import { ResumeLocationComponent } from './resume-location/resume-location.component';
+import { ListLocationsComponent } from './list-locations/list-locations.component';
 
 export const routes: Routes = [
     {
@@ -68,6 +69,11 @@ export const routes: Routes = [
                 path: 'location',
                 outlet: 'popup',
                 component: LocationComponent,
+            },
+            {
+                path: 'listLocations',
+                outlet: 'popup',
+                component: ListLocationsComponent,
             },
         ],
     },

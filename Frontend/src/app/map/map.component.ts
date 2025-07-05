@@ -30,6 +30,8 @@ import {
     point,
 } from '@turf/turf';
 import { HttpClient } from '@angular/common/http';
+import { ButtonListLocationsComponent } from '../button-list-locations/button-list-locations.component';
+import { ButtonAddLocationComponent } from '../button-add-location/button-add-location.component';
 
 @Component({
     selector: 'app-map',
@@ -43,13 +45,14 @@ import { HttpClient } from '@angular/common/http';
         FullscreenControlDirective,
         GeolocateControlDirective,
         NavigationControlDirective,
-        ScaleControlDirective,
         MapTypesListComponent,
         SearchBarComponent,
         ProfileIconComponent,
         RouterOutlet,
         GeoJSONSourceComponent,
         LayerComponent,
+        ButtonListLocationsComponent,
+        ButtonAddLocationComponent,
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.css',
