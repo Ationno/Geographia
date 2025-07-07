@@ -38,10 +38,18 @@ export class MapTypesListComponent {
     openMenu = false;
     mapTypes = ['SATÉLITE', 'GEOGRÁFICA', 'RURAL', 'HISTÓRICA','CLIMÁTICA'];
     selectedType: string = 'SATÉLITE';
+    selectedAnnouncement: string = 'Tipo de mapa seleccionado actualmente: SATÉLITE';
 
     toggleMenu() {
         this.openMenu = !this.openMenu;
-    }
+      
+        if (this.openMenu) {
+          this.selectedAnnouncement = '';
+          setTimeout(() => {
+            this.selectedAnnouncement = `Tipo de mapa seleccionado actualmente: ${this.selectedType}`;
+          }, 100);
+        }
+      }
 
     selectType(type: string) {
         this.selectedType = type;

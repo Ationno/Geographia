@@ -1,9 +1,11 @@
 <span class="material-symbols-outlined manage_search" tabindex="0" (click)="toggleMenu()" (keydown.enter)="toggleMenu()"
-    [attr.aria-label]=" openMenu ? 'Cerrar menú de tipos de mapa' : 'Abrir menú de tipos de mapa' " aria-hidden="false"
-    role="button">
+    [attr.aria-label]=" openMenu ? 'Cerrar menú de tipos de mapa' : 'Abrir menú de tipos de mapa' " role="button">
 
     <span aria-hidden="true">manage_search</span>
 </span>
+<div aria-live="polite" class="sr-only">
+    {{ selectedAnnouncement }}
+</div>
 <ul *ngIf="openMenu" [class.visible]="openMenu" [@fadeInOut] role="listbox" class="map-types-menu"
     aria-label="Menú de tipos de mapa" tabindex="0" (keydown)="handleKeydown($event)">
     <li class="map-types" *ngFor="let type of mapTypes" (click)="selectType(type)" (keydown.enter)="selectType(type)"
