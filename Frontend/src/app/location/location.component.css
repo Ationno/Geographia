@@ -38,7 +38,7 @@
 
 .date {
     font-size: 0.9em;
-    color: #777;
+    color: var(--color-button-disabled);
 }
 
 .title-section {
@@ -67,12 +67,13 @@
 
 .rating span {
     font-size: 24px;
-    color: #ccc;
+    color: var(--color-button-disabled);
     cursor: default;
 }
 
 .rating .filled {
-    color: gold;
+    color: #BA8E23;
+    text-shadow: 0 0 5px gold
 }
 
 .carousel {
@@ -147,7 +148,7 @@
 }
 
 .type-tag {
-    background-color: #007bff;
+    background-color: var(--color-primario);
     color: white;
     font-weight: bold;
 }

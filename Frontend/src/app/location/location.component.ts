@@ -53,7 +53,7 @@ export class LocationComponent implements OnInit {
         description:
             'Una reserva con esteros impresionantes y gran biodiversidad. Ideal para avistaje de fauna y fotografía de naturaleza.',
         tags: ['Naturaleza', 'Humedales', 'Biodiversidad'],
-        type: 'Reserva Natural',
+        type: 'Geográfica',
     };
 
     comments = [

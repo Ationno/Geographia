@@ -1,22 +1,7 @@
-<div
-    class="backdrop"
-    (click)="closeAddLocation()"
-    (keydown.escape)="closeAddLocation()"
->
-    <div
-        cdkTrapFocus
-        [@fadeInOut]
-        class="modal"
-        (click)="$event.stopPropagation()"
-        role="dialog"
-        aria-labelledby="modal-title"
-    >
-        <h1
-            style="margin-bottom: 2px"
-            tabindex="0"
-            id="modal-title"
-            #firstFocusElement
-        >
+<div class="backdrop" (click)="closeAddLocation()" (keydown.escape)="closeAddLocation()">
+    <div cdkTrapFocus [@fadeInOut] class="modal" (click)="$event.stopPropagation()" role="dialog"
+        aria-labelledby="modal-title">
+        <h1 style="margin-bottom: 2px" tabindex="0" id="modal-title" #firstFocusElement>
             AGREGAR LOCACIÓN
         </h1>
         <p class="required-fields">
@@ -27,24 +12,13 @@
             <div class="form-group">
                 <div class="form-row">
                     <label for="name">NOMBRE*</label>
-                    <input
-                        placeholder="Nombre de la locación"
-                        #name
-                        id="name"
-                        type="text"
-                        formControlName="name"
-                    />
+                    <input placeholder="Nombre de la locación" #name id="name" type="text" formControlName="name" />
                 </div>
 
                 <div class="form-row">
                     <label for="address">DIRECCIÓN*</label>
-                    <input
-                        [readOnly]="!isAccesibility"
-                        id="address"
-                        type="text"
-                        formControlName="address"
-                        [class]="isAccesibility ? '' : 'readonly-input'"
-                    />
+                    <input [readOnly]="!isAccesibility" id="address" type="text" formControlName="address"
+                        [class]="isAccesibility ? '' : 'readonly-input'" />
                 </div>
             </div>
 
@@ -52,35 +26,19 @@
                 <label for="images">IMÁGENES*</label>
 
                 <label for="images" class="upload-label">
-                    <span
-                        class="material-symbols-outlined upload-button"
-                        tabindex="0"
-                        role="button"
-                        aria-label="Subir imagen de perfil"
-                        (keydown)="handleKeyPress($event)"
-                    >
+                    <span class="material-symbols-outlined upload-button" tabindex="0" role="button"
+                        aria-label="Subir imagen de perfil" (keydown)="handleKeyPress($event)">
                         add_photo_alternate
                     </span>
                     Agregar imágenes desde el dispositivo
                 </label>
 
-                <input
-                    #fileInput
-                    id="images"
-                    type="file"
-                    multiple
-                    (change)="onFileChange($event)"
-                    accept="image/*"
-                    hidden
-                />
+                <input #fileInput id="images" type="file" multiple (change)="onFileChange($event)" accept="image/*"
+                    hidden />
 
                 <div>
                     <div class="image-preview">
-                        <img
-                            *ngFor="let image of selectedImagePreviews"
-                            [src]="image"
-                            alt="preview"
-                        />
+                        <img *ngFor="let image of selectedImagePreviews" [src]="image" alt="preview" tabindex="0" />
                     </div>
                 </div>
             </div>
@@ -88,36 +46,18 @@
             <div class="form-row">
                 <label for="etiquetas">ETIQUETAS</label>
 
-                <input
-                    *ngIf="isEditingTags"
-                    id="etiquetas"
-                    type="text"
-                    [formControl]="tagInputControl"
-                    (blur)="onTagsBlur()"
-                    (focus)="onTagsFocus()"
-                    (keydown.enter)="onTagsBlur()"
-                    #tagInputElement
-                />
-                <div
-                    *ngIf="!isEditingTags"
-                    class="tags-container"
-                    (click)="enableTagEdit()"
-                    (keydown.enter)="enableTagEdit()"
-                    tabindex="0"
-                    aria-label="Apretar Enter para editar etiquetas"
-                >
+                <input *ngIf="isEditingTags" id="etiquetas" type="text" [formControl]="tagInputControl"
+                    (blur)="onTagsBlur()" (focus)="onTagsFocus()" (keydown.enter)="onTagsBlur()" #tagInputElement />
+                <div *ngIf="!isEditingTags" class="tags-container" (click)="enableTagEdit()"
+                    (keydown.enter)="enableTagEdit()" tabindex="0" aria-label="Apretar Enter para editar etiquetas">
                     <span class="tag placeholder" *ngIf="tags.length === 0">
                         Agrega etiquetas usando #
                     </span>
 
-                    <span
-                        class="tag"
-                        *ngFor="let tag of tags; let i = index"
+                    <span class="tag" *ngFor="let tag of tags; let i = index"
                         (click)="deleteTag(i); $event.stopPropagation()"
-                        (keydown.enter)="deleteTag(i); $event.stopPropagation()"
-                        tabindex="0"
-                        aria-label="Apretar Enter para eliminar etiqueta"
-                    >
+                        (keydown.enter)="deleteTag(i); $event.stopPropagation()" tabindex="0"
+                        aria-label="Apretar Enter para eliminar etiqueta">
                         {{ tag }} <span class="remove">&times;</span>
                     </span>
                 </div>
@@ -125,12 +65,8 @@
 
             <div class="form-row">
                 <label for="details">DETALLES</label>
-                <textarea
-                    id="details"
-                    formControlName="details"
-                    placeholder="Agregar detalles de la locación"
-                    rows="4"
-                ></textarea>
+                <textarea id="details" formControlName="details" placeholder="Agregar detalles de la locación"
+                    rows="4"></textarea>
             </div>
 
             <div class="form-row">
@@ -149,11 +85,7 @@
                 <button class="button" type="submit" [disabled]="form.invalid">
                     Enviar
                 </button>
-                <button
-                    class="button cancel"
-                    type="button"
-                    (click)="closeAddLocation()"
-                >
+                <button class="button cancel" type="button" (click)="closeAddLocation()">
                     Cancelar
                 </button>
             </div>
