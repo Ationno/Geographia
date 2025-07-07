@@ -1,19 +1,7 @@
 <div class="backdrop" (click)="cancelEdit()" (keydown.escape)="cancelEdit()">
-    <div
-        cdkTrapFocus
-        [@fadeInOut]
-        class="modal"
-        (click)="$event.stopPropagation()"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-    >
-        <h1
-            #firstFocusElement
-            id="modal-title"
-            tabindex="0"
-            style="margin-bottom: 2px"
-        >
+    <div cdkTrapFocus [@fadeInOut] class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true"
+        aria-labelledby="modal-title">
+        <h1 #firstFocusElement id="modal-title" tabindex="0" style="margin-bottom: 2px">
             EDITAR PERFIL
         </h1>
         <p class="required-fields" tabindex="0">
@@ -25,78 +13,42 @@
             <div class="form-group">
                 <div class="form-row">
                     <label for="first_name">NOMBRE*</label>
-                    <input
-                        id="first_name"
-                        type="text"
-                        formControlName="first_name"
-                        placeholder="Nombre"
-                    />
+                    <input id="first_name" type="text" formControlName="first_name" placeholder="Nombre" />
                 </div>
 
                 <div class="form-row">
                     <label for="last_name">APELLIDO*</label>
-                    <input
-                        id="last_name"
-                        type="text"
-                        formControlName="last_name"
-                        placeholder="Apellido"
-                    />
+                    <input id="last_name" type="text" formControlName="last_name" placeholder="Apellido" />
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="form-row">
                     <label for="email">CORREO ELECTRÓNICO*</label>
-                    <input
-                        id="email"
-                        type="email"
-                        formControlName="email"
-                        placeholder="correo@ejemplo.com"
-                    />
+                    <input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
                 </div>
 
                 <div class="form-row">
                     <label for="birth_date">FECHA DE NACIMIENTO*</label>
-                    <input
-                        id="birth_date"
-                        type="date"
-                        formControlName="birth_date"
-                    />
+                    <input id="birth_date" type="date" formControlName="birth_date" />
                 </div>
             </div>
 
             <div class="form-row">
-                <label aria-hidden="true" tabindex="-1" for="profile_image"
-                    >FOTO DE PERFIL</label
-                >
+                <label aria-hidden="true" tabindex="-1" for="profile_image">FOTO DE PERFIL</label>
 
                 <label for="profile_image" class="upload-label">
-                    <span
-                        class="material-symbols-outlined upload-button"
-                        tabindex="0"
-                        role="button"
-                        aria-label="Subir imagen de perfil"
-                        (keydown)="handleKeyPress($event)"
-                        >add_a_photo</span
-                    >
+                    <span class="material-symbols-outlined upload-button" tabindex="0" role="button"
+                        aria-label="Subir imagen de perfil" (keydown)="handleKeyPress($event)">add_a_photo</span>
                     Subir imagen
                 </label>
 
-                <input
-                    #fileInput
-                    id="profile_image"
-                    type="file"
-                    accept="image/*"
-                    (change)="onFileChange($event)"
-                    hidden
-                />
+                <input #fileInput id="profile_image" type="file" accept="image/*" (change)="onFileChange($event)"
+                    hidden />
 
                 <div class="image-preview">
-                    <img
-                        *ngIf="selectedImagePreview"
-                        [src]="selectedImagePreview"
-                        [alt]="'Vista previa de la imagen seleccionada'"
-                    />
+                    <img tabindex="0" *ngIf="selectedImagePreview" [src]="selectedImagePreview"
+                        [alt]="'Vista previa de la imagen seleccionada'" />
                 </div>
             </div>
 
@@ -104,11 +56,7 @@
                 <button type="submit" class="button" [disabled]="form.invalid">
                     Guardar cambios
                 </button>
-                <button
-                    type="button"
-                    class="button cancel"
-                    (click)="cancelEdit()"
-                >
+                <button type="button" class="button cancel" (click)="cancelEdit()">
                     Cancelar
                 </button>
             </div>
