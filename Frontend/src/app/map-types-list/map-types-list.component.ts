@@ -33,10 +33,11 @@ import { trigger, style, transition, animate } from '@angular/animations';
         ]),
     ],
 })
+
 export class MapTypesListComponent {
     openMenu = false;
-    mapTypes = ['SATÉLITE', 'CLIMÁTICA', 'GEOGRÁFICA', 'RURAL'];
-    selectedType: string | null = null;
+    mapTypes = ['SATÉLITE', 'GEOGRÁFICA', 'RURAL', 'HISTÓRICA','CLIMÁTICA'];
+    selectedType: string = 'SATÉLITE';
 
     toggleMenu() {
         this.openMenu = !this.openMenu;
@@ -45,4 +46,17 @@ export class MapTypesListComponent {
     selectType(type: string) {
         this.selectedType = type;
     }
+
+    handleKeydown(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            this.openMenu = false;
+            setTimeout(() => {
+                const button = document.querySelector('.manage_search');
+                if (button instanceof HTMLElement) {
+                    button.focus();
+                }
+            }, 0);
+        }
+    }
 }
+

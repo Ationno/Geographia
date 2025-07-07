@@ -1,32 +1,14 @@
-<span
-    class="material-symbols-outlined manage_search"
-    tabindex="0"
-    (click)="toggleMenu()"
-    (keydown.enter)="toggleMenu()"
-    [attr.aria-label]="
-        openMenu
-            ? 'Cerrar menú de tipos de mapa'
-            : 'Abrir menú de tipos de mapa'
-    "
-    >manage_search</span
->
-<ul
-    *ngIf="openMenu"
-    [class.visible]="openMenu"
-    [@fadeInOut]
-    class="map-types-menu"
-    aria-label="Menú de tipos de mapa"
-    tabindex="0"
->
-    <li
-        class="map-types"
-        *ngFor="let type of mapTypes"
-        (click)="selectType(type)"
-        [class.active]="type === selectedType"
-        [attr.aria-selected]="type === selectedType"
-        [attr.aria-label]="'Seleccionar tipo de mapa: ' + type"
-        tabindex="0"
-    >
+<span class="material-symbols-outlined manage_search" tabindex="0" (click)="toggleMenu()" (keydown.enter)="toggleMenu()"
+    [attr.aria-label]=" openMenu ? 'Cerrar menú de tipos de mapa' : 'Abrir menú de tipos de mapa' " aria-hidden="false"
+    role="button">
+
+    <span aria-hidden="true">manage_search</span>
+</span>
+<ul *ngIf="openMenu" [class.visible]="openMenu" [@fadeInOut] role="listbox" class="map-types-menu"
+    aria-label="Menú de tipos de mapa" tabindex="0" (keydown)="handleKeydown($event)">
+    <li class="map-types" *ngFor="let type of mapTypes" (click)="selectType(type)" (keydown.enter)="selectType(type)"
+        [class.active]="type === selectedType" [attr.aria-selected]="type === selectedType"
+        [attr.aria-label]="'Seleccionar tipo de mapa: ' + type" tabindex="0" role="option">
         {{ type }}
     </li>
 </ul>
