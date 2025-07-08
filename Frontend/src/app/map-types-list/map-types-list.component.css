@@ -1,8 +1,8 @@
 .manage_search {
     font-size: 36px;
-    padding: 8px;
+    padding: 12px;
     background-color: #ffffff;
-    border-radius: 8px;
+    border-radius: 12px;
     color: var(--color-iconos);
     border: 1px solid #d8d8d8;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -103,8 +103,8 @@
     }
 
     .manage_search {
-        font-size: 24px;
-        padding: 4px;
+        font-size: 28px;
+        padding: 8px;
     }
 
     .map-filter-label {

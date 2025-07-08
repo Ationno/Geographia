@@ -193,10 +193,17 @@
     visibility: visible;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
     .profile-menu {
-        width: 90vw;
-        right: 5vw;
+        width: 60vw;
+        right: 2vw;
+        max-height: 60vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+
+    .profile-menu::-webkit-scrollbar {
+        width: 6px;
     }
 
     .profile-avatar {
@@ -210,8 +217,13 @@
         height: 48px;
     }
 
-    .profile-options li p {
-        font-size: 0.9em;
+    .profile-menu::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+
+    .profile-menu::-webkit-scrollbar-track {
+        background-color: transparent;
     }
 
     .profile-label {
