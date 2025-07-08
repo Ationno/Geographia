@@ -56,7 +56,7 @@
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 900px) {
     .modal {
         max-width: 280px;
         max-height: 220px;

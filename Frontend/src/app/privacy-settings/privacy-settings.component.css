@@ -93,7 +93,7 @@ h3 {
     margin-bottom: 12px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
     .modal {
         width: 90%;
         min-width: unset;

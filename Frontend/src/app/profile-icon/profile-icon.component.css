@@ -193,7 +193,7 @@
     visibility: visible;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
     .profile-menu {
         width: 90vw;
         right: 5vw;
