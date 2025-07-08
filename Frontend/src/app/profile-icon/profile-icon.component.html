@@ -5,6 +5,11 @@
         <img src="icono.jpg" alt="Icono de usuario de Agustina" class="icon" />
     </button>
 
+    <div class="profile-label" aria-hidden="true">
+        <!--<div class="profile-label" [class.visible]="visibleMenu"> -->
+        Perfil de usuario
+    </div>
+
     <div class="profile-menu" *ngIf="visibleMenu" [@fadeInOut] aria-label="Menú de perfil de usuario" tabindex="0">
         <div class="profile-header">
             <img src="icono.jpg" alt="Icono de usuario de Agustina" class="profile-avatar" tabindex="0" />

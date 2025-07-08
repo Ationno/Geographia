@@ -1,8 +1,17 @@
-<span class="material-symbols-outlined manage_search" tabindex="0" (click)="toggleMenu()" (keydown.enter)="toggleMenu()"
-    [attr.aria-label]=" openMenu ? 'Cerrar menú de tipos de mapa' : 'Abrir menú de tipos de mapa' " role="button">
+<div class="map-filter-wrapper">
+    <span class="material-symbols-outlined manage_search" tabindex="0" (click)="toggleMenu()"
+        (keydown.enter)="toggleMenu()"
+        [attr.aria-label]=" openMenu ? 'Cerrar menú de tipos de mapa' : 'Abrir menú de tipos de mapa' " role="button">
+        <span aria-hidden="true">manage_search</span>
+    </span>
 
-    <span aria-hidden="true">manage_search</span>
-</span>
+    <span class="map-filter-label" aria-hidden="true">
+        <!--    <span class="map-filter-label" [class.visible]="openMenu">  -->
+        Tipos de mapa
+    </span>
+</div>
+
+
 <div aria-live="polite" class="sr-only">
     {{ selectedAnnouncement }}
 </div>

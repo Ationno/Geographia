@@ -113,7 +113,7 @@
     color: #d92d20;
 }
 
-.profile-menu:focus-visible{
+.profile-menu:focus-visible {
     outline: 3px solid var(--color-primario);
     outline-offset: 2px;
 }
@@ -140,7 +140,7 @@
     outline-offset: 2px;
 }
 
-.user-name:focus-visible{
+.user-name:focus-visible {
     outline: 2px solid var(--color-primario);
     outline-offset: 2px;
     border-radius: 2px;
@@ -164,6 +164,35 @@
     background-color: #eaeaea;
 }
 
+.profile-label {
+    position: absolute;
+    top: 50%;
+    right: 75px;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    border: 1px solid #d8d8d8;
+    color: var(--color-subtitulos);
+    padding: 6px 12px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1em;
+    font-weight: 500;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    margin-left: 8px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.profile-container:hover .profile-label,
+.profile-label.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
 @media (max-width: 600px) {
     .profile-menu {
         width: 90vw;
@@ -173,6 +202,12 @@
     .profile-avatar {
         width: 40px;
         height: 40px;
+    }
+
+    .profile-container button.icon,
+    .profile-container .icon {
+        width: 48px;
+        height: 48px;
     }
 
     .profile-options li p {
