@@ -55,3 +55,9 @@
     visibility: visible;
     pointer-events: auto;
 }
+
+@media (max-width: 900px) {
+    .button-label {
+        display: none;
+    }
+}

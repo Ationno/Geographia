@@ -213,4 +213,8 @@
     .profile-options li p {
         font-size: 0.9em;
     }
+
+    .profile-label {
+        display: none;
+    }
 }
