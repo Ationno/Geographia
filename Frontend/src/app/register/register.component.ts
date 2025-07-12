@@ -12,6 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { AbstractControl } from '@angular/forms';
 import { min } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-register',
@@ -139,10 +140,59 @@ export class RegisterComponent {
                 .register(firstName, lastName, email, birthDate, password)
                 .subscribe({
                     next: () => {
-                        this.router.navigate(['/login']);
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Registro exitoso!',
+                            text: 'Tu cuenta fue creada correctamente.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'montserrat-swal',
+                                closeButton: 'montserrat-close',
+                            },
+                        }).then(() => {
+                            this.router.navigate(['/login']);
+                        });
                     },
                     error: (err) => {
                         console.error('Registration failed', err);
+
+                        if (
+                            err.status === 400 &&
+                            err.error?.error === 'User already exists'
+                        ) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'El correo ya está registrado',
+                                text: 'Por favor, iniciá sesión o usá otro correo electrónico.',
+                                timer: 4000,
+                                timerProgressBar: true,
+                                showCloseButton: true,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'montserrat-swal',
+                                    closeButton: 'montserrat-close',
+                                },
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al registrar',
+                                text:
+                                    err?.error?.message ||
+                                    'Ocurrió un error inesperado. Por favor, intentá de nuevo.',
+                                timer: 4000,
+                                timerProgressBar: true,
+                                showCloseButton: true,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'montserrat-swal',
+                                    closeButton: 'montserrat-close',
+                                },
+                            });
+                        }
                     },
                 });
         } else {

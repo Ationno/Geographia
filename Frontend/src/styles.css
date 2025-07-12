@@ -382,6 +382,16 @@ html {
     font-size: 16px;
 }
 
+.swal2-popup {
+    font-family: "Montserrat", sans-serif;
+}
+
+.montserrat-swal,
+.montserrat-btn,
+.montserrat-close {
+    font-family: "Montserrat", sans-serif;
+}
+
 @media (max-width: 900px) {
     html {
         font-size: 14px;
