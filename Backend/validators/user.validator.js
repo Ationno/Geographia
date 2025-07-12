@@ -3,8 +3,8 @@ const Joi = require("joi");
 const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
 
 const registerSchema = Joi.object({
-	first_name: Joi.string().pattern(nameRegex).required(),
-	last_name: Joi.string().pattern(nameRegex).required(),
+	first_name: Joi.string().min(2).pattern(nameRegex).required(),
+	last_name: Joi.string().min(2).pattern(nameRegex).required(),
 	email: Joi.string().email().required(),
 	birth_date: Joi.date().iso().required(),
 	password: Joi.string().min(8).pattern(/[0-9]/).required(),
@@ -38,8 +38,7 @@ const updateLocationSchema = Joi.object({
 const updatePasswordSchema = Joi.object({
 	actual_password: Joi.string().min(8).pattern(/[0-9]/).required(),
 	new_password: Joi.string().min(8).pattern(/[0-9]/).required(),
-	confirm_new_password: Joi.string().valid(Joi.ref("new_password")).required(),
-}).with("new_password", "confirm_new_password");
+});
 
 module.exports = {
 	registerSchema,
