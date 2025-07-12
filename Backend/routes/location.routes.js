@@ -27,7 +27,6 @@ const upload = require("../middlewares/upload.middleware");
 router.post(
 	"/create",
 	authorization,
-	requireUploader,
 	upload.array("images", 20),
 	validateRequest(createLocationSchema),
 	asyncHandler(createLocation)
@@ -35,18 +34,12 @@ router.post(
 router.put(
 	"/location/:id",
 	authorization,
-	requireUploader,
 	upload.array("images", 20),
 	validateRequest(updateLocationSchema),
 	asyncHandler(updateLocation)
 );
 router.get("/location/:id", authorization, asyncHandler(getLocationById));
-router.delete(
-	"/location/:id",
-	authorization,
-	requireUploader,
-	asyncHandler(deleteLocation)
-);
+router.delete("/location/:id", authorization, asyncHandler(deleteLocation));
 router.get("/all", authorization, asyncHandler(getAllLocations));
 router.get("/me", authorization, asyncHandler(getMyLocations));
 router.post(

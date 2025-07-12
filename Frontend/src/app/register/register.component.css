@@ -75,19 +75,23 @@ form {
     position: relative;
 }
 
-.email-wrapper,
-.password-wrapper {
+.wrapper {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
 }
 
-.email-wrapper > span,
-.password-wrapper > span {
+.wrapper > span {
     border-bottom: 1px solid #ccc;
     padding: 8px 4px;
     color: var(--color-texto);
     font-weight: 400;
+    display: flex;
+    align-items: center;
+}
+
+input {
+    flex-grow: 1;
 }
 
 .date-wrapper > span {
@@ -139,7 +143,7 @@ input {
 
 .register-button {
     padding: 12px;
-    margin-top: 56px;
+    margin-top: 32px;
 }
 
 .gsi-material-button {
