@@ -97,6 +97,10 @@ app-profile-icon {
     background: linear-gradient(#71bb75, #1b501f 77%, #142c16 100%);
 }
 
+::ng-deep .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+    margin: 5px 5px;
+}
+
 ::ng-deep .mapboxgl-ctrl-top-right {
     position: absolute;
     bottom: 10px;
@@ -111,6 +115,13 @@ app-profile-icon {
 
 ::ng-deep .mapboxgl-ctrl-group {
     display: flex;
+    background-color: #052346;
+    box-shadow: none;
+    border-radius: 8px !important;
+}
+
+::ng-deep .mapboxgl-ctrl-group:not(:empty) {
+    box-shadow: unset;
 }
 
 ::ng-deep .mapboxgl-ctrl-group button + button {
@@ -129,4 +140,25 @@ app-button-add-location {
     bottom: 115px;
     right: 15px;
     z-index: 1000;
+}
+
+::ng-deep .mapboxgl-ctrl-group button {
+    background-color: var(--color-primario);
+    border: none;
+    border-radius: 8px !important;
+    margin: 4px 4px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background-color 0.3s ease;
+}
+
+::ng-deep .mapboxgl-ctrl-icon {
+    background-size: 85% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: invert(100%);
 }

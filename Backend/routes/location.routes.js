@@ -22,8 +22,6 @@ const {
 } = require("../validators/location.validator");
 const { validateRequest } = require("../middlewares/validate.middleware");
 
-const { requireUploader } = require("../middlewares/role.middleware");
-
 const upload = require("../middlewares/upload.middleware");
 
 router.post(

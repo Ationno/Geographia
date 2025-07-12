@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
-	const { first_name, last_name, email, birth_date, role, password } = req.body;
+	const { first_name, last_name, email, birth_date, password } = req.body;
 	const hashedPassword = await bcrypt.hash(password, 10);
 
 	const existingUser = await User.findOne({ where: { email } });
@@ -16,7 +16,6 @@ const register = async (req, res) => {
 		last_name,
 		email,
 		birth_date,
-		role,
 		password: hashedPassword,
 		profile_image_url: "/uploads/default_profile.jpg",
 	});
@@ -29,7 +28,6 @@ const register = async (req, res) => {
 			last_name: user.last_name,
 			email: user.email,
 			birth_date: user.birth_date,
-			role: user.role,
 		},
 	});
 };
@@ -44,13 +42,9 @@ const login = async (req, res) => {
 
 	if (!(await bcrypt.compare(password, user.password)))
 		return res.status(401).json({ error: "Unauthorized" });
-	const token = jwt.sign(
-		{ userId: user.id, role: user.role },
-		process.env.JWT_SECRET,
-		{
-			expiresIn: process.env.JWT_EXPIRATION || "1h",
-		}
-	);
+	const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+		expiresIn: process.env.JWT_EXPIRATION || "1h",
+	});
 	res.json({ token });
 };
 

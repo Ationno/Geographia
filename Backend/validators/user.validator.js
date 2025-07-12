@@ -7,7 +7,6 @@ const registerSchema = Joi.object({
 	last_name: Joi.string().pattern(nameRegex).required(),
 	email: Joi.string().email().required(),
 	birth_date: Joi.date().iso().required(),
-	role: Joi.string().valid("viewer", "uploader").required(),
 	password: Joi.string().min(8).pattern(/[0-9]/).required(),
 });
 

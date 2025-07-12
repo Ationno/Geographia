@@ -70,13 +70,7 @@ const getProfile = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-	const existingFields = [
-		"first_name",
-		"last_name",
-		"email",
-		"birth_date",
-		"role",
-	];
+	const existingFields = ["first_name", "last_name", "email", "birth_date"];
 
 	const updateFields = {};
 

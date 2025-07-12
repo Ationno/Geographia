@@ -14,12 +14,6 @@ const User = sequelize.define("User", {
 	show_email: { type: DataTypes.BOOLEAN, defaultValue: true },
 	show_birth_date: { type: DataTypes.BOOLEAN, defaultValue: true },
 	show_location: { type: DataTypes.BOOLEAN, defaultValue: true },
-
-	role: {
-		type: DataTypes.ENUM("viewer", "uploader"),
-		allowNull: false,
-		defaultValue: "viewer",
-	},
 });
 
 module.exports = User;
