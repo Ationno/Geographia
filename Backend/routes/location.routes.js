@@ -38,9 +38,9 @@ router.put(
 	validateRequest(updateLocationSchema),
 	asyncHandler(updateLocation)
 );
-router.get("/location/:id", authorization, asyncHandler(getLocationById));
+router.get("/location/:id", asyncHandler(getLocationById));
 router.delete("/location/:id", authorization, asyncHandler(deleteLocation));
-router.get("/all", authorization, asyncHandler(getAllLocations));
+router.get("/all", asyncHandler(getAllLocations));
 router.get("/me", authorization, asyncHandler(getMyLocations));
 router.post(
 	"/location/:id/rate",
@@ -54,7 +54,7 @@ router.put(
 	validateRequest(ratingSchema),
 	asyncHandler(updateRating)
 );
-router.get("/rural/", authorization, asyncHandler(getRuralLocations));
-router.get("/geographic/", authorization, asyncHandler(getGeographicLocations));
+router.get("/rural/", asyncHandler(getRuralLocations));
+router.get("/geographic/", asyncHandler(getGeographicLocations));
 
 module.exports = router;

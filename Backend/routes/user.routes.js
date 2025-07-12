@@ -22,7 +22,7 @@ const { asyncHandler } = require("../middlewares/handler.middleware");
 
 const singleUpload = require("../middlewares/singleUpload.middleware");
 
-router.get("/profile/:id", authorization, asyncHandler(getProfile));
+router.get("/profile/:id", asyncHandler(getProfile));
 router.get("/me", authorization, asyncHandler(getMyProfile));
 router.put(
 	"/me",

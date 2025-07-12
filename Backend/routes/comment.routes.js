@@ -16,6 +16,6 @@ router.post(
 	validateRequest(createCommentSchema),
 	asyncHandler(addComment)
 );
-router.get("/:locationId", authorization, asyncHandler(getCommentsByLocation));
+router.get("/:locationId", asyncHandler(getCommentsByLocation));
 
 module.exports = router;
