@@ -1,4 +1,9 @@
 .button {
     font-weight: 700;
     font-size: 1.2em;
+    background-color: var(--color-primario);
+}
+
+.button:hover {
+    background-color: var(--color-button);
 }
