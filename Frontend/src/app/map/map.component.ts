@@ -32,6 +32,10 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { ButtonListLocationsComponent } from '../button-list-locations/button-list-locations.component';
 import { ButtonAddLocationComponent } from '../button-add-location/button-add-location.component';
+import { AuthService } from '../auth.service';
+import Swal from 'sweetalert2';
+import { LoginButtonComponent } from '../login-button/login-button.component';
+import { AddLocationComponent } from '../add-location/add-location.component';
 
 @Component({
     selector: 'app-map',
@@ -53,6 +57,7 @@ import { ButtonAddLocationComponent } from '../button-add-location/button-add-lo
         LayerComponent,
         ButtonListLocationsComponent,
         ButtonAddLocationComponent,
+        LoginButtonComponent,
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.css',
@@ -79,6 +84,8 @@ export class MapComponent {
     popup: { coordinates: [number, number] } | null = null;
     private routerSub!: Subscription;
     maskGeoJSON: any;
+    isLoggedIn: boolean = false;
+    private authSub!: Subscription;
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLDivElement>;
@@ -109,7 +116,17 @@ export class MapComponent {
         },
     ];
 
+    constructor(
+        private router: Router,
+        private http: HttpClient,
+        private authService: AuthService
+    ) {}
+
     ngOnInit() {
+        this.authSub = this.authService.isLoggedIn$.subscribe((loggedIn) => {
+            this.isLoggedIn = loggedIn;
+        });
+
         this.http.get('argentina-mask.geojson').subscribe((argentina: any) => {
             const world = bboxPolygon([-180, -90, 180, 90]);
             this.maskGeoJSON = difference(
@@ -129,11 +146,10 @@ export class MapComponent {
             });
     }
 
-    constructor(
-        private router: Router,
-        private route: ActivatedRoute,
-        private http: HttpClient
-    ) {}
+    ngOnDestroy() {
+        this.authSub?.unsubscribe();
+        this.routerSub?.unsubscribe();
+    }
 
     onMapClick(event: mapboxgl.MapMouseEvent) {
         this.http.get('argentina-mask.geojson').subscribe((argentina: any) => {
@@ -158,23 +174,38 @@ export class MapComponent {
     }
 
     addLocation() {
-        this.router.navigate(
-            [
-                '/map',
-                {
-                    outlets: {
-                        popup: ['addLocation'],
+        if (this.isLoggedIn) {
+            this.router.navigate(
+                [
+                    '/map',
+                    {
+                        outlets: {
+                            popup: ['addLocation'],
+                        },
                     },
+                ],
+                {
+                    queryParams: {
+                        lat: this.popup?.coordinates[1],
+                        lng: this.popup?.coordinates[0],
+                    },
+                }
+            );
+            this.popup = null;
+        } else {
+            Swal.fire({
+                icon: 'info',
+                title: 'Inicio de sesión requerido',
+                text: 'Para realizar esta acción, por favor, inicie sesión.',
+                timerProgressBar: true,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'montserrat-swal',
+                    closeButton: 'montserrat-close',
                 },
-            ],
-            {
-                queryParams: {
-                    lat: this.popup?.coordinates[1],
-                    lng: this.popup?.coordinates[0],
-                },
-            }
-        );
-        this.popup = null;
+            });
+        }
     }
 
     goToLocation(locationId: number) {

@@ -157,8 +157,6 @@ export class RegisterComponent {
                         });
                     },
                     error: (err) => {
-                        console.error('Registration failed', err);
-
                         if (
                             err.status === 400 &&
                             err.error?.error === 'User already exists'

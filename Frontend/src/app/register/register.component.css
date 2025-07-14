@@ -71,25 +71,6 @@ form {
     flex-direction: column;
 }
 
-.password-wrapper {
-    position: relative;
-}
-
-.wrapper {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.wrapper > span {
-    border-bottom: 1px solid #ccc;
-    padding: 8px 4px;
-    color: var(--color-texto);
-    font-weight: 400;
-    display: flex;
-    align-items: center;
-}
-
 input {
     flex-grow: 1;
 }

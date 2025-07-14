@@ -154,6 +154,22 @@ input {
     width: 100%;
 }
 
+.wrapper {
+    display: flex;
+    position: relative;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.wrapper > span {
+    border-bottom: 1px solid #ccc;
+    padding: 8px 4px;
+    color: var(--color-texto);
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+}
+
 .upload-label {
     display: flex;
     gap: 8px;

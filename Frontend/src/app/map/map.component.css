@@ -84,6 +84,13 @@ app-profile-icon {
     z-index: 1000;
 }
 
+app-login-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+}
+
 .popup-image {
     width: 50px;
     height: 50px;

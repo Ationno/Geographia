@@ -52,51 +52,45 @@
                 [formGroup]="registerForm"
                 (ngSubmit)="onSubmit()"
             >
-                <div>
-                    <div class="wrapper">
-                        <label for="email" class="sr-only"
-                            >Correo Electrónico</label
-                        >
-                        <span
-                            class="material-symbols-outlined"
-                            aria-hidden="true"
-                            >mail</span
-                        >
-                        <input
-                            id="email"
-                            type="email"
-                            placeholder="Correo Electrónico"
-                            required
-                            autocomplete="email"
-                            aria-required="true"
-                            formControlName="email"
-                        />
+                <div class="wrapper">
+                    <label for="email" class="sr-only"
+                        >Correo Electrónico</label
+                    >
+                    <span class="material-symbols-outlined" aria-hidden="true"
+                        >mail</span
+                    >
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Correo Electrónico"
+                        required
+                        autocomplete="email"
+                        aria-required="true"
+                        formControlName="email"
+                    />
+                </div>
+                <div
+                    *ngIf="
+                        registerForm.get('email')?.touched &&
+                        registerForm.get('email')?.invalid
+                    "
+                    class="error"
+                    role="alert"
+                    tabindex="0"
+                >
+                    <div
+                        *ngIf="registerForm.get('email')?.errors?.['required']"
+                    >
+                        Este campo es obligatorio.
+                    </div>
+                    <div *ngIf="registerForm.get('email')?.errors?.['email']">
+                        Debe ser un correo electrónico válido.
                     </div>
                     <div
-                        *ngIf="
-                            registerForm.get('email')?.touched &&
-                            registerForm.get('email')?.invalid
-                        "
-                        class="error"
-                        role="alert"
-                        tabindex="0"
+                        *ngIf="registerForm.get('email')?.errors?.['maxLength']"
                     >
-                        <div
-                            *ngIf="registerForm.get('email')?.errors?.['required']"
-                        >
-                            Este campo es obligatorio.
-                        </div>
-                        <div
-                            *ngIf="registerForm.get('email')?.errors?.['email']"
-                        >
-                            Debe ser un correo electrónico válido.
-                        </div>
-                        <div
-                            *ngIf="registerForm.get('email')?.errors?.['maxLength']"
-                        >
-                            El correo electrónico no puede exceder los 50
-                            caracteres.
-                        </div>
+                        El correo electrónico no puede exceder los 50
+                        caracteres.
                     </div>
                 </div>
 
@@ -249,22 +243,26 @@
                             autocomplete="new-password"
                             formControlName="password"
                         />
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            [attr.aria-pressed]="showPassword"
+                            [attr.aria-label]="
+                                showPassword
+                                    ? 'Ocultar contraseña'
+                                    : 'Mostrar contraseña'
+                            "
+                            (click)="togglePassword()"
+                        >
+                            <span class="material-symbols-outlined">
+                                {{
+                                    showPassword
+                                        ? "visibility_off"
+                                        : "visibility"
+                                }}
+                            </span>
+                        </button>
                     </div>
-                    <button
-                        type="button"
-                        class="toggle-password"
-                        [attr.aria-pressed]="showPassword"
-                        [attr.aria-label]="
-                            showPassword
-                                ? 'Ocultar contraseña'
-                                : 'Mostrar contraseña'
-                        "
-                        (click)="togglePassword()"
-                    >
-                        <span class="material-symbols-outlined">
-                            {{ showPassword ? "visibility_off" : "visibility" }}
-                        </span>
-                    </button>
                     <div
                         *ngIf="
                             registerForm.get('password')?.touched &&
@@ -305,26 +303,26 @@
                             autocomplete="new-password"
                             formControlName="repeatPassword"
                         />
-                    </div>
-                    <button
-                        type="button"
-                        class="toggle-password"
-                        [attr.aria-pressed]="showRepeatPassword"
-                        [attr.aria-label]="
-                            showRepeatPassword
-                                ? 'Ocultar contraseña'
-                                : 'Mostrar contraseña'
-                        "
-                        (click)="toggleRepeatPassword()"
-                    >
-                        <span class="material-symbols-outlined">
-                            {{
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            [attr.aria-pressed]="showRepeatPassword"
+                            [attr.aria-label]="
                                 showRepeatPassword
-                                    ? "visibility_off"
-                                    : "visibility"
-                            }}
-                        </span>
-                    </button>
+                                    ? 'Ocultar contraseña'
+                                    : 'Mostrar contraseña'
+                            "
+                            (click)="toggleRepeatPassword()"
+                        >
+                            <span class="material-symbols-outlined">
+                                {{
+                                    showRepeatPassword
+                                        ? "visibility_off"
+                                        : "visibility"
+                                }}
+                            </span>
+                        </button>
+                    </div>
                     <div
                         *ngIf="
                             registerForm.get('repeatPassword')?.touched &&
