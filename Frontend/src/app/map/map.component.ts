@@ -173,6 +173,82 @@ export class MapComponent {
         });
     }
 
+    ngAfterViewInit() {
+        setTimeout(() => {
+            const canvas = document.querySelector('.mapboxgl-canvas');
+            if (canvas) {
+                canvas.setAttribute(
+                    'aria-label',
+                    'Mapa interactivo de Geographia'
+                );
+            }
+
+            const fullscreenBtn = document.querySelector(
+                '.mapboxgl-ctrl-fullscreen'
+            );
+            if (fullscreenBtn) {
+                fullscreenBtn.setAttribute(
+                    'aria-label',
+                    'Control de pantalla completa'
+                );
+                const fullscreenIcon = fullscreenBtn.querySelector(
+                    '.mapboxgl-ctrl-icon'
+                );
+                if (fullscreenIcon) {
+                    fullscreenIcon.setAttribute('title', 'Pantalla completa');
+                }
+            }
+
+            const geolocateBtn = document.querySelector(
+                '.mapboxgl-ctrl-geolocate'
+            );
+            if (geolocateBtn) {
+                geolocateBtn.setAttribute('aria-label', 'Ubicar mi posición');
+                const geolocateIcon = geolocateBtn.querySelector(
+                    '.mapboxgl-ctrl-icon'
+                );
+                if (geolocateIcon) {
+                    geolocateIcon.setAttribute('title', 'Ubicar mi posición');
+                }
+            }
+
+            const zoomInBtn = document.querySelector('.mapboxgl-ctrl-zoom-in');
+            if (zoomInBtn) {
+                zoomInBtn.setAttribute('aria-label', 'Acercar zoom');
+                const zoomInIcon = zoomInBtn.querySelector(
+                    '.mapboxgl-ctrl-icon'
+                );
+                if (zoomInIcon) {
+                    zoomInIcon.setAttribute('title', 'Acercar zoom');
+                }
+            }
+
+            const zoomOutBtn = document.querySelector(
+                '.mapboxgl-ctrl-zoom-out'
+            );
+            if (zoomOutBtn) {
+                zoomOutBtn.setAttribute('aria-label', 'Alejar zoom');
+                const zoomOutIcon = zoomOutBtn.querySelector(
+                    '.mapboxgl-ctrl-icon'
+                );
+                if (zoomOutIcon) {
+                    zoomOutIcon.setAttribute('title', 'Alejar zoom');
+                }
+            }
+
+            const compass = document.querySelector('.mapboxgl-ctrl-compass');
+            if (compass) {
+                compass.setAttribute('aria-label', 'Reorientar mapa');
+                const compassIcon = compass.querySelector(
+                    '.mapboxgl-ctrl-icon'
+                );
+                if (compassIcon) {
+                    compassIcon.setAttribute('title', 'Reorientar mapa');
+                }
+            }
+        }, 100);
+    }
+
     addLocation() {
         if (this.isLoggedIn) {
             this.router.navigate(
