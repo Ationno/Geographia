@@ -16,8 +16,8 @@ const loginSchema = Joi.object({
 });
 
 const updateProfileSchema = Joi.object({
-	first_name: Joi.string().pattern(nameRegex).optional(),
-	last_name: Joi.string().pattern(nameRegex).optional(),
+	first_name: Joi.string().min(2).pattern(nameRegex).optional(),
+	last_name: Joi.string().min(2).pattern(nameRegex).optional(),
 	email: Joi.string().email().optional(),
 	birth_date: Joi.date().iso().optional(),
 	remove_profile_image: Joi.boolean().optional().default(false),
