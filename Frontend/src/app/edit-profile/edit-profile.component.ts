@@ -5,6 +5,8 @@ import {
     FormGroup,
     FormControl,
     Validators,
+    AbstractControl,
+    ValidationErrors,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
@@ -30,7 +32,7 @@ import { A11yModule } from '@angular/cdk/a11y';
     ],
 })
 export class EditProfileComponent implements OnInit {
-    form: FormGroup;
+    editProfileForm: FormGroup;
     selectedImagePreview: string | null = null;
     selectedImageFile: File | null = null;
 
@@ -40,13 +42,52 @@ export class EditProfileComponent implements OnInit {
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
     constructor(private router: Router, private userService: UserService) {
-        this.form = new FormGroup({
-            first_name: new FormControl('', [Validators.required]),
-            last_name: new FormControl('', [Validators.required]),
-            email: new FormControl('', [Validators.required, Validators.email]),
-            birth_date: new FormControl('', [Validators.required]),
+        this.editProfileForm = new FormGroup({
+            first_name: new FormControl('', [
+                Validators.required,
+                Validators.minLength(2),
+                Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/),
+            ]),
+            last_name: new FormControl('', [
+                Validators.required,
+                Validators.minLength(2),
+                Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/),
+            ]),
+            email: new FormControl('', [
+                Validators.required,
+                Validators.email,
+                Validators.maxLength(50),
+            ]),
+            birth_date: new FormControl('', [
+                Validators.required,
+                this.minAgeValidator(13),
+            ]),
             profile_image: new FormControl(null),
         });
+    }
+
+    minAgeValidator(minAge: number) {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const value = control.value;
+            if (!value) return null;
+
+            const birthDate = new Date(value);
+            const today = new Date();
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            const dayDiff = today.getDate() - birthDate.getDate();
+
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                age--;
+            }
+
+            console.log('Edad calculada:', age);
+
+            return age >= minAge
+                ? null
+                : { minAge: { requiredAge: minAge, actualAge: age } };
+        };
     }
 
     ngOnInit(): void {
@@ -56,7 +97,7 @@ export class EditProfileComponent implements OnInit {
 
         this.userService.getCurrentUser().subscribe({
             next: (data: any) => {
-                this.form.patchValue({
+                this.editProfileForm.patchValue({
                     first_name: data.first_name,
                     last_name: data.last_name,
                     email: data.email,
@@ -77,7 +118,7 @@ export class EditProfileComponent implements OnInit {
         const file: File = event.target.files[0];
         if (file) {
             this.selectedImageFile = file;
-            this.form.patchValue({ profile_image: file });
+            this.editProfileForm.patchValue({ profile_image: file });
 
             const reader = new FileReader();
             reader.onload = (e: any) => {
@@ -96,20 +137,28 @@ export class EditProfileComponent implements OnInit {
     }
 
     onSubmit() {
-        if (this.form.valid) {
+        if (this.editProfileForm.valid) {
             const formData = new FormData();
-            formData.append('first_name', this.form.get('first_name')?.value);
-            formData.append('last_name', this.form.get('last_name')?.value);
-            formData.append('email', this.form.get('email')?.value);
-            formData.append('birth_date', this.form.get('birth_date')?.value);
-            formData.append('role', this.form.get('role')?.value);
+            formData.append(
+                'first_name',
+                this.editProfileForm.get('first_name')?.value
+            );
+            formData.append(
+                'last_name',
+                this.editProfileForm.get('last_name')?.value
+            );
+            formData.append('email', this.editProfileForm.get('email')?.value);
+            formData.append(
+                'birth_date',
+                this.editProfileForm.get('birth_date')?.value
+            );
 
             if (this.selectedImageFile) {
                 formData.append('profile_image', this.selectedImageFile);
             }
 
             this.userService.updateProfile(formData).subscribe({
-                next: () => this.router.navigate(['/']),
+                next: () => this.router.navigate(['/map']),
                 error: (err) =>
                     console.error('Error al actualizar perfil', err),
             });

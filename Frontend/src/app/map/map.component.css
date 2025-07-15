@@ -122,9 +122,20 @@ app-login-button {
 
 ::ng-deep .mapboxgl-ctrl-group {
     display: flex;
-    background-color: #052346;
+    background-color: var(--color-button);
     box-shadow: none;
     border-radius: 8px !important;
+    transition: box-shadow 0.8s ease, background-color 0.8s ease;
+}
+
+::ng-deep .mapboxgl-ctrl-group:hover {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--color-button-hover);
+}
+
+/* tomar solo el ultimo boton */
+::ng-deep .mapboxgl-ctrl-group:last-child:hover {
+    background-color: var(--color-button);
 }
 
 ::ng-deep .mapboxgl-ctrl-group:not(:empty) {
@@ -150,7 +161,6 @@ app-button-add-location {
 }
 
 ::ng-deep .mapboxgl-ctrl-group button {
-    background-color: var(--color-primario);
     border: none;
     border-radius: 8px !important;
     margin: 4px 4px;
@@ -160,12 +170,26 @@ app-button-add-location {
     align-items: center;
     justify-content: center;
     padding: 0;
+    margin: 0;
+    background-color: var(--color-button);
     transition: background-color 0.3s ease;
+    width: 48px;
+    height: 48px;
+}
+
+::ng-deep .mapboxgl-ctrl-group button:hover {
+    background-color: var(--color-button-hover) !important;
 }
 
 ::ng-deep .mapboxgl-ctrl-icon {
     background-size: 85% !important;
     background-position: center;
     background-repeat: no-repeat;
-    filter: invert(100%);
+    filter: brightness(1) contrast(1.2) saturate(1.5) grayscale(0.2)
+        invert(100%);
+    transition: filter 0.3s ease;
+}
+
+::ng-deep .mapboxgl-ctrl-icon:hover {
+    filter: brightness(0.2) contrast(1) saturate(1) grayscale(0) invert(100%);
 }

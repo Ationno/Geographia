@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener } from '@angular/core';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { Router } from '@angular/router';
+import { UserService } from '../user.service';
+import { User } from '../models/user.model';
 @Component({
     selector: 'app-profile-icon',
     imports: [CommonModule],
@@ -35,8 +37,24 @@ import { Router } from '@angular/router';
 })
 export class ProfileIconComponent {
     visibleMenu = false;
+    user: User | null = null;
 
-    constructor(private elementRef: ElementRef, private router: Router) {}
+    constructor(
+        private elementRef: ElementRef,
+        private router: Router,
+        private userService: UserService
+    ) {}
+
+    ngOnInit() {
+        this.userService.getCurrentUser().subscribe({
+            next: (user) => {
+                this.user = user;
+            },
+            error: (error) => {
+                console.error('Error fetching user data:', error);
+            },
+        });
+    }
 
     toggleMenu() {
         this.visibleMenu = !this.visibleMenu;

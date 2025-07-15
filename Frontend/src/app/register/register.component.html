@@ -110,30 +110,30 @@
                                 required
                                 autocomplete="given-name"
                                 aria-required="true"
-                                formControlName="firstName"
+                                formControlName="first_name"
                             />
                         </div>
                         <div
                             *ngIf="
-                                registerForm.get('firstName')?.touched &&
-                                registerForm.get('firstName')?.invalid
+                                registerForm.get('first_name')?.touched &&
+                                registerForm.get('first_name')?.invalid
                             "
                             class="error"
                             role="alert"
                             tabindex="0"
                         >
                             <div
-                                *ngIf="registerForm.get('firstName')?.errors?.['required']"
+                                *ngIf="registerForm.get('first_name')?.errors?.['required']"
                             >
                                 Este campo es obligatorio.
                             </div>
                             <div
-                                *ngIf="registerForm.get('firstName')?.errors?.['minlength']"
+                                *ngIf="registerForm.get('first_name')?.errors?.['minlength']"
                             >
                                 Debe tener al menos 2 caracteres.
                             </div>
                             <div
-                                *ngIf="registerForm.get('firstName')?.errors?.['pattern']"
+                                *ngIf="registerForm.get('first_name')?.errors?.['pattern']"
                             >
                                 Solo se permiten letras y espacios.
                             </div>
@@ -156,30 +156,30 @@
                                 required
                                 autocomplete="family-name"
                                 aria-required="true"
-                                formControlName="lastName"
+                                formControlName="last_name"
                             />
                         </div>
                         <div
                             *ngIf="
-                                registerForm.get('lastName')?.touched &&
-                                registerForm.get('lastName')?.invalid
+                                registerForm.get('last_name')?.touched &&
+                                registerForm.get('last_name')?.invalid
                             "
                             class="error"
                             role="alert"
                             tabindex="0"
                         >
                             <div
-                                *ngIf="registerForm.get('lastName')?.errors?.['required']"
+                                *ngIf="registerForm.get('last_name')?.errors?.['required']"
                             >
                                 Este campo es obligatorio.
                             </div>
                             <div
-                                *ngIf="registerForm.get('lastName')?.errors?.['minlength']"
+                                *ngIf="registerForm.get('last_name')?.errors?.['minlength']"
                             >
                                 Debe tener al menos 2 caracteres.
                             </div>
                             <div
-                                *ngIf="registerForm.get('lastName')?.errors?.['pattern']"
+                                *ngIf="registerForm.get('last_name')?.errors?.['pattern']"
                             >
                                 Solo se permiten letras y espacios.
                             </div>
@@ -202,25 +202,25 @@
                             placeholder="Fecha de nacimiento"
                             required
                             aria-required="true"
-                            formControlName="birthDate"
+                            formControlName="birth_date"
                         />
                     </div>
                     <div
                         *ngIf="
-                            registerForm.get('birthDate')?.touched &&
-                            registerForm.get('birthDate')?.invalid
+                            registerForm.get('birth_date')?.touched &&
+                            registerForm.get('birth_date')?.invalid
                         "
                         class="error"
                         role="alert"
                         tabindex="0"
                     >
                         <div
-                            *ngIf="registerForm.get('birthDate')?.errors?.['required']"
+                            *ngIf="registerForm.get('birth_date')?.errors?.['required']"
                         >
                             Este campo es obligatorio.
                         </div>
                         <div
-                            *ngIf="registerForm.get('birthDate')?.errors?.['minAge']"
+                            *ngIf="registerForm.get('birth_date')?.errors?.['minAge']"
                         >
                             Debes tener al menos 13 años para registrarte.
                         </div>

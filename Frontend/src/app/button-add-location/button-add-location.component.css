@@ -4,7 +4,7 @@
     border-radius: 50%;
     padding: 14px 14px 10px 14px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    color: var(--color-primario);
+    color: var(--color-button);
     cursor: pointer;
     transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
     display: inline-flex;
@@ -15,7 +15,7 @@
 .button-accesible:hover {
     background-color: #f0f0f0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    color: var(--color-button);
+    color: var(--color-button-hover);
 }
 
 .button-accesible:focus-visible {

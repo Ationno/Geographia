@@ -128,9 +128,14 @@
     cursor: pointer;
     display: inline-block;
     padding: 0;
+    transition: transform 0.2s ease;
 }
 
-.profile-container button.icon:focus {
+.profile-container button.icon:hover {
+    transform: scale(1.05);
+}
+
+.profile-container button.icon:focus-visible {
     outline: 3px solid var(--color-primario);
     outline-offset: 2px;
 }

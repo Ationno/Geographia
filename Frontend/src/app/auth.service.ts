@@ -20,20 +20,8 @@ export class AuthService {
         this.isLoggedIn$ = this.loggedIn.asObservable();
     }
 
-    register(
-        firstName: string,
-        lastName: string,
-        email: string,
-        birthDate: Date,
-        password: string
-    ): Observable<any> {
-        return this.http.post(this.apiUrl + '/register', {
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            birth_date: birthDate,
-            password: password,
-        });
+    register(user: FormData): Observable<any> {
+        return this.http.post(this.apiUrl + '/register', user);
     }
 
     login(email: string, password: string): Observable<any> {
@@ -61,6 +49,12 @@ export class AuthService {
         return (
             sessionStorage.getItem('token') !== null ||
             this.cookieService.check('token')
+        );
+    }
+
+    getToken(): string | null {
+        return (
+            sessionStorage.getItem('token') || this.cookieService.get('token')
         );
     }
 }

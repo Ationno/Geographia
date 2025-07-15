@@ -35,7 +35,7 @@ export class RegisterComponent {
     ngOnInit() {
         this.registerForm = this.fb.group(
             {
-                firstName: [
+                first_name: [
                     '',
                     [
                         Validators.required,
@@ -43,7 +43,7 @@ export class RegisterComponent {
                         Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/),
                     ],
                 ],
-                lastName: [
+                last_name: [
                     '',
                     [
                         Validators.required,
@@ -59,7 +59,7 @@ export class RegisterComponent {
                         Validators.maxLength(50),
                     ],
                 ],
-                birthDate: [
+                birth_date: [
                     '',
                     [Validators.required, this.minAgeValidator(13)],
                 ],
@@ -133,17 +133,53 @@ export class RegisterComponent {
 
     onSubmit() {
         if (this.registerForm.valid) {
-            const { firstName, lastName, email, birthDate, password } =
-                this.registerForm.value;
+            const formData = new FormData();
 
-            this.authService
-                .register(firstName, lastName, email, birthDate, password)
-                .subscribe({
-                    next: () => {
+            formData.append(
+                'first_name',
+                this.registerForm.get('first_name')?.value
+            );
+            formData.append(
+                'last_name',
+                this.registerForm.get('last_name')?.value
+            );
+            formData.append('email', this.registerForm.get('email')?.value);
+            formData.append(
+                'birth_date',
+                this.registerForm.get('birth_date')?.value
+            );
+            formData.append(
+                'password',
+                this.registerForm.get('password')?.value
+            );
+
+            this.authService.register(formData).subscribe({
+                next: () => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Registro exitoso!',
+                        text: 'Tu cuenta fue creada correctamente.',
+                        timer: 4000,
+                        timerProgressBar: true,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'montserrat-swal',
+                            closeButton: 'montserrat-close',
+                        },
+                    }).then(() => {
+                        this.router.navigate(['/login']);
+                    });
+                },
+                error: (err) => {
+                    if (
+                        err.status === 400 &&
+                        err.error?.error === 'User already exists'
+                    ) {
                         Swal.fire({
-                            icon: 'success',
-                            title: '¡Registro exitoso!',
-                            text: 'Tu cuenta fue creada correctamente.',
+                            icon: 'error',
+                            title: 'El correo ya está registrado',
+                            text: 'Por favor, iniciá sesión o usá otro correo electrónico.',
                             timer: 4000,
                             timerProgressBar: true,
                             showCloseButton: true,
@@ -152,47 +188,26 @@ export class RegisterComponent {
                                 popup: 'montserrat-swal',
                                 closeButton: 'montserrat-close',
                             },
-                        }).then(() => {
-                            this.router.navigate(['/login']);
                         });
-                    },
-                    error: (err) => {
-                        if (
-                            err.status === 400 &&
-                            err.error?.error === 'User already exists'
-                        ) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'El correo ya está registrado',
-                                text: 'Por favor, iniciá sesión o usá otro correo electrónico.',
-                                timer: 4000,
-                                timerProgressBar: true,
-                                showCloseButton: true,
-                                showConfirmButton: false,
-                                customClass: {
-                                    popup: 'montserrat-swal',
-                                    closeButton: 'montserrat-close',
-                                },
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error al registrar',
-                                text:
-                                    err?.error?.message ||
-                                    'Ocurrió un error inesperado. Por favor, intentá de nuevo.',
-                                timer: 4000,
-                                timerProgressBar: true,
-                                showCloseButton: true,
-                                showConfirmButton: false,
-                                customClass: {
-                                    popup: 'montserrat-swal',
-                                    closeButton: 'montserrat-close',
-                                },
-                            });
-                        }
-                    },
-                });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al registrar',
+                            text:
+                                err?.error?.message ||
+                                'Ocurrió un error inesperado. Por favor, intentá de nuevo.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'montserrat-swal',
+                                closeButton: 'montserrat-close',
+                            },
+                        });
+                    }
+                },
+            });
         } else {
             console.log('Form is invalid');
         }

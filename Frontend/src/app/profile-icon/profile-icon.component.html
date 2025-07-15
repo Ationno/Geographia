@@ -1,14 +1,27 @@
 <div class="profile-container">
-    <!-- [attr.aria-label]="'Abrir menú de perfil de usuario ' + userName" -->
     <button
         class="icon"
         (click)="toggleMenu()"
         aria-haspopup="true"
         [attr.aria-expanded]="visibleMenu"
-        aria-label="Abrir menú de perfil de usuario Agustina"
+        [attr.aria-label]="
+            'Abrir menú de perfil de usuario ' +
+            this.user?.first_name +
+            ' ' +
+            this.user?.last_name
+        "
         tabindex="0"
     >
-        <img src="icono.jpg" alt="Icono de usuario de Agustina" class="icon" />
+        <img
+            [src]="this.user?.profile_image_url"
+            [alt]="
+                'Icono de usuario de ' +
+                this.user?.first_name +
+                ' ' +
+                this.user?.last_name
+            "
+            class="icon"
+        />
     </button>
 
     <div class="profile-label" aria-hidden="true">Perfil de usuario</div>
@@ -22,17 +35,30 @@
     >
         <div class="profile-header">
             <img
-                src="icono.jpg"
-                alt="Icono de usuario de Agustina"
+                [src]="this.user?.profile_image_url"
+                [alt]="
+                    'Avatar de usuario de ' +
+                    this.user?.first_name +
+                    ' ' +
+                    this.user?.last_name
+                "
                 class="profile-avatar"
                 tabindex="0"
             />
             <div class="user-info">
-                <div class="user-name" tabindex="0">AGUSTINA ROJAS</div>
+                <div class="user-name" tabindex="0">
+                    {{
+                        this.user
+                            ? this.user.first_name.toUpperCase() +
+                              " " +
+                              this.user.last_name.toUpperCase()
+                            : ""
+                    }}
+                </div>
                 <div class="user-email">
-                    <a tabindex="0" href="mailto:agusrojasmc@gmail.com"
-                        >agusrojasmc&#64;gmail.com</a
-                    >
+                    <a tabindex="0" [href]="'mailto:' + this.user?.email">{{
+                        this.user?.email
+                    }}</a>
                 </div>
             </div>
         </div>
