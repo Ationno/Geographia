@@ -35,6 +35,7 @@ export class EditProfileComponent implements OnInit {
     editProfileForm: FormGroup;
     selectedImagePreview: string | null = null;
     selectedImageFile: File | null = null;
+    imageError: string | null = null;
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
@@ -117,6 +118,17 @@ export class EditProfileComponent implements OnInit {
     onFileChange(event: any) {
         const file: File = event.target.files[0];
         if (file) {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+            if (!validTypes.includes(file.type)) {
+                this.imageError = 'La imagen debe ser JPG, JPEG o PNG.';
+                this.editProfileForm.patchValue({
+                    profile_image: null,
+                });
+                return;
+            }
+
+            this.imageError = null;
             this.selectedImageFile = file;
             this.editProfileForm.patchValue({ profile_image: file });
 

@@ -17,3 +17,7 @@ input {
 .modal {
     min-width: 650px;
 }
+
+.image-error {
+    margin-top: 12px;
+}
