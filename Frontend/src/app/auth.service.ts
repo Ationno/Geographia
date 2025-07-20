@@ -57,4 +57,21 @@ export class AuthService {
             sessionStorage.getItem('token') || this.cookieService.get('token')
         );
     }
+
+    requestPasswordReset(email: string): Observable<any> {
+        return this.http.post(this.apiUrl + '/request-password-reset', {
+            email,
+        });
+    }
+
+    verifyCode(token: string, code: string): Observable<any> {
+        return this.http.post(this.apiUrl + '/verify-code', { token, code });
+    }
+
+    resetPassword(token: string, newPassword: string): Observable<any> {
+        return this.http.post(this.apiUrl + '/reset-password', {
+            token,
+            newPassword,
+        });
+    }
 }

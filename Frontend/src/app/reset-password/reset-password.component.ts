@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
     FormBuilder,
     FormGroup,
     Validators,
     ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-reset-password',
@@ -19,49 +20,103 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ResetPasswordComponent {
     form: FormGroup;
-    email = '';
+
+    @Input() email: string = '';
+    @Input() token: string = '';
+    @Output() passwordReset = new EventEmitter<void>();
+    @Output() backToCode = new EventEmitter<void>();
 
     constructor(
+        private router: Router,
         private fb: FormBuilder,
-        private route: ActivatedRoute,
-        private http: HttpClient,
-        private router: Router
+        private authService: AuthService
     ) {
         this.form = this.fb.group({
             newPassword: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['', Validators.required],
         });
-
-        this.route.queryParams.subscribe((params) => {
-            this.email = params['email'] || '';
-        });
     }
 
     submit() {
-        if (
-            this.form.valid &&
-            this.form.value.newPassword === this.form.value.confirmPassword
-        ) {
-            const payload = {
-                email: this.email,
-                newPassword: this.form.value.newPassword,
-            };
+        if (!this.email) {
+            Swal.fire('Error', 'No se encontró un email válido.', 'error');
+            return;
+        }
 
-            this.http.post('/api/auth/reset-password', payload).subscribe({
-                next: () => {
-                    Swal.fire(
-                        'Contraseña restablecida',
-                        'Ya podés iniciar sesión con tu nueva contraseña.',
-                        'success'
-                    );
-                    this.router.navigate(['/login']);
-                },
-                error: () => {
-                    Swal.fire('Error', 'Código incorrecto o vencido.', 'error');
+        if (this.form.invalid) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, completa todos los campos correctamente.',
+                timer: 4000,
+                timerProgressBar: true,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'montserrat-swal',
+                    closeButton: 'montserrat-close',
                 },
             });
-        } else {
-            Swal.fire('Error', 'Las contraseñas no coinciden.', 'error');
+            return;
         }
+
+        const { newPassword, confirmPassword } = this.form.value;
+
+        if (newPassword !== confirmPassword) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Las contraseñas no coinciden.',
+                timer: 4000,
+                timerProgressBar: true,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'montserrat-swal',
+                    closeButton: 'montserrat-close',
+                },
+            });
+            return;
+        }
+
+        const payload = {
+            email: this.email,
+            newPassword,
+        };
+
+        this.authService.resetPassword(this.token, newPassword).subscribe({
+            next: () => {
+                this.passwordReset.emit();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Contraseña restablecida',
+                    text: 'Tu contraseña ha sido restablecida exitosamente.',
+                    timer: 4000,
+                    timerProgressBar: true,
+                    showCloseButton: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'montserrat-swal',
+                        closeButton: 'montserrat-close',
+                    },
+                });
+                this.router.navigate(['/login']);
+            },
+            error: () => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un problema al restablecer la contraseña.',
+                    timer: 4000,
+                    timerProgressBar: true,
+                    showCloseButton: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'montserrat-swal',
+                        closeButton: 'montserrat-close',
+                    },
+                });
+            },
+        });
     }
 }

@@ -1,0 +1,19 @@
+<div class="verification-container">
+    <h2>Verificar código</h2>
+    <p>Ingresá el código de 4 dígitos que recibiste por correo.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="code-inputs">
+            <input *ngFor="let ctrl of codeControls; let i = index" maxlength="1" type="text" inputmode="numeric"
+                pattern="[0-9]*" [formControl]="ctrl" (input)="onInput($event, i)" (keydown)="onKeyDown($event, i)"
+                class="code-box" />
+        </div>
+
+        <button type="submit" class="button" [disabled]="form.get('code')?.value?.length !== 4">
+            Verificar
+        </button>
+    </form>
+    <p class="back-to-login">
+        <a href="/login">Volver al inicio de sesión</a>
+    </p>
+</div>

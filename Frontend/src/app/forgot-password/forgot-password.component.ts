@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
     FormBuilder,
     FormGroup,
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 @Component({
     selector: 'app-forgot-password',
@@ -20,10 +21,14 @@ import { HttpClient } from '@angular/common/http';
 export class ForgotPasswordComponent {
     form: FormGroup;
 
+    @Output() tokenReceived = new EventEmitter<string>();
+    @Output() emailSubmitted = new EventEmitter<string>();
+
     constructor(
         private fb: FormBuilder,
         private http: HttpClient,
-        private router: Router
+        private router: Router,
+        private authService: AuthService
     ) {
         this.form = this.fb.group({
             email: ['', [Validators.required, Validators.email]],
@@ -32,39 +37,29 @@ export class ForgotPasswordComponent {
 
     submit() {
         if (this.form.valid) {
-            this.http
-                .post('/api/auth/request-password-reset', this.form.value)
+            this.authService
+                .requestPasswordReset(this.form.value.email)
                 .subscribe({
-                    next: () => {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Código enviado',
-                            text: 'Revisá tu correo. Cuando lo tengas, hacé clic en "Ingresar código".',
-                            showCancelButton: true,
-                            confirmButtonText: 'Ingresar código',
-                            cancelButtonText: 'Cerrar',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                this.router.navigate(['/reset-password'], {
-                                    queryParams: {
-                                        email: this.form.value.email,
-                                    },
-                                });
-                            }
-                        });
+                    next: (response) => {
+                        this.emailSubmitted.emit(this.form.value.email);
+                        this.tokenReceived.emit(response.token);
                     },
                     error: () => {
-                        Swal.fire(
-                            'Error',
-                            'No se pudo enviar el correo. Verificá el email.',
-                            'error'
-                        );
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo enviar el correo. Asegúrate de que el email sea válido.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'montserrat-swal',
+                                closeButton: 'montserrat-close',
+                            },
+                        });
                     },
                 });
         }
-    }
-
-    backToLogin() {
-        this.router.navigate(['/login']);
     }
 }
