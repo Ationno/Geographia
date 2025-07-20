@@ -12,6 +12,8 @@ import { CloseSesionComponent } from './close-sesion/close-sesion.component';
 import { LocationComponent } from './location/location.component';
 import { ResumeLocationComponent } from './resume-location/resume-location.component';
 import { ListLocationsComponent } from './list-locations/list-locations.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 export const routes: Routes = [
     {
@@ -25,6 +27,14 @@ export const routes: Routes = [
     {
         path: 'login',
         component: LoginComponent,
+    },
+    {
+        path: 'forgot-password',
+        component: ForgotPasswordComponent,
+    },
+    {
+        path: 'reset-password',
+        component: ResetPasswordComponent,
     },
     {
         path: 'map',
