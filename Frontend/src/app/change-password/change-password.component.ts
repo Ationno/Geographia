@@ -38,7 +38,7 @@ import { A11yModule } from '@angular/cdk/a11y';
     ],
 })
 export class ChangePasswordComponent {
-    form: FormGroup;
+    changePasswordForm: FormGroup;
     submitted = false;
     wrongCurrentPassword = false;
 
@@ -48,7 +48,7 @@ export class ChangePasswordComponent {
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
 
     constructor(private router: Router) {
-        this.form = new FormGroup(
+        this.changePasswordForm = new FormGroup(
             {
                 currentPassword: new FormControl('', [Validators.required]),
                 newPassword: new FormControl('', [
@@ -88,17 +88,18 @@ export class ChangePasswordComponent {
         this.submitted = true;
         this.wrongCurrentPassword = false;
 
-        if (this.form.valid) {
-            const current = this.form.get('currentPassword')?.value;
+        if (this.changePasswordForm.valid) {
+            const current =
+                this.changePasswordForm.get('currentPassword')?.value;
 
             if (current !== this.actualPasswordFromBackend) {
                 this.wrongCurrentPassword = true;
                 return;
             }
 
-            console.log('Password Change Data:', this.form.value);
+            console.log('Password Change Data:', this.changePasswordForm.value);
         } else {
-            this.form.markAllAsTouched();
+            this.changePasswordForm.markAllAsTouched();
         }
     }
 

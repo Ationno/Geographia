@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../user.service'; // Ruta según tu estructura
 import { catchError } from 'rxjs';
 import { of } from 'rxjs';
-import { A11yModule } from '@angular/cdk/a11y'; 
+import { A11yModule } from '@angular/cdk/a11y';
 @Component({
     selector: 'app-privacy-settings',
     standalone: true,
@@ -14,7 +14,7 @@ import { A11yModule } from '@angular/cdk/a11y';
     styleUrl: './privacy-settings.component.css',
 })
 export class PrivacySettingsComponent implements OnInit {
-    form: FormGroup;
+    privacyForm: FormGroup;
     isLoading = false;
     errorMessage: string | null = null;
 
@@ -22,7 +22,7 @@ export class PrivacySettingsComponent implements OnInit {
     firstFocusElement!: ElementRef<HTMLHeadingElement>;
 
     constructor(private userService: UserService, private router: Router) {
-        this.form = new FormGroup({
+        this.privacyForm = new FormGroup({
             show_location: new FormControl(false),
             show_birth_date: new FormControl(false),
             show_name: new FormControl(false),
@@ -37,40 +37,40 @@ export class PrivacySettingsComponent implements OnInit {
             this.firstFocusElement.nativeElement.focus();
         }, 0);
 
-        this.userService
-            .getPrivacySettings()
-            .pipe(
-                catchError((err) => {
-                    console.error(
-                        'Error cargando configuración de privacidad',
-                        err
-                    );
-                    this.errorMessage = 'No se pudo cargar la configuración.';
-                    return of(null);
-                })
-            )
-            .subscribe((settings) => {
-                if (settings) {
-                    this.form.patchValue(settings);
-                }
-                this.isLoading = false;
-            });
+        this.userService.getCurrentUser().subscribe({
+            next: (data: any) => {
+                this.privacyForm.patchValue({
+                    show_location: data.show_location,
+                    show_birth_date: data.show_birth_date,
+                    show_name: data.show_name,
+                    show_email: data.show_email,
+                });
+            },
+            error: (err) => {
+                console.error(
+                    'Error al obtener la configuración de privacidad',
+                    err
+                );
+            },
+        });
     }
 
     onSubmit(): void {
-        if (this.form.valid) {
-            this.userService.updatePrivacySettings(this.form.value).subscribe({
-                next: () => {
-                    this.router.navigate(['/map']);
-                },
-                error: (err) => {
-                    console.error(
-                        'Error actualizando configuración de privacidad',
-                        err
-                    );
-                    this.errorMessage = 'Error al guardar los cambios.';
-                },
-            });
+        if (this.privacyForm.valid) {
+            this.userService
+                .updatePrivacySettings(this.privacyForm.value)
+                .subscribe({
+                    next: () => {
+                        this.router.navigate(['/map']);
+                    },
+                    error: (err) => {
+                        console.error(
+                            'Error actualizando configuración de privacidad',
+                            err
+                        );
+                        this.errorMessage = 'Error al guardar los cambios.';
+                    },
+                });
         }
     }
 

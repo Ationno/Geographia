@@ -25,11 +25,10 @@ export class UserService {
         });
     }
 
-    getPrivacySettings() {
-        return this.http.get('/api/users/me/privacy');
-    }
-
-    updatePrivacySettings(data: any) {
-        return this.http.put('/api/users/me/privacy', data);
+    updatePrivacySettings(data: FormData): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.put(this.apiUrl + '/me/privacy', data, {
+            headers: { Authorization: `Bearer ${this.token}` },
+        });
     }
 }
