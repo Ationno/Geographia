@@ -6,6 +6,7 @@ import { UserService } from '../user.service'; // Ruta según tu estructura
 import { catchError } from 'rxjs';
 import { of } from 'rxjs';
 import { A11yModule } from '@angular/cdk/a11y';
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-privacy-settings',
     standalone: true,
@@ -47,10 +48,8 @@ export class PrivacySettingsComponent implements OnInit {
                 });
             },
             error: (err) => {
-                console.error(
-                    'Error al obtener la configuración de privacidad',
-                    err
-                );
+                this.errorMessage =
+                    'Error al obtener la configuración de privacidad';
             },
         });
     }
@@ -62,13 +61,38 @@ export class PrivacySettingsComponent implements OnInit {
                 .subscribe({
                     next: () => {
                         this.router.navigate(['/map']);
+                        Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            },
+                        }).fire({
+                            icon: 'success',
+                            title: 'Actualización de configuración de privacidad exitosa.',
+                        });
                     },
                     error: (err) => {
-                        console.error(
-                            'Error actualizando configuración de privacidad',
-                            err
-                        );
-                        this.errorMessage = 'Error al guardar los cambios.';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al procesar la solicitud.',
+                            text:
+                                err?.error?.message ||
+                                'Ocurrió un error inesperado. Por favor, intentá de nuevo.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'montserrat-swal',
+                                closeButton: 'montserrat-close',
+                            },
+                        });
                     },
                 });
         }

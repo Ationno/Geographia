@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
+import { UserService } from '../user.service';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-change-password',
@@ -40,21 +42,20 @@ import { A11yModule } from '@angular/cdk/a11y';
 export class ChangePasswordComponent {
     changePasswordForm: FormGroup;
     submitted = false;
-    wrongCurrentPassword = false;
-
-    actualPasswordFromBackend = 'miPass123';
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
 
-    constructor(private router: Router) {
+    constructor(private router: Router, private userService: UserService) {
         this.changePasswordForm = new FormGroup(
             {
-                currentPassword: new FormControl('', [Validators.required]),
-                newPassword: new FormControl('', [
+                actual_password: new FormControl('', [
                     Validators.required,
                     Validators.minLength(8),
-                    this.passwordComplexityValidator,
+                ]),
+                new_password: new FormControl('', [
+                    Validators.required,
+                    Validators.minLength(8),
                 ]),
                 confirmPassword: new FormControl('', [Validators.required]),
             },
@@ -68,17 +69,8 @@ export class ChangePasswordComponent {
         }, 0);
     }
 
-    passwordComplexityValidator(
-        control: AbstractControl
-    ): ValidationErrors | null {
-        const value = control.value;
-        if (!value) return null;
-        const hasNumber = /\d/.test(value);
-        return hasNumber ? null : { noNumber: true };
-    }
-
     matchPasswordsValidator(group: AbstractControl): ValidationErrors | null {
-        const newPass = group.get('newPassword')?.value;
+        const newPass = group.get('new_password')?.value;
         const confirm = group.get('confirmPassword')?.value;
 
         return newPass !== confirm ? { passwordMismatch: true } : null;
@@ -86,20 +78,96 @@ export class ChangePasswordComponent {
 
     onSubmit() {
         this.submitted = true;
-        this.wrongCurrentPassword = false;
 
         if (this.changePasswordForm.valid) {
-            const current =
-                this.changePasswordForm.get('currentPassword')?.value;
-
-            if (current !== this.actualPasswordFromBackend) {
-                this.wrongCurrentPassword = true;
-                return;
-            }
-
-            console.log('Password Change Data:', this.changePasswordForm.value);
-        } else {
-            this.changePasswordForm.markAllAsTouched();
+            const { actual_password, new_password } =
+                this.changePasswordForm.value;
+            this.userService
+                .changePassword(actual_password, new_password)
+                .subscribe({
+                    next: () => {
+                        this.router.navigate(['/map']);
+                        Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            },
+                        }).fire({
+                            icon: 'success',
+                            title: 'Cambio de contraseña exitoso',
+                        });
+                    },
+                    error: (error) => {
+                        if (error.status == 404) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Usuario no encontrado',
+                                text: 'Por favor, revisá tus credenciales e intentá de nuevo.',
+                                timer: 4000,
+                                timerProgressBar: true,
+                                showCloseButton: true,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'montserrat-swal',
+                                    closeButton: 'montserrat-close',
+                                },
+                            });
+                        } else if (error.status == 400) {
+                            if (
+                                error.error.error ==
+                                'Actual password is incorrect'
+                            )
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'La contraseña actual es incorrecta',
+                                    text: 'Por favor, revisá tus credenciales e intentá de nuevo.',
+                                    timer: 4000,
+                                    timerProgressBar: true,
+                                    showCloseButton: true,
+                                    showConfirmButton: false,
+                                    customClass: {
+                                        popup: 'montserrat-swal',
+                                        closeButton: 'montserrat-close',
+                                    },
+                                });
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'La nueva contraseña no puede ser igual a la actual',
+                                    text: 'Por favor, revisá tus credenciales e intentá de nuevo.',
+                                    timer: 4000,
+                                    timerProgressBar: true,
+                                    showCloseButton: true,
+                                    showConfirmButton: false,
+                                    customClass: {
+                                        popup: 'montserrat-swal',
+                                        closeButton: 'montserrat-close',
+                                    },
+                                });
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al procesar la solicitud.',
+                                text: 'Ocurrió un error inesperado. Por favor, intentá de nuevo.',
+                                timer: 4000,
+                                timerProgressBar: true,
+                                showCloseButton: true,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'montserrat-swal',
+                                    closeButton: 'montserrat-close',
+                                },
+                            });
+                        }
+                    },
+                });
         }
     }
 

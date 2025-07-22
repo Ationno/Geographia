@@ -7,7 +7,7 @@ const registerSchema = Joi.object({
 	last_name: Joi.string().min(2).pattern(nameRegex).required(),
 	email: Joi.string().email().required(),
 	birth_date: Joi.date().iso().required(),
-	password: Joi.string().min(8).pattern(/[0-9]/).required(),
+	password: Joi.string().min(8).required(),
 });
 
 const loginSchema = Joi.object({
@@ -36,8 +36,8 @@ const updateLocationSchema = Joi.object({
 });
 
 const updatePasswordSchema = Joi.object({
-	actual_password: Joi.string().min(8).pattern(/[0-9]/).required(),
-	new_password: Joi.string().min(8).pattern(/[0-9]/).required(),
+	actual_password: Joi.string().min(8).required(),
+	new_password: Joi.string().min(8).required(),
 });
 
 module.exports = {

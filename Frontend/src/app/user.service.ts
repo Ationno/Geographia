@@ -31,4 +31,20 @@ export class UserService {
             headers: { Authorization: `Bearer ${this.token}` },
         });
     }
+
+    changePassword(
+        actual_password: string,
+        new_password: string
+    ): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.put(
+            this.apiUrl + '/me/password',
+            { actual_password, new_password },
+            {
+                headers: {
+                    Authorization: `Bearer ${this.token}`,
+                },
+            }
+        );
+    }
 }

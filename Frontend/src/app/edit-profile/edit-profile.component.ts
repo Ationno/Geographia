@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { UserService } from '../user.service';
 import { A11yModule } from '@angular/cdk/a11y';
+import { ResetService } from '../reset.service';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-edit-profile',
@@ -42,7 +44,11 @@ export class EditProfileComponent implements OnInit {
 
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-    constructor(private router: Router, private userService: UserService) {
+    constructor(
+        private router: Router,
+        private userService: UserService,
+        private resetService: ResetService
+    ) {
         this.editProfileForm = new FormGroup({
             first_name: new FormControl('', [
                 Validators.required,
@@ -170,9 +176,41 @@ export class EditProfileComponent implements OnInit {
             }
 
             this.userService.updateProfile(formData).subscribe({
-                next: () => this.router.navigate(['/map']),
+                next: () => {
+                    this.router.navigate(['/map']);
+                    this.resetService.resetComponentTrigger();
+                    Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showCloseButton: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        },
+                    }).fire({
+                        icon: 'success',
+                        title: 'Actualización de datos exitosa',
+                    });
+                },
                 error: (err) =>
-                    console.error('Error al actualizar perfil', err),
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al procesar la solicitud',
+                        text:
+                            err?.error?.message ||
+                            'Ocurrió un error inesperado. Por favor, intentá de nuevo.',
+                        timer: 4000,
+                        timerProgressBar: true,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'montserrat-swal',
+                            closeButton: 'montserrat-close',
+                        },
+                    }),
             });
         }
     }

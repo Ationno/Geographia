@@ -413,3 +413,7 @@ html {
         font-size: 14px;
     }
 }
+
+.swal2-container {
+    z-index: 20000 !important;
+}
