@@ -9,7 +9,7 @@ const Location = sequelize.define("Location", {
 	images: { type: DataTypes.JSON, allowNull: false },
 	details: { type: DataTypes.TEXT, allowNull: true, defaultValue: "" },
 	type: {
-		type: DataTypes.ENUM("geographic", "rural"),
+		type: DataTypes.ENUM("Rural", "Geográfica", "Histórica"),
 		allowNull: false,
 	},
 });

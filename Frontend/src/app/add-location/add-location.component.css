@@ -49,3 +49,8 @@
     font-size: 20px;
     cursor: pointer;
 }
+
+.error {
+    margin-top: 8px;
+    margin-bottom: 0;
+}

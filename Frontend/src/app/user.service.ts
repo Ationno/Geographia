@@ -47,4 +47,18 @@ export class UserService {
             }
         );
     }
+
+    deleteProfile(): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.delete(this.apiUrl + '/me', {
+            headers: { Authorization: `Bearer ${this.token}` },
+        });
+    }
+
+    getUserById(userId: number): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.get(`${this.apiUrl}/profile/${userId}`, {
+            headers: { Authorization: `Bearer ${this.token}` },
+        });
+    }
 }

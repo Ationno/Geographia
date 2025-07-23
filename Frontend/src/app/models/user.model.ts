@@ -13,4 +13,5 @@ export interface User {
     show_location: boolean;
     show_name: boolean;
     updatedAt: Date;
+    lastLocation: string;
 }

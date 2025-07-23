@@ -36,6 +36,9 @@ import { AuthService } from '../auth.service';
 import Swal from 'sweetalert2';
 import { LoginButtonComponent } from '../login-button/login-button.component';
 import { AddLocationComponent } from '../add-location/add-location.component';
+import { Location } from '../models/location.model';
+import { LocationService } from '../location.service';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-map',
@@ -86,6 +89,8 @@ export class MapComponent {
     maskGeoJSON: any;
     isLoggedIn: boolean = false;
     private authSub!: Subscription;
+    locations: Location[] = [];
+    protected apiUrl = environment.apiUrl.slice(0, -4);
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLDivElement>;
@@ -95,36 +100,21 @@ export class MapComponent {
         [-52.5, -20.0],
     ];
 
-    locations = [
-        {
-            id: 1,
-            title: 'Glaciar Perito Moreno',
-            coordinates: [-73.05, -50.5] as [number, number],
-            image: 'Perito.jpg',
-        },
-        {
-            id: 2,
-            title: 'Quebrada de Humahuaca',
-            coordinates: [-65.5, -23.2] as [number, number],
-            image: 'Salta.jpg',
-        },
-        {
-            id: 3,
-            title: 'Esteros del Iberá',
-            coordinates: [-57.2, -28.5] as [number, number],
-            image: 'Andes.jpg',
-        },
-    ];
-
     constructor(
         private router: Router,
         private http: HttpClient,
-        private authService: AuthService
+        private authService: AuthService,
+        private locationService: LocationService
     ) {}
 
     ngOnInit() {
         this.authSub = this.authService.isLoggedIn$.subscribe((loggedIn) => {
             this.isLoggedIn = loggedIn;
+        });
+
+        this.locationService.getAllLocations().subscribe((locations) => {
+            this.locations = locations;
+            console.log('Locations fetched:', this.locations);
         });
 
         this.http.get('argentina-mask.geojson').subscribe((argentina: any) => {

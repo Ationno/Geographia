@@ -9,6 +9,9 @@ import { MapboxService } from '../mapbox.service';
 import { catchError, finalize, of } from 'rxjs';
 import { ViewChild, ElementRef } from '@angular/core';
 import { A11yModule } from '@angular/cdk/a11y';
+import { LocationService } from '../location.service';
+import { ResetService } from '../reset.service';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-add-location',
@@ -44,7 +47,7 @@ export class AddLocationComponent {
 
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-    form: FormGroup;
+    addLocationForm: FormGroup;
     selectedImages: File[] = [];
     lat!: number;
     lng!: number;
@@ -58,9 +61,11 @@ export class AddLocationComponent {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private mapboxService: MapboxService
+        private mapboxService: MapboxService,
+        private locationService: LocationService,
+        private resetService: ResetService
     ) {
-        this.form = new FormGroup({
+        this.addLocationForm = new FormGroup({
             name: new FormControl('', [Validators.required]),
             address: new FormControl('', [Validators.required]),
             latitude: new FormControl(null, [Validators.required]),
@@ -88,7 +93,7 @@ export class AddLocationComponent {
 
         this.fetchAddress();
 
-        this.form.patchValue({
+        this.addLocationForm.patchValue({
             latitude: this.lat,
             longitude: this.lng,
         });
@@ -116,7 +121,7 @@ export class AddLocationComponent {
                 if (response?.features?.length > 0) {
                     const address =
                         response.features[0].properties.full_address;
-                    this.form.patchValue({ address });
+                    this.addLocationForm.patchValue({ address });
                 }
             });
     }
@@ -129,10 +134,10 @@ export class AddLocationComponent {
         const files: FileList = event.target.files;
         if (files.length > 0) {
             this.selectedImages = Array.from(files);
-            this.form.patchValue({
+            this.addLocationForm.patchValue({
                 images: this.selectedImages,
             });
-            this.form.get('images')?.updateValueAndValidity();
+            this.addLocationForm.get('images')?.updateValueAndValidity();
 
             this.selectedImagePreviews = [];
             for (const file of this.selectedImages) {
@@ -146,8 +151,85 @@ export class AddLocationComponent {
     }
 
     onSubmit() {
-        if (this.form.valid) {
-            console.log(this.form.value);
+        if (this.addLocationForm.valid) {
+            const data: FormData = new FormData();
+            data.append('name', this.addLocationForm.get('name')?.value);
+            data.append('address', this.addLocationForm.get('address')?.value);
+            data.append(
+                'latitude',
+                this.addLocationForm.get('latitude')?.value.toString()
+            );
+            data.append(
+                'longitude',
+                this.addLocationForm.get('longitude')?.value.toString()
+            );
+            if (this.addLocationForm.get('details')?.value) {
+                data.append(
+                    'details',
+                    this.addLocationForm.get('details')?.value
+                );
+            }
+            data.append('type', this.addLocationForm.get('type')?.value);
+            if (this.tags.length > 0) {
+                data.append('tags', JSON.stringify(this.tags));
+            }
+            this.selectedImages.forEach((image) => {
+                data.append('images', image, image.name);
+            });
+
+            this.locationService.addLocation(data).subscribe({
+                next: (response) => {
+                    this.resetService.resetComponentTrigger();
+                    this.router.navigate(['/map']);
+                    Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showCloseButton: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        },
+                    }).fire({
+                        icon: 'success',
+                        title: 'Locación agregada exitosamente.',
+                    });
+                },
+                error: (error) => {
+                    console.error('Error al agregar locación:', error);
+                    if (error.status == 409) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al agregar locación',
+                            text: 'No se puede agregar una locacion tan cerca de otra existente.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'montserrat-swal',
+                                closeButton: 'montserrat-close',
+                            },
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al procesar la solicitud.',
+                            text: 'Ocurrió un error inesperado. Por favor, intentá de nuevo.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'montserrat-swal',
+                                closeButton: 'montserrat-close',
+                            },
+                        });
+                    }
+                },
+            });
         }
     }
 
@@ -172,13 +254,13 @@ export class AddLocationComponent {
             .filter((t) => t !== '');
 
         this.tags = parsed;
-        this.form.get('tags')?.setValue(this.tags);
+        this.addLocationForm.get('tags')?.setValue(this.tags);
         this.isEditingTags = false;
     }
 
     deleteTag(index: number) {
         this.tags.splice(index, 1);
-        this.form.get('tags')?.setValue(this.tags);
+        this.addLocationForm.get('tags')?.setValue(this.tags);
     }
 
     enableTagEdit() {

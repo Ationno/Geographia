@@ -9,6 +9,7 @@ const path = require("path");
 const fs = require("fs");
 
 const { Op } = require("sequelize");
+const { console } = require("inspector");
 
 const EARTH_RADIUS_METERS = 6371000;
 
@@ -77,7 +78,9 @@ const deleteOldImages = async (images) => {
 };
 
 const createLocation = async (req, res) => {
-	const { name, address, latitude, longitude, tags, details, type } = req.body;
+	let tags = [];
+	const { name, address, latitude, longitude, details, type } = req.body;
+	tags = JSON.parse(req.body.tags);
 
 	const user = await User.findByPk(req.userId);
 
@@ -108,10 +111,14 @@ const createLocation = async (req, res) => {
 		images,
 	});
 
+	console.log("tags", tags, typeof tags);
+
 	if (tags && tags.length > 0) {
 		const tagInstances = await Promise.all(
 			tags.map(async (tagName) => {
-				const [tag] = await Tag.findOrCreate({ where: { name: tagName } });
+				const [tag] = await Tag.findOrCreate({
+					where: { name: tagName },
+				});
 				return tag;
 			})
 		);
@@ -122,7 +129,6 @@ const createLocation = async (req, res) => {
 	const imagesURL = images.map((image) => {
 		return `${req.protocol}://${req.get("host")}${image}`;
 	});
-
 	res.status(201).json({
 		message: "Location created successfully",
 		location: {
@@ -172,9 +178,9 @@ const updateLocation = async (req, res) => {
 	}
 
 	if (location.UserId !== req.userId) {
-		return res
-			.status(403)
-			.json({ error: "You do not have permission to update this location" });
+		return res.status(403).json({
+			error: "You do not have permission to update this location",
+		});
 	}
 
 	if (req.body.latitude || req.body.longitude) {
@@ -191,14 +197,18 @@ const updateLocation = async (req, res) => {
 
 	if (req.files && req.files.length > 0) {
 		deleteOldImages(location.images);
-		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
+		updateFields.images = req.files.map(
+			(file) => `/uploads/${file.filename}`
+		);
 	}
 
 	await location.update(updateFields);
 	if (updateFields.tags) {
 		const tagInstances = await Promise.all(
 			updateFields.tags.map(async (tagName) => {
-				const [tag] = await Tag.findOrCreate({ where: { name: tagName } });
+				const [tag] = await Tag.findOrCreate({
+					where: { name: tagName },
+				});
 				return tag;
 			})
 		);
@@ -461,9 +471,9 @@ const deleteLocation = async (req, res) => {
 	}
 
 	if (location.UserId !== req.userId) {
-		return res
-			.status(403)
-			.json({ error: "You do not have permission to delete this location" });
+		return res.status(403).json({
+			error: "You do not have permission to delete this location",
+		});
 	}
 
 	await Comment.destroy({ where: { locationId: location.id } });

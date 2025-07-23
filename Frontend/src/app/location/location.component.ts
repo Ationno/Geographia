@@ -6,9 +6,14 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { A11yModule } from '@angular/cdk/a11y';
+import { LocationService } from '../location.service';
+import { Location } from '../models/location.model';
+import { User } from '../models/user.model';
+import { UserService } from '../user.service';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-location',
@@ -36,52 +41,20 @@ export class LocationComponent implements OnInit {
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
 
-    constructor(private fb: FormBuilder, private router: Router) {}
+    location: Location | null = null;
 
-    images = ['Andes.jpg', 'Perito.jpg', 'Salta.jpg'];
+    constructor(
+        private fb: FormBuilder,
+        private router: Router,
+        private route: ActivatedRoute,
+        private locationService: LocationService,
+        private userService: UserService
+    ) {}
 
-    location = {
-        createdAt: '2025-06-28',
-        title: 'Reserva Natural Iberá',
-        user: {
-            name: 'Carlos Gómez',
-            profilePic: 'icono.jpg',
-            lastLocation: 'Corrientes',
-        },
-        location: 'Corrientes, Argentina',
-        rating: 4,
-        description:
-            'Una reserva con esteros impresionantes y gran biodiversidad. Ideal para avistaje de fauna y fotografía de naturaleza.',
-        tags: ['Naturaleza', 'Humedales', 'Biodiversidad'],
-        type: 'Geográfica',
-    };
-
-    comments = [
-        {
-            user: {
-                name: 'Lucía Pérez',
-                profilePic: 'icono.jpg',
-                lastLocation: 'Misiones',
-            },
-            text: 'Hermoso lugar, súper tranquilo y lleno de vida silvestre.',
-            date: '2025-06-25',
-        },
-        {
-            user: {
-                name: 'Julián Torres',
-                profilePic: 'icono.jpg',
-                lastLocation: 'Formosa',
-            },
-            text: 'Vale la pena visitar en primavera.',
-            date: '2025-06-24',
-        },
-    ];
-
-    userLoggedIn = {
-        name: 'Usuario Actual',
-        profilePic: 'icono.jpg',
-        lastLocation: 'Buenos Aires',
-    };
+    comments: { user: User | null; text: string; date: string }[] = [];
+    userLoggedIn: User | null = null;
+    userCreator: User | null = null;
+    protected apiUrl = environment.apiUrl.slice(0, -4);
 
     ngOnInit(): void {
         this.commentForm = this.fb.group({
@@ -91,17 +64,39 @@ export class LocationComponent implements OnInit {
         setTimeout(() => {
             this.firstFocusElement.nativeElement.focus();
         }, 0);
+
+        this.route.queryParams.subscribe((params) => {
+            this.locationService
+                .getLocationById(+params['locationId'])
+                .subscribe((location) => {
+                    this.location = location;
+                    this.userService
+                        .getUserById(location.UserId)
+                        .subscribe((user) => {
+                            this.userCreator = user;
+                        });
+                });
+        });
+
+        this.userService.getCurrentUser().subscribe((user) => {
+            this.userLoggedIn = user;
+        });
     }
 
     nextImage() {
-        this.currentImageIndex =
-            (this.currentImageIndex + 1) % this.images.length;
+        const imagesLength = this.location?.images?.length ?? 0;
+        if (imagesLength > 0) {
+            this.currentImageIndex =
+                (this.currentImageIndex + 1) % imagesLength;
+        }
     }
 
     prevImage() {
-        this.currentImageIndex =
-            (this.currentImageIndex - 1 + this.images.length) %
-            this.images.length;
+        const imagesLength = this.location?.images?.length ?? 0;
+        if (imagesLength > 0) {
+            this.currentImageIndex =
+                (this.currentImageIndex - 1 + imagesLength) % imagesLength;
+        }
     }
 
     selectImage(index: number) {

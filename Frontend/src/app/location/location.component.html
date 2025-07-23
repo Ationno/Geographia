@@ -1,83 +1,177 @@
 <div class="backdrop" (click)="cancel()" (keydown.escape)="cancel()">
-    <div cdkTrapFocus [@fadeInOut] class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true"
-        aria-labelledby="modal-title" aria-describedby="modal-description">
+    <div
+        cdkTrapFocus
+        [@fadeInOut]
+        class="modal"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+    >
         <div class="info-left">
             <p tabindex="0" #firstFocusElement class="date">
-                {{ location.createdAt }}
+                {{ location?.createdAt }}
             </p>
 
             <div class="title-section">
-                <h2 id="modal-title" tabindex="0">{{ location.title }}</h2>
-                <img [src]="location.user.profilePic" [alt]="'Icono de ' + location.user.name" class="profile-pic"
-                    tabindex="0" />
+                <h2 id="modal-title" tabindex="0">{{ location?.name }}</h2>
+                <img
+                    [src]="this.userCreator?.profile_image_url"
+                    [alt]="
+                        'Icono de ' +
+                        this.userCreator?.first_name +
+                        ' ' +
+                        this.userCreator?.last_name
+                    "
+                    class="profile-pic"
+                    tabindex="0"
+                />
             </div>
 
-            <p class="location" tabindex="0">{{ location.location }}</p>
+            <p class="location" tabindex="0">{{ location?.address }}</p>
 
-            <div class="rating" tabindex="0" role="region" [attr.aria-label]="
+            <div
+                class="rating"
+                tabindex="0"
+                role="region"
+                [attr.aria-label]="
                     'Calificación de ' +
-                    location.title +
+                    location?.name +
                     ' es ' +
-                    location.rating
-                ">
-                <span *ngFor="let star of [1, 2, 3, 4, 5]" class="material-symbols-outlined"
-                    [class.filled]="star <= location.rating" tabindex="-1" aria-hidden="true">
+                    location?.rating
+                "
+            >
+                <span
+                    *ngFor="let star of [1, 2, 3, 4, 5]"
+                    class="material-symbols-outlined"
+                    [class.filled]="star <= (location?.rating ?? 0)"
+                    tabindex="-1"
+                    aria-hidden="true"
+                >
                     star
                 </span>
             </div>
 
             <div class="carousel">
-                <button tabindex="0" type="button" aria-label="Imagen previa" class="arrow" (click)="prevImage()">
+                <button
+                    tabindex="0"
+                    type="button"
+                    aria-label="Imagen previa"
+                    class="arrow"
+                    (click)="prevImage()"
+                >
                     ‹
                 </button>
-                <img [src]="images[currentImageIndex]" [alt]="'imagen'" />
-                <button class="arrow" type="button" aria-label="Imagen siguiente" (click)="nextImage()">
+                <img
+                    [src]="this.apiUrl + location?.images?.[currentImageIndex] || 'assets/default-image.png'"
+                    [alt]="'imagen'"
+                />
+                <button
+                    class="arrow"
+                    type="button"
+                    aria-label="Imagen siguiente"
+                    (click)="nextImage()"
+                >
                     ›
                 </button>
             </div>
 
             <div class="dots">
-                <span *ngFor="let img of images; let i = index" [class.active]="i === currentImageIndex" role="button"
-                    tabindex="0" (click)="selectImage(i)" [attr.aria-label]="'Imagen ' + (i + 1)" tabindex="0"></span>
+                <span
+                    *ngFor="let img of this.location?.images; let i = index"
+                    [class.active]="i === currentImageIndex"
+                    role="button"
+                    tabindex="0"
+                    (click)="selectImage(i)"
+                    [attr.aria-label]="'Imagen ' + (i + 1)"
+                ></span>
             </div>
 
-            <p class="description" id="modal-description" tabindex="0" aria-label="Descripción de la ubicación">
-                {{ location.description }}
+            <p
+                class="description"
+                id="modal-description"
+                tabindex="0"
+                aria-label="Descripción de la ubicación"
+            >
+                {{ location?.details }}
             </p>
 
             <div class="tags">
-                <span class="type-tag" tabindex="0" aria-label="Tipo de locación.">{{ location.type }}</span>
-                <span *ngFor="let tag of location.tags" class="tag" tabindex="0" aria-label="Etiqueta">{{ tag }}</span>
+                <span
+                    class="type-tag"
+                    tabindex="0"
+                    aria-label="Tipo de locación."
+                    >{{ location?.type }}</span
+                >
+                <span
+                    *ngFor="let tag of location?.tags"
+                    class="tag"
+                    tabindex="0"
+                    aria-label="Etiqueta"
+                    >{{ tag }}</span
+                >
             </div>
         </div>
 
-        <div class="comments-right" tabindex="0" aria-label="Sección de comentarios">
+        <div
+            class="comments-right"
+            tabindex="0"
+            aria-label="Sección de comentarios"
+        >
             <div class="comments-header">
                 <h3 tabindex="0">COMENTARIOS</h3>
                 <span class="material-symbols-outlined"> chat </span>
             </div>
 
             <div class="comment" *ngFor="let c of comments">
-                <img [src]="c.user.profilePic" [alt]="'Foto de perfil de ' + c.user.name" class="comment-pic" />
+                <img
+                    [src]="c.user?.profile_image_url"
+                    [alt]="
+                        'Foto de perfil de ' +
+                        c.user?.first_name +
+                        ' ' +
+                        c.user?.last_name
+                    "
+                    class="comment-pic"
+                />
                 <div class="comment-body">
                     <div class="comment-meta">
                         <strong tabindex="0" aria-label="Usuario">{{
-                            c.user.name
-                            }}</strong>
-                        <small tabindex="0" aria-label="Ubicación y fecha">{{ c.user.lastLocation }} • {{ c.date
-                            }}</small>
+                            c.user?.first_name + " " + c.user?.last_name
+                        }}</strong>
+                        <small tabindex="0" aria-label="Ubicación y fecha"
+                            >{{ c.user?.latitude }} • {{ c.date }}</small
+                        >
                     </div>
-                    <p class="comment-text" tabindex="0" aria-label="Comentario">
+                    <p
+                        class="comment-text"
+                        tabindex="0"
+                        aria-label="Comentario"
+                    >
                         {{ c.text }}
                     </p>
                 </div>
             </div>
 
-            <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="comment-form"
-                aria-label="Formulario para agregar un comentario" tabindex="0">
-                <img [src]="userLoggedIn.profilePic" [alt]="'Foto de perfil de ' + userLoggedIn.name"
-                    class="comment-pic" />
-                <input type="text" formControlName="text" placeholder="Escribe un comentario..." required />
+            <form
+                [formGroup]="commentForm"
+                (ngSubmit)="onSubmitComment()"
+                class="comment-form"
+                aria-label="Formulario para agregar un comentario"
+                tabindex="0"
+            >
+                <img
+                    [src]="userLoggedIn?.profile_image_url"
+                    [alt]="'Foto de perfil de ' + userLoggedIn?.first_name"
+                    class="comment-pic"
+                />
+                <input
+                    type="text"
+                    formControlName="text"
+                    placeholder="Escribe un comentario..."
+                    required
+                />
                 <button type="submit" hidden></button>
             </form>
         </div>

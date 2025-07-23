@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
+import { LocationService } from '../location.service';
+import { Location } from '../models/location.model';
 
 @Component({
     selector: 'app-resume-location',
@@ -20,14 +22,23 @@ import { trigger, style, transition, animate } from '@angular/animations';
     ],
 })
 export class ResumeLocationComponent {
-    location = {
-        id: 'locationId',
-        name: 'Parque Nacional Torres del Paine',
-        address:
-            'Torres del Paine, Región de Magallanes y de la Antártica Chilena, Chile',
-    };
+    location: Location | null = null;
 
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private locationService: LocationService,
+        private route: ActivatedRoute
+    ) {}
+
+    ngOnInit(): void {
+        this.route.queryParams.subscribe((params) => {
+            this.locationService
+                .getLocationById(+params['locationId'])
+                .subscribe((location) => {
+                    this.location = location;
+                });
+        });
+    }
 
     goToLocationDetails(): void {
         this.router.navigate(
@@ -41,7 +52,7 @@ export class ResumeLocationComponent {
             ],
             {
                 queryParams: {
-                    locationId: this.location.id,
+                    locationId: this.location?.id,
                 },
             }
         );

@@ -105,8 +105,6 @@ export class RegisterComponent {
                 age--;
             }
 
-            console.log('Edad calculada:', age);
-
             return age >= minAge
                 ? null
                 : { minAge: { requiredAge: minAge, actualAge: age } };
@@ -133,27 +131,9 @@ export class RegisterComponent {
 
     onSubmit() {
         if (this.registerForm.valid) {
-            const formData = new FormData();
-
-            formData.append(
-                'first_name',
-                this.registerForm.get('first_name')?.value
-            );
-            formData.append(
-                'last_name',
-                this.registerForm.get('last_name')?.value
-            );
-            formData.append('email', this.registerForm.get('email')?.value);
-            formData.append(
-                'birth_date',
-                this.registerForm.get('birth_date')?.value
-            );
-            formData.append(
-                'password',
-                this.registerForm.get('password')?.value
-            );
-
-            this.authService.register(formData).subscribe({
+            const data = { ...this.registerForm.value };
+            delete data.repeatPassword;
+            this.authService.register(data).subscribe({
                 next: () => {
                     Swal.fire({
                         icon: 'success',
@@ -172,6 +152,7 @@ export class RegisterComponent {
                     });
                 },
                 error: (err) => {
+                    console.error('Error during registration:', err);
                     if (
                         err.status === 400 &&
                         err.error?.error === 'User already exists'
