@@ -4,6 +4,9 @@ import {
     FormGroup,
     Validators,
     ReactiveFormsModule,
+    ValidatorFn,
+    AbstractControl,
+    ValidationErrors,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -20,6 +23,8 @@ import { Router } from '@angular/router';
 })
 export class ResetPasswordComponent {
     form: FormGroup;
+    showPassword = false;
+    showRepeatPassword = false;
 
     @Input() email: string = '';
     @Input() token: string = '';
@@ -31,92 +36,86 @@ export class ResetPasswordComponent {
         private fb: FormBuilder,
         private authService: AuthService
     ) {
-        this.form = this.fb.group({
-            newPassword: ['', [Validators.required, Validators.minLength(6)]],
-            confirmPassword: ['', Validators.required],
-        });
+        this.form = this.fb.group(
+            {
+                password: ['', [Validators.required, Validators.minLength(8)]],
+                repeatPassword: [
+                    '',
+                    [Validators.required, Validators.minLength(8)],
+                ],
+            },
+            {
+                validators: [
+                    this.passwordMatchValidator('password', 'repeatPassword'),
+                ],
+            }
+        );
+    }
+
+    togglePassword() {
+        this.showPassword = !this.showPassword;
+    }
+
+    toggleRepeatPassword() {
+        this.showRepeatPassword = !this.showRepeatPassword;
+    }
+
+    passwordMatchValidator(
+        passwordKey: string,
+        confirmPasswordKey: string
+    ): ValidatorFn {
+        return (formGroup: AbstractControl): ValidationErrors | null => {
+            const group = formGroup as FormGroup;
+
+            const password = group.get(passwordKey)?.value;
+            const confirmPassword = group.get(confirmPasswordKey)?.value;
+
+            if (!password || !confirmPassword) return null;
+
+            return password === confirmPassword
+                ? null
+                : { passwordMismatch: true };
+        };
     }
 
     submit() {
-        if (!this.email) {
-            Swal.fire('Error', 'No se encontró un email válido.', 'error');
-            return;
-        }
-
-        if (this.form.invalid) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Por favor, completa todos los campos correctamente.',
-                timer: 4000,
-                timerProgressBar: true,
-                showCloseButton: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'montserrat-swal',
-                    closeButton: 'montserrat-close',
+        if (this.form.valid) {
+            const { password } = this.form.value;
+            this.authService.resetPassword(this.token, password).subscribe({
+                next: () => {
+                    this.passwordReset.emit();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Contraseña restablecida',
+                        text: 'Tu contraseña ha sido restablecida exitosamente.',
+                        timer: 4000,
+                        timerProgressBar: true,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'montserrat-swal',
+                            closeButton: 'montserrat-close',
+                        },
+                    });
+                    this.router.navigate(['/login']);
+                },
+                error: () => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un problema al restablecer la contraseña.',
+                        timer: 4000,
+                        timerProgressBar: true,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'montserrat-swal',
+                            closeButton: 'montserrat-close',
+                        },
+                    });
                 },
             });
-            return;
         }
-
-        const { newPassword, confirmPassword } = this.form.value;
-
-        if (newPassword !== confirmPassword) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Las contraseñas no coinciden.',
-                timer: 4000,
-                timerProgressBar: true,
-                showCloseButton: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'montserrat-swal',
-                    closeButton: 'montserrat-close',
-                },
-            });
-            return;
-        }
-
-        const payload = {
-            email: this.email,
-            newPassword,
-        };
-
-        this.authService.resetPassword(this.token, newPassword).subscribe({
-            next: () => {
-                this.passwordReset.emit();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Contraseña restablecida',
-                    text: 'Tu contraseña ha sido restablecida exitosamente.',
-                    timer: 4000,
-                    timerProgressBar: true,
-                    showCloseButton: true,
-                    showConfirmButton: false,
-                    customClass: {
-                        popup: 'montserrat-swal',
-                        closeButton: 'montserrat-close',
-                    },
-                });
-                this.router.navigate(['/login']);
-            },
-            error: () => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un problema al restablecer la contraseña.',
-                    timer: 4000,
-                    timerProgressBar: true,
-                    showCloseButton: true,
-                    showConfirmButton: false,
-                    customClass: {
-                        popup: 'montserrat-swal',
-                        closeButton: 'montserrat-close',
-                    },
-                });
-            },
-        });
+        console.log('Form is invalid');
     }
 }

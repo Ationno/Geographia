@@ -52,13 +52,23 @@ export class CodeVerificationComponent implements AfterViewInit {
                     Validators.pattern(/^[0-9]$/),
                 ])
         );
+
         this.form = new FormGroup({
-            code: new FormControl('', Validators.required),
+            code: new FormControl('', [
+                Validators.required,
+                Validators.minLength(4),
+                Validators.maxLength(4),
+            ]),
         });
 
         this.route.queryParams.subscribe((params) => {
             this.email = params['email'] || '';
         });
+    }
+
+    isCodeValid(): boolean {
+        const code = this.form.get('code')?.value;
+        return /^\d{4}$/.test(code);
     }
 
     ngAfterViewInit(): void {
@@ -95,9 +105,28 @@ export class CodeVerificationComponent implements AfterViewInit {
         this.form.get('code')?.updateValueAndValidity();
     }
 
+    onPaste(event: ClipboardEvent): void {
+        const pastedData = event.clipboardData?.getData('text') || '';
+        const digits = pastedData.replace(/\D/g, '').slice(0, 4);
+
+        if (digits.length) {
+            event.preventDefault();
+            digits.split('').forEach((digit, i) => {
+                if (this.codeControls[i]) {
+                    this.codeControls[i].setValue(digit);
+                }
+            });
+            this.updateFormCode();
+
+            const nextIndex = digits.length < 4 ? digits.length : 3;
+            const nextInput = this.codeInputs?.toArray()[nextIndex];
+            nextInput?.nativeElement?.focus();
+        }
+    }
+
     submit() {
         const code = this.form.get('code')?.value;
-        if (!this.email || !code || code.length !== 4) {
+        if (!this.isCodeValid()) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',

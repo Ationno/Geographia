@@ -24,14 +24,16 @@ export class ForgotPasswordComponent {
     @Output() tokenReceived = new EventEmitter<string>();
     @Output() emailSubmitted = new EventEmitter<string>();
 
-    constructor(
-        private fb: FormBuilder,
-        private http: HttpClient,
-        private router: Router,
-        private authService: AuthService
-    ) {
+    constructor(private fb: FormBuilder, private authService: AuthService) {
         this.form = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
+            email: [
+                '',
+                [
+                    Validators.required,
+                    Validators.email,
+                    Validators.maxLength(50),
+                ],
+            ],
         });
     }
 
