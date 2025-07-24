@@ -7,6 +7,7 @@ const {
 	getAllLocations,
 	getRuralLocations,
 	getGeographicLocations,
+	getHistoricalLocations,
 	getLocationById,
 	getMyLocations,
 	deleteLocation,
@@ -56,5 +57,6 @@ router.put(
 );
 router.get("/rural/", asyncHandler(getRuralLocations));
 router.get("/geographic/", asyncHandler(getGeographicLocations));
+router.get("/historical/", asyncHandler(getHistoricalLocations));
 
 module.exports = router;

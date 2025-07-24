@@ -80,7 +80,7 @@ const deleteOldImages = async (images) => {
 const createLocation = async (req, res) => {
 	let tags = [];
 	const { name, address, latitude, longitude, details, type } = req.body;
-	tags = JSON.parse(req.body.tags);
+	tags = req.body.tags ? JSON.parse(req.body.tags) : [];
 
 	const user = await User.findByPk(req.userId);
 
@@ -197,9 +197,7 @@ const updateLocation = async (req, res) => {
 
 	if (req.files && req.files.length > 0) {
 		deleteOldImages(location.images);
-		updateFields.images = req.files.map(
-			(file) => `/uploads/${file.filename}`
-		);
+		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
 	}
 
 	await location.update(updateFields);
@@ -277,7 +275,7 @@ const getAllLocations = async (req, res) => {
 
 const getRuralLocations = async (req, res) => {
 	const ruralLocations = await Location.findAll({
-		where: { type: "rural" },
+		where: { type: "Rural" },
 		attributes: {
 			include: [
 				[
@@ -323,7 +321,7 @@ const getRuralLocations = async (req, res) => {
 
 const getGeographicLocations = async (req, res) => {
 	const geographicLocations = await Location.findAll({
-		where: { type: "geographic" },
+		where: { type: "Geográfica" },
 		attributes: {
 			include: [
 				[
@@ -355,6 +353,52 @@ const getGeographicLocations = async (req, res) => {
 		],
 	});
 	const formattedLocations = geographicLocations.map((loc) => {
+		const locJSON = loc.toJSON();
+
+		return {
+			...locJSON,
+			tags: locJSON.Tags.map((tag) => tag.name),
+			Tags: undefined,
+		};
+	});
+
+	res.status(200).json(formattedLocations);
+};
+
+const getHistoricalLocations = async (req, res) => {
+	const historicalLocations = await Location.findAll({
+		where: { type: "Histórica" },
+		attributes: {
+			include: [
+				[
+					Sequelize.fn(
+						"COALESCE",
+						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
+						0
+					),
+					"averageRating",
+				],
+			],
+		},
+		include: [
+			{
+				model: Rating,
+				attributes: [],
+			},
+			{
+				model: Tag,
+				attributes: ["name"],
+				through: { attributes: [] },
+			},
+		],
+		group: [
+			"Location.id",
+			"Tags.id",
+			"Tags->location_tags.LocationId",
+			"Tags->location_tags.TagId",
+		],
+	});
+	const formattedLocations = historicalLocations.map((loc) => {
 		const locJSON = loc.toJSON();
 
 		return {
@@ -560,6 +604,7 @@ module.exports = {
 	getAllLocations,
 	getRuralLocations,
 	getGeographicLocations,
+	getHistoricalLocations,
 	getLocationById,
 	getMyLocations,
 	deleteLocation,
