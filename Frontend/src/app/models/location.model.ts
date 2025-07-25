@@ -14,7 +14,8 @@ export interface Location {
 }
 
 export enum LocationType {
-    Rural = 'Rural',
-    Geográfica = 'Geográfica',
-    Histórica = 'Histórica',
+    SATELITE = 'SATÉLITE',
+    RURAL = 'RURAL',
+    GEOGRAFICA = 'GEOGRÁFICA',
+    HISTORICA = 'HISTÓRICA',
 }

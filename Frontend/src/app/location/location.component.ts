@@ -69,6 +69,7 @@ export class LocationComponent implements OnInit {
             this.locationService
                 .getLocationById(+params['locationId'])
                 .subscribe((location) => {
+                    location.createdAt = new Date(location.createdAt);
                     this.location = location;
                     this.userService
                         .getUserById(location.UserId)
@@ -117,9 +118,6 @@ export class LocationComponent implements OnInit {
 
         this.comments.unshift(newComment);
         this.commentForm.reset();
-
-        // Acá irá tu lógica de envío al backend
-        console.log('Comentario enviado:', newComment);
     }
 
     cancel() {

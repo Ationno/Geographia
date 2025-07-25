@@ -111,8 +111,6 @@ const createLocation = async (req, res) => {
 		images,
 	});
 
-	console.log("tags", tags, typeof tags);
-
 	if (tags && tags.length > 0) {
 		const tagInstances = await Promise.all(
 			tags.map(async (tagName) => {
@@ -197,7 +195,9 @@ const updateLocation = async (req, res) => {
 
 	if (req.files && req.files.length > 0) {
 		deleteOldImages(location.images);
-		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
+		updateFields.images = req.files.map(
+			(file) => `/uploads/${file.filename}`
+		);
 	}
 
 	await location.update(updateFields);
@@ -598,6 +598,63 @@ const updateRating = async (req, res) => {
 	});
 };
 
+const searchLocations = async (req, res) => {
+	const query = req.query.q;
+
+	if (!query || query.trim() === "") {
+		return res.status(400).json({ error: "Query parameter is required" });
+	}
+
+	const locations = await Location.findAll({
+		where: {
+			address: {
+				[Op.like]: `%${query}%`,
+			},
+		},
+		attributes: {
+			include: [
+				[
+					Sequelize.fn(
+						"COALESCE",
+						Sequelize.fn("AVG", Sequelize.col("Ratings.score")),
+						0
+					),
+					"averageRating",
+				],
+			],
+		},
+		include: [
+			{
+				model: Rating,
+				attributes: [],
+			},
+			{
+				model: Tag,
+				attributes: ["name"],
+				through: { attributes: [] },
+			},
+		],
+		group: [
+			"Location.id",
+			"Tags.id",
+			"Tags->location_tags.LocationId",
+			"Tags->location_tags.TagId",
+		],
+	});
+
+	const formattedLocations = locations.map((loc) => {
+		const locJSON = loc.toJSON();
+
+		return {
+			...locJSON,
+			tags: locJSON.Tags.map((tag) => tag.name),
+			Tags: undefined,
+		};
+	});
+
+	res.status(200).json(formattedLocations);
+};
+
 module.exports = {
 	createLocation,
 	updateLocation,
@@ -610,4 +667,5 @@ module.exports = {
 	deleteLocation,
 	addRating,
 	updateRating,
+	searchLocations,
 };

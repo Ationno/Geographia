@@ -13,30 +13,8 @@ import { ResetPasswordComponent } from '../reset-password/reset-password.compone
         CodeVerificationComponent,
         ResetPasswordComponent,
     ],
-    template: `<ng-container [ngSwitch]="step">
-        <app-forgot-password
-            *ngSwitchCase="'email'"
-            (emailSubmitted)="onEmailSubmitted($event)"
-            (tokenReceived)="onTokenReceived($event)"
-        ></app-forgot-password>
-
-        <app-code-verification
-            *ngSwitchCase="'code'"
-            [email]="email"
-            [token]="token"
-            (codeVerified)="onCodeVerified()"
-            (backToEmail)="step = 'email'"
-        ></app-code-verification>
-
-        <app-reset-password
-            *ngSwitchCase="'reset'"
-            [email]="email"
-            [token]="token"
-            (passwordReset)="onPasswordReset()"
-            (backToCode)="step = 'code'"
-        ></app-reset-password>
-    </ng-container>`,
-    styleUrls: [],
+    templateUrl: './recover-password.component.html',
+    styleUrls: ['./recover-password.component.css'],
 })
 export class RecoverPasswordComponent {
     step: 'email' | 'code' | 'reset' = 'email';

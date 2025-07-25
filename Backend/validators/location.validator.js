@@ -9,7 +9,7 @@ const createLocationSchema = Joi.object({
 	longitude: Joi.number().min(-180).max(180).required(),
 	details: Joi.string().max(1000).optional(),
 	tags: Joi.string().optional(),
-	type: Joi.string().valid("Rural", "Geográfica", "Histórica").required(),
+	type: Joi.string().valid("RURAL", "GEOGRÁFICA", "HISTÓRICA").required(),
 });
 
 const updateLocationSchema = Joi.object({
@@ -19,7 +19,7 @@ const updateLocationSchema = Joi.object({
 	longitude: Joi.number().min(-180).max(180).optional(),
 	details: Joi.string().max(1000).optional(),
 	tags: Joi.string().optional(),
-	type: Joi.string().valid("Rural", "Geográfica", "Histórica").optional(),
+	type: Joi.string().valid("RURAL", "GEOGRÁFICA", "HISTÓRICA").optional(),
 }).min(1);
 
 const ratingSchema = Joi.object({

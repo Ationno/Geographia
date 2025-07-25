@@ -1,15 +1,19 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    ViewChild,
+    OnInit,
+    OnDestroy,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
-
-interface Location {
-    id: number;
-    image: string;
-    title: string;
-    description: string;
-}
+import { LocationService } from '../location.service';
+import { Location, LocationType } from '../models/location.model';
+import { environment } from '../../environments/environment';
+import { TypeService } from '../type.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-list-locations',
@@ -29,46 +33,67 @@ interface Location {
         ]),
     ],
 })
-export class ListLocationsComponent implements OnInit {
+export class ListLocationsComponent implements OnInit, OnDestroy {
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLHeadingElement>;
 
     locations: Location[] = [];
+    filteredLocations: Location[] = [];
     paginatedLocations: Location[] = [];
+
     currentPage: number = 1;
     pageSize: number = 5;
     totalPages: number = 1;
+    protected apiUrl = environment.apiUrl.slice(0, -4);
+    type: LocationType = LocationType.SATELITE;
 
-    constructor(private router: Router) {}
+    private typeSub!: Subscription;
+
+    constructor(
+        private router: Router,
+        private locationService: LocationService,
+        private typeService: TypeService
+    ) {}
 
     ngOnInit(): void {
         setTimeout(() => {
             this.firstFocusElement.nativeElement.focus();
         }, 0);
 
-        this.fetchLocations();
+        this.locationService.getAllLocations().subscribe({
+            next: (response) => {
+                this.locations = response;
+                this.typeSub = this.typeService
+                    .getCurrentType()
+                    .subscribe((type) => {
+                        this.applyFilter(type);
+                        this.type = type;
+                    });
+            },
+        });
     }
 
-    fetchLocations(): void {
-        const mockLocations: Location[] = Array.from(
-            { length: 37 },
-            (_, i) => ({
-                id: i + 1,
-                image: 'https://via.placeholder.com/100x60?text=Loc+' + (i + 1),
-                title: 'Locación ' + (i + 1),
-                description: 'Descripción de la locación número ' + (i + 1),
-            })
-        );
+    applyFilter(type: string): void {
+        if (type === 'SATÉLITE') {
+            this.filteredLocations = [...this.locations];
+        } else {
+            this.filteredLocations = this.locations.filter(
+                (loc) => loc.type?.toLowerCase() === type.toLowerCase()
+            );
+        }
 
-        this.locations = mockLocations;
-        this.totalPages = Math.ceil(this.locations.length / this.pageSize);
+        this.totalPages = Math.max(
+            1,
+            Math.ceil(this.filteredLocations.length / this.pageSize)
+        );
+        this.currentPage = 1;
         this.updatePaginatedLocations();
     }
 
     updatePaginatedLocations(): void {
         const start = (this.currentPage - 1) * this.pageSize;
         const end = start + this.pageSize;
-        this.paginatedLocations = this.locations.slice(start, end);
+        this.paginatedLocations = this.filteredLocations.slice(start, end);
     }
 
     goToPage(page: number): void {
@@ -83,20 +108,12 @@ export class ListLocationsComponent implements OnInit {
     }
 
     goToLocation(locationId: number): void {
-        this.router.navigate(
-            [
-                '/map',
-                {
-                    outlets: {
-                        popup: ['location'],
-                    },
-                },
-            ],
-            {
-                queryParams: {
-                    locationId: locationId,
-                },
-            }
-        );
+        this.router.navigate(['/map', { outlets: { popup: ['location'] } }], {
+            queryParams: { locationId },
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.typeSub?.unsubscribe();
     }
 }

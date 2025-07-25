@@ -8,6 +8,7 @@
 <app-button-add-location></app-button-add-location>
 <router-outlet name="popup"></router-outlet>
 <mgl-map
+    *ngIf="isBrowser"
     [style]="'mapbox://styles/mapbox/standard'"
     [zoom]="[4]"
     [center]="[-64.0, -34.0]"
@@ -31,11 +32,11 @@
 
     <mgl-control mglAttribution />
     <mgl-control mglFullscreen />
-    <mgl-control mglGeolocate (geolocate)="onGeolocate($event)" />
+    <mgl-control mglGeolocate />
     <mgl-control mglNavigation />
 
     <mgl-popup
-        *ngFor="let loc of locations"
+        *ngFor="let loc of filteredLocations"
         [lngLat]="[loc.longitude, loc.latitude]"
         [closeOnClick]="false"
     >

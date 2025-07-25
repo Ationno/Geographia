@@ -89,8 +89,6 @@ export class EditProfileComponent implements OnInit {
                 age--;
             }
 
-            console.log('Edad calculada:', age);
-
             return age >= minAge
                 ? null
                 : { minAge: { requiredAge: minAge, actualAge: age } };

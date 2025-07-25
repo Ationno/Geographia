@@ -13,6 +13,7 @@ const {
 	deleteLocation,
 	addRating,
 	updateRating,
+	searchLocations,
 } = require("../controllers/location.controller");
 
 const { asyncHandler } = require("../middlewares/handler.middleware");
@@ -58,5 +59,5 @@ router.put(
 router.get("/rural/", asyncHandler(getRuralLocations));
 router.get("/geographic/", asyncHandler(getGeographicLocations));
 router.get("/historical/", asyncHandler(getHistoricalLocations));
-
+router.get("/search", asyncHandler(searchLocations));
 module.exports = router;

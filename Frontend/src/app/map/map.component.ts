@@ -36,9 +36,12 @@ import { AuthService } from '../auth.service';
 import Swal from 'sweetalert2';
 import { LoginButtonComponent } from '../login-button/login-button.component';
 import { AddLocationComponent } from '../add-location/add-location.component';
-import { Location } from '../models/location.model';
+import { Location, LocationType } from '../models/location.model';
 import { LocationService } from '../location.service';
 import { environment } from '../../environments/environment';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
+import { TypeService } from '../type.service';
 
 @Component({
     selector: 'app-map',
@@ -89,8 +92,12 @@ export class MapComponent {
     maskGeoJSON: any;
     isLoggedIn: boolean = false;
     private authSub!: Subscription;
-    locations: Location[] = [];
     protected apiUrl = environment.apiUrl.slice(0, -4);
+    isBrowser: boolean;
+    private typeSub!: Subscription;
+    selectedType: LocationType = LocationType.SATELITE;
+    locations: Location[] = [];
+    filteredLocations: Location[] = [];
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLDivElement>;
@@ -104,8 +111,12 @@ export class MapComponent {
         private router: Router,
         private http: HttpClient,
         private authService: AuthService,
-        private locationService: LocationService
-    ) {}
+        private locationService: LocationService,
+        @Inject(PLATFORM_ID) private platformId: Object,
+        private typeService: TypeService
+    ) {
+        this.isBrowser = isPlatformBrowser(this.platformId);
+    }
 
     ngOnInit() {
         this.authSub = this.authService.isLoggedIn$.subscribe((loggedIn) => {
@@ -114,7 +125,12 @@ export class MapComponent {
 
         this.locationService.getAllLocations().subscribe((locations) => {
             this.locations = locations;
-            console.log('Locations fetched:', this.locations);
+            this.filterLocations(this.selectedType);
+        });
+
+        this.typeSub = this.typeService.getCurrentType().subscribe((type) => {
+            this.selectedType = type;
+            this.filterLocations(type);
         });
 
         this.http.get('argentina-mask.geojson').subscribe((argentina: any) => {
@@ -128,7 +144,6 @@ export class MapComponent {
             .pipe(filter((event) => event instanceof NavigationEnd))
             .subscribe((event) => {
                 if (this.router.url === '/map') {
-                    console.log('Map component initialized');
                     setTimeout(() => {
                         this.firstFocusElement.nativeElement.focus();
                     }, 0);
@@ -139,6 +154,17 @@ export class MapComponent {
     ngOnDestroy() {
         this.authSub?.unsubscribe();
         this.routerSub?.unsubscribe();
+        this.typeSub?.unsubscribe();
+    }
+
+    filterLocations(type: LocationType) {
+        if (type === LocationType.SATELITE) {
+            this.filteredLocations = [...this.locations];
+        } else {
+            this.filteredLocations = this.locations.filter(
+                (loc) => loc.type === type
+            );
+        }
     }
 
     onMapClick(event: mapboxgl.MapMouseEvent) {
@@ -164,79 +190,94 @@ export class MapComponent {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => {
-            const canvas = document.querySelector('.mapboxgl-canvas');
-            if (canvas) {
-                canvas.setAttribute(
-                    'aria-label',
-                    'Mapa interactivo de Geographia'
-                );
-            }
-
-            const fullscreenBtn = document.querySelector(
-                '.mapboxgl-ctrl-fullscreen'
-            );
-            if (fullscreenBtn) {
-                fullscreenBtn.setAttribute(
-                    'aria-label',
-                    'Control de pantalla completa'
-                );
-                const fullscreenIcon = fullscreenBtn.querySelector(
-                    '.mapboxgl-ctrl-icon'
-                );
-                if (fullscreenIcon) {
-                    fullscreenIcon.setAttribute('title', 'Pantalla completa');
+        if (typeof document !== 'undefined') {
+            setTimeout(() => {
+                const canvas = document.querySelector('.mapboxgl-canvas');
+                if (canvas) {
+                    canvas.setAttribute(
+                        'aria-label',
+                        'Mapa interactivo de Geographia'
+                    );
                 }
-            }
 
-            const geolocateBtn = document.querySelector(
-                '.mapboxgl-ctrl-geolocate'
-            );
-            if (geolocateBtn) {
-                geolocateBtn.setAttribute('aria-label', 'Ubicar mi posición');
-                const geolocateIcon = geolocateBtn.querySelector(
-                    '.mapboxgl-ctrl-icon'
+                const fullscreenBtn = document.querySelector(
+                    '.mapboxgl-ctrl-fullscreen'
                 );
-                if (geolocateIcon) {
-                    geolocateIcon.setAttribute('title', 'Ubicar mi posición');
+                if (fullscreenBtn) {
+                    fullscreenBtn.setAttribute(
+                        'aria-label',
+                        'Control de pantalla completa'
+                    );
+                    const fullscreenIcon = fullscreenBtn.querySelector(
+                        '.mapboxgl-ctrl-icon'
+                    );
+                    if (fullscreenIcon) {
+                        fullscreenIcon.setAttribute(
+                            'title',
+                            'Pantalla completa'
+                        );
+                    }
                 }
-            }
 
-            const zoomInBtn = document.querySelector('.mapboxgl-ctrl-zoom-in');
-            if (zoomInBtn) {
-                zoomInBtn.setAttribute('aria-label', 'Acercar zoom');
-                const zoomInIcon = zoomInBtn.querySelector(
-                    '.mapboxgl-ctrl-icon'
+                const geolocateBtn = document.querySelector(
+                    '.mapboxgl-ctrl-geolocate'
                 );
-                if (zoomInIcon) {
-                    zoomInIcon.setAttribute('title', 'Acercar zoom');
+                if (geolocateBtn) {
+                    geolocateBtn.setAttribute(
+                        'aria-label',
+                        'Ubicar mi posición'
+                    );
+                    const geolocateIcon = geolocateBtn.querySelector(
+                        '.mapboxgl-ctrl-icon'
+                    );
+                    if (geolocateIcon) {
+                        geolocateIcon.setAttribute(
+                            'title',
+                            'Ubicar mi posición'
+                        );
+                    }
                 }
-            }
 
-            const zoomOutBtn = document.querySelector(
-                '.mapboxgl-ctrl-zoom-out'
-            );
-            if (zoomOutBtn) {
-                zoomOutBtn.setAttribute('aria-label', 'Alejar zoom');
-                const zoomOutIcon = zoomOutBtn.querySelector(
-                    '.mapboxgl-ctrl-icon'
+                const zoomInBtn = document.querySelector(
+                    '.mapboxgl-ctrl-zoom-in'
                 );
-                if (zoomOutIcon) {
-                    zoomOutIcon.setAttribute('title', 'Alejar zoom');
+                if (zoomInBtn) {
+                    zoomInBtn.setAttribute('aria-label', 'Acercar zoom');
+                    const zoomInIcon = zoomInBtn.querySelector(
+                        '.mapboxgl-ctrl-icon'
+                    );
+                    if (zoomInIcon) {
+                        zoomInIcon.setAttribute('title', 'Acercar zoom');
+                    }
                 }
-            }
 
-            const compass = document.querySelector('.mapboxgl-ctrl-compass');
-            if (compass) {
-                compass.setAttribute('aria-label', 'Reorientar mapa');
-                const compassIcon = compass.querySelector(
-                    '.mapboxgl-ctrl-icon'
+                const zoomOutBtn = document.querySelector(
+                    '.mapboxgl-ctrl-zoom-out'
                 );
-                if (compassIcon) {
-                    compassIcon.setAttribute('title', 'Reorientar mapa');
+                if (zoomOutBtn) {
+                    zoomOutBtn.setAttribute('aria-label', 'Alejar zoom');
+                    const zoomOutIcon = zoomOutBtn.querySelector(
+                        '.mapboxgl-ctrl-icon'
+                    );
+                    if (zoomOutIcon) {
+                        zoomOutIcon.setAttribute('title', 'Alejar zoom');
+                    }
                 }
-            }
-        }, 100);
+
+                const compass = document.querySelector(
+                    '.mapboxgl-ctrl-compass'
+                );
+                if (compass) {
+                    compass.setAttribute('aria-label', 'Reorientar mapa');
+                    const compassIcon = compass.querySelector(
+                        '.mapboxgl-ctrl-icon'
+                    );
+                    if (compassIcon) {
+                        compassIcon.setAttribute('title', 'Reorientar mapa');
+                    }
+                }
+            }, 100);
+        }
     }
 
     addLocation() {
@@ -290,9 +331,5 @@ export class MapComponent {
                 },
             }
         );
-    }
-
-    onGeolocate(position: GeolocationPosition) {
-        console.log('geolocate', position);
     }
 }

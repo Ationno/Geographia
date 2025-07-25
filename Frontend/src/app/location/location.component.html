@@ -11,7 +11,11 @@
     >
         <div class="info-left">
             <p tabindex="0" #firstFocusElement class="date">
-                {{ location?.createdAt }}
+                {{ location?.createdAt?.toLocaleDateString('es-AR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                }) }}
             </p>
 
             <div class="title-section">
@@ -102,7 +106,12 @@
                     class="type-tag"
                     tabindex="0"
                     aria-label="Tipo de locación."
-                    >{{ location?.type }}</span
+                    >{{
+                        this.location != null
+                            ? this.location.type.charAt(0).toUpperCase() +
+                              this.location.type.slice(1).toLowerCase()
+                            : ""
+                    }}</span
                 >
                 <span
                     *ngFor="let tag of location?.tags"

@@ -10,7 +10,6 @@
     padding: 12px 20px;
     border-radius: 8px;
     width: 100%;
-    position: relative;
     background-color: #ffffff;
     border: 1px solid #d8d8d8;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -39,13 +38,11 @@
 }
 
 .recents-dropdown {
-    position: absolute;
     background-color: #ffffff;
     border: 1px solid #d8d8d8;
     border-radius: 0 0 8px 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-top: 8px;
-    width: 100%;
     z-index: 10;
     padding: 20px;
     max-height: 300px;

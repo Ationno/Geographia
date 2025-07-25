@@ -33,4 +33,12 @@ export class LocationService {
             headers: { Authorization: `Bearer ${this.token}` },
         });
     }
+
+    searchLocations(query: string): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.get(`${this.apiUrl}/search`, {
+            headers: { Authorization: `Bearer ${this.token}` },
+            params: { q: query },
+        });
+    }
 }

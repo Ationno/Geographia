@@ -10,6 +10,19 @@
     z-index: 2000;
 }
 
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.type {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+    font-weight: 500;
+}
+
 .locations-list {
     display: flex;
     flex-direction: column;

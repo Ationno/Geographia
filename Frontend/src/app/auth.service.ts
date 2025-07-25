@@ -26,12 +26,12 @@ export class AuthService {
 
     login(email: string, password: string): Observable<any> {
         const post = this.http.post(this.apiUrl + '/login', {
-            email: email,
-            password: password,
+            email,
+            password,
         });
 
         post.subscribe({
-            next: (response) => {
+            next: () => {
                 this.loggedIn.next(true);
             },
         });
@@ -41,21 +41,38 @@ export class AuthService {
 
     logout(): void {
         this.cookieService.delete('token', '/');
-        sessionStorage.removeItem('token');
+        if (
+            typeof window !== 'undefined' &&
+            typeof sessionStorage !== 'undefined'
+        ) {
+            sessionStorage.removeItem('token');
+        }
         this.loggedIn.next(false);
     }
 
     hasToken(): boolean {
-        return (
-            sessionStorage.getItem('token') !== null ||
-            this.cookieService.check('token')
-        );
+        const hasSessionToken =
+            typeof window !== 'undefined' &&
+            typeof sessionStorage !== 'undefined' &&
+            sessionStorage.getItem('token') !== null;
+
+        const hasCookieToken = this.cookieService.check('token');
+
+        return hasSessionToken || hasCookieToken;
     }
 
     getToken(): string | null {
-        return (
-            sessionStorage.getItem('token') || this.cookieService.get('token')
-        );
+        if (
+            typeof window !== 'undefined' &&
+            typeof sessionStorage !== 'undefined'
+        ) {
+            const sessionToken = sessionStorage.getItem('token');
+            if (sessionToken) return sessionToken;
+        }
+
+        return this.cookieService.check('token')
+            ? this.cookieService.get('token')
+            : null;
     }
 
     requestPasswordReset(email: string): Observable<any> {

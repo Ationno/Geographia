@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, style, transition, animate } from '@angular/animations';
-import { Location } from '../models/location.model';
-import { LocationType } from '../models/location.model';
+import { debounceTime, Subject, Subscription } from 'rxjs';
+import { LocationService } from '../location.service';
+import { Location, LocationType } from '../models/location.model';
+import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-search-bar',
@@ -37,70 +40,104 @@ import { LocationType } from '../models/location.model';
         ]),
     ],
 })
-export class SearchBarComponent {
+export class SearchBarComponent implements OnInit, OnDestroy {
     searchTerm = '';
-    showRecents = false;
+    showDropdown = false;
     private blurTimeout: any;
-    recentSearches: Location[] = [
-        {
-            id: 1,
-            name: 'Lago 7 colores',
-            images: ['lago.jpg'],
-            address: 'La Plata, Buenos Aires, Argentina',
-            latitude: -34.9214,
-            longitude: -57.9544,
-            type: LocationType.Geográfica,
-            createdAt: new Date(),
-            rating: 4.5,
-            UserId: 1,
-        },
-        {
-            id: 2,
-            name: 'Fosil Argentinosaurus',
-            images: ['fosil.jpg'],
-            address: 'San Juan, San Juan, Argentina',
-            latitude: -31.5375,
-            longitude: -68.5369,
-            type: LocationType.Histórica,
-            createdAt: new Date(),
-            rating: 4.8,
-            UserId: 2,
-        },
-        {
-            id: 3,
-            name: 'Cataratas del Iguazú',
-            images: ['cascada.jpg'],
-            address: 'Puerto Iguazú, Misiones, Argentina',
-            latitude: -25.6953,
-            longitude: -54.4367,
-            type: LocationType.Geográfica,
-            createdAt: new Date(),
-            rating: 4.5,
-            UserId: 3,
-        },
-    ];
+
+    recentSearches: Location[] = [];
+    searchResults: Location[] = [];
+
+    private searchInput$ = new Subject<string>();
+    private subscriptions = new Subscription();
+
+    protected apiUrl = environment.apiUrl.slice(0, -4);
+
+    constructor(
+        private locationService: LocationService,
+        private router: Router
+    ) {}
+
+    ngOnInit(): void {
+        this.loadRecentSearches();
+
+        this.subscriptions.add(
+            this.searchInput$.pipe(debounceTime(300)).subscribe((term) => {
+                console.log('Search term:', term);
+                if (term.trim().length > 0) {
+                    this.locationService
+                        .searchLocations(term)
+                        .subscribe((results) => {
+                            console.log('Search results:', results);
+                            this.searchResults = results;
+                        });
+                } else {
+                    this.searchResults = [];
+                }
+            })
+        );
+    }
+
+    onInputChange() {
+        this.searchInput$.next(this.searchTerm);
+    }
+
+    selectItem(location: Location) {
+        this.searchTerm = location.name;
+        this.addToRecents(location);
+        this.showDropdown = false;
+        this.router.navigate(
+            [
+                '/map',
+                {
+                    outlets: {
+                        popup: ['location'],
+                    },
+                },
+            ],
+            {
+                queryParams: {
+                    locationId: location?.id,
+                },
+            }
+        );
+        this.searchTerm = '';
+    }
+
+    addToRecents(location: Location): void {
+        const existingIndex = this.recentSearches.findIndex(
+            (r) => r.id === location.id
+        );
+        if (existingIndex !== -1) {
+            this.recentSearches.splice(existingIndex, 1);
+        }
+        this.recentSearches.unshift(location);
+        this.recentSearches = this.recentSearches.slice(0, 5);
+        localStorage.setItem(
+            'recentSearches',
+            JSON.stringify(this.recentSearches)
+        );
+    }
+
+    loadRecentSearches(): void {
+        const stored = localStorage.getItem('recentSearches');
+        if (stored) {
+            this.recentSearches = JSON.parse(stored);
+        }
+    }
 
     onWrapperFocus() {
         clearTimeout(this.blurTimeout);
-        this.showRecents = true;
+        this.showDropdown = true;
     }
 
     onWrapperBlur() {
         this.blurTimeout = setTimeout(() => {
-            this.showRecents = false;
+            this.showDropdown = false;
         }, 200);
     }
 
-    onFocus() {
-        this.showRecents = true;
-    }
-
-    onBlur() {
-        setTimeout(() => (this.showRecents = false), 200);
-    }
-
-    selectRecent(term: Location) {
-        this.searchTerm = term.name;
-        this.showRecents = false;
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 }

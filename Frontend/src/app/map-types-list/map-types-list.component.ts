@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, style, transition, animate } from '@angular/animations';
+import { LocationType } from '../models/location.model';
+import { TypeService } from '../type.service';
 
 @Component({
     selector: 'app-map-types-list',
@@ -33,26 +35,38 @@ import { trigger, style, transition, animate } from '@angular/animations';
         ]),
     ],
 })
-
 export class MapTypesListComponent {
     openMenu = false;
-    mapTypes = ['SATÉLITE', 'GEOGRÁFICA', 'RURAL', 'HISTÓRICA','CLIMÁTICA'];
+    mapTypes = Object.values(LocationType);
     selectedType: string = 'SATÉLITE';
-    selectedAnnouncement: string = 'Tipo de mapa seleccionado actualmente: SATÉLITE';
+    selectedAnnouncement: string =
+        'Tipo de mapa seleccionado actualmente: SATÉLITE';
+
+    constructor(private typeService: TypeService) {}
 
     toggleMenu() {
         this.openMenu = !this.openMenu;
-      
-        if (this.openMenu) {
-          this.selectedAnnouncement = '';
-          setTimeout(() => {
-            this.selectedAnnouncement = `Tipo de mapa seleccionado actualmente: ${this.selectedType}`;
-          }, 100);
-        }
-      }
 
-    selectType(type: string) {
+        if (this.openMenu) {
+            this.selectedAnnouncement = '';
+            setTimeout(() => {
+                this.selectedAnnouncement = `Tipo de mapa seleccionado actualmente: ${this.selectedType}`;
+            }, 100);
+        }
+    }
+
+    selectType(type: LocationType) {
         this.selectedType = type;
+        this.typeService.setCurrentType(type);
+    }
+
+    getEnumKeyByValue<T extends object>(
+        enumObj: T,
+        value: string
+    ): keyof T | undefined {
+        return (Object.keys(enumObj) as Array<keyof T>).find(
+            (key) => enumObj[key] === value
+        );
     }
 
     handleKeydown(event: KeyboardEvent) {
@@ -67,4 +81,3 @@ export class MapTypesListComponent {
         }
     }
 }
-
