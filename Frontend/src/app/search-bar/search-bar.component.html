@@ -25,8 +25,11 @@
         aria-label="Resultados o búsquedas recientes"
         tabindex="0"
     >
-        <ng-container *ngIf="searchTerm.trim() === '' && recentSearches.length">
-            <h1>RECIENTES</h1>
+        <ng-container *ngIf="searchTerm.trim() === ''">
+            <h1 *ngIf="recentSearches.length > 0">RECIENTES</h1>
+            <p *ngIf="recentSearches.length === 0">
+                No hay locaciones recientes guardadas.
+            </p>
             <div
                 class="recent-item"
                 *ngFor="let recent of recentSearches"

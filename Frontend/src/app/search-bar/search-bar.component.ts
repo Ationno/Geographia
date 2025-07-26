@@ -63,7 +63,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
         this.subscriptions.add(
             this.searchInput$.pipe(debounceTime(300)).subscribe((term) => {
-                console.log('Search term:', term);
                 if (term.trim().length > 0) {
                     this.locationService
                         .searchLocations(term)
@@ -113,16 +112,20 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         }
         this.recentSearches.unshift(location);
         this.recentSearches = this.recentSearches.slice(0, 5);
-        localStorage.setItem(
-            'recentSearches',
-            JSON.stringify(this.recentSearches)
-        );
+        if (typeof window !== 'undefined' && window.localStorage) {
+            localStorage.setItem(
+                'recentSearches',
+                JSON.stringify(this.recentSearches)
+            );
+        }
     }
 
     loadRecentSearches(): void {
-        const stored = localStorage.getItem('recentSearches');
-        if (stored) {
-            this.recentSearches = JSON.parse(stored);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const stored = localStorage.getItem('recentSearches');
+            if (stored) {
+                this.recentSearches = JSON.parse(stored);
+            }
         }
     }
 

@@ -41,4 +41,11 @@ export class LocationService {
             params: { q: query },
         });
     }
+
+    deleteLocation(id: number): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.delete(`${this.apiUrl}/location/${id}`, {
+            headers: { Authorization: `Bearer ${this.token}` },
+        });
+    }
 }
