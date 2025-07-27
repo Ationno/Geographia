@@ -7,6 +7,8 @@ const defaultImage = "/uploads/default_profile.jpg";
 const fs = require("fs");
 const path = require("path");
 
+const { deleteLocationById } = require("./location.controller");
+
 const deleteOldImage = (imageUrl) => {
 	if (imageUrl && imageUrl !== defaultImage) {
 		const oldImagePath = path.join(__dirname, "..", imageUrl);
@@ -199,9 +201,20 @@ const deleteUser = async (req, res) => {
 		return res.status(404).json({ error: "User not found" });
 	}
 
+	deleteOldImage(user.profile_image_url);
+
 	await Comment.destroy({ where: { UserId: req.userId } });
 	await Rating.destroy({ where: { UserId: req.userId } });
-	await Location.destroy({ where: { UserId: req.userId } });
+
+	const locations = await Location.findAll({ where: { UserId: req.userId } });
+
+	for (const location of locations) {
+		try {
+			await deleteLocationById(location.id, req.userId);
+		} catch (err) {
+			console.error(`Error deleting location ${location.id}: ${err.message}`);
+		}
+	}
 
 	await user.destroy();
 

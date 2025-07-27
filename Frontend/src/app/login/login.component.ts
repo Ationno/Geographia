@@ -120,4 +120,8 @@ export class LoginComponent {
             console.log('Form is invalid');
         }
     }
+
+    goToMap() {
+        this.router.navigate(['/map']);
+    }
 }

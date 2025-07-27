@@ -64,7 +64,7 @@ const isLocationNearby = async (
 };
 
 const deleteOldImages = async (images) => {
-	if (!images) {
+	if (!images || images.length === 0) {
 		return;
 	}
 	images.forEach((imageUrl) => {
@@ -75,6 +75,28 @@ const deleteOldImages = async (images) => {
 			}
 		});
 	});
+};
+
+const deleteLocationById = async (locationId, userId) => {
+	const location = await Location.findByPk(locationId);
+	if (!location) {
+		throw { status: 404, message: "Location not found" };
+	}
+
+	if (location.UserId !== userId) {
+		throw {
+			status: 403,
+			message: "You do not have permission to delete this location",
+		};
+	}
+
+	deleteOldImages(location.images);
+
+	await Comment.destroy({ where: { locationId: location.id } });
+	await Rating.destroy({ where: { locationId: location.id } });
+
+	await location.setTags([]);
+	await location.destroy();
 };
 
 const createLocation = async (req, res) => {
@@ -195,9 +217,7 @@ const updateLocation = async (req, res) => {
 
 	if (req.files && req.files.length > 0) {
 		deleteOldImages(location.images);
-		updateFields.images = req.files.map(
-			(file) => `/uploads/${file.filename}`
-		);
+		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
 	}
 
 	await location.update(updateFields);
@@ -509,22 +529,7 @@ const getLocationById = async (req, res) => {
 };
 
 const deleteLocation = async (req, res) => {
-	const location = await Location.findByPk(req.params.id);
-	if (!location) {
-		return res.status(404).json({ error: "Location not found" });
-	}
-
-	if (location.UserId !== req.userId) {
-		return res.status(403).json({
-			error: "You do not have permission to delete this location",
-		});
-	}
-
-	await Comment.destroy({ where: { locationId: location.id } });
-	await Rating.destroy({ where: { locationId: location.id } });
-
-	await location.setTags([]);
-	await location.destroy();
+	await deleteLocationById(req.params.id, req.userId);
 	res.status(204).send();
 };
 
@@ -607,9 +612,10 @@ const searchLocations = async (req, res) => {
 
 	const locations = await Location.findAll({
 		where: {
-			address: {
-				[Op.like]: `%${query}%`,
-			},
+			[Op.or]: [
+				{ address: { [Op.like]: `%${query}%` } },
+				{ name: { [Op.like]: `%${query}%` } },
+			],
 		},
 		attributes: {
 			include: [
@@ -668,4 +674,5 @@ module.exports = {
 	addRating,
 	updateRating,
 	searchLocations,
+	deleteLocationById,
 };

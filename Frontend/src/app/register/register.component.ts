@@ -193,4 +193,8 @@ export class RegisterComponent {
             console.log('Form is invalid');
         }
     }
+
+    goToMap() {
+        this.router.navigate(['/map']);
+    }
 }

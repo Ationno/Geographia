@@ -5,10 +5,8 @@ import {
     Validators,
     ReactiveFormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 
 @Component({

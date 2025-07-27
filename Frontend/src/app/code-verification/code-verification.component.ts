@@ -29,7 +29,6 @@ import { AuthService } from '../auth.service';
     styleUrls: ['./code-verification.component.css'],
 })
 export class CodeVerificationComponent implements AfterViewInit {
-    @Input() email: string = '';
     @Input() token: string = '';
     @Output() codeVerified = new EventEmitter<void>();
     @Output() backToEmail = new EventEmitter<void>();
@@ -59,10 +58,6 @@ export class CodeVerificationComponent implements AfterViewInit {
                 Validators.minLength(4),
                 Validators.maxLength(4),
             ]),
-        });
-
-        this.route.queryParams.subscribe((params) => {
-            this.email = params['email'] || '';
         });
     }
 

@@ -2,6 +2,7 @@
     font-weight: 700;
     font-size: 1.2em;
     background-color: var(--color-button);
+    margin-top: 12px;
 }
 
 .button:hover {

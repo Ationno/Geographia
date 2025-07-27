@@ -9,7 +9,6 @@ import {
     ValidationErrors,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
@@ -26,7 +25,6 @@ export class ResetPasswordComponent {
     showPassword = false;
     showRepeatPassword = false;
 
-    @Input() email: string = '';
     @Input() token: string = '';
     @Output() passwordReset = new EventEmitter<void>();
     @Output() backToCode = new EventEmitter<void>();
