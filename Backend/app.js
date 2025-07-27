@@ -7,7 +7,15 @@ require("dotenv").config();
 
 const sequelize = require("./database/db");
 
-app.use(cors());
+const allowedOrigins = [process.env.FRONTEND_URL || "http://localhost:4200"];
+
+app.use(
+	cors({
+		origin: allowedOrigins,
+		credentials: true,
+	})
+);
+
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -23,7 +31,7 @@ if (process.env.NODE_ENV === "reset") {
 }
 
 app.get("/", (req, res) => {
-	res.status(200).json({ message: "Welcome to the API" });
+	res.status(200).json({ message: "Welcome to the Geographia API" });
 });
 
 app.use("/api/auth", authRoutes);
@@ -41,7 +49,6 @@ app.use((err, req, res, next) => {
 	res.status(500).json({
 		message: "Internal Server Error",
 	});
-	next();
 });
 
 module.exports = app;
