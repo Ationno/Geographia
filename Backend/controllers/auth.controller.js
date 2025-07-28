@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const { sendEmail } = require("../services/email.service");
 
 const register = async (req, res) => {
-	const { first_name, last_name, email, birth_date, password } = req.body;
+	const { first_name, last_name, email, birth_date, password, address } =
+		req.body;
 	const hashedPassword = await bcrypt.hash(password, 10);
 
 	const existingUser = await User.findOne({ where: { email } });
@@ -17,6 +18,7 @@ const register = async (req, res) => {
 		last_name,
 		email,
 		birth_date,
+		address,
 		password: hashedPassword,
 		profile_image_url: "/uploads/default_profile.jpg",
 	});
@@ -101,7 +103,9 @@ const resetPassword = async (req, res) => {
 		if (await bcrypt.compare(newPassword, user.password)) {
 			return res
 				.status(400)
-				.json({ error: "New password cannot be the same as the old one" });
+				.json({
+					error: "New password cannot be the same as the old one",
+				});
 		}
 
 		const hashed = await bcrypt.hash(newPassword, 10);

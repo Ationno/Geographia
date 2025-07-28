@@ -26,7 +26,6 @@ export class PrivacySettingsComponent implements OnInit {
         this.privacyForm = new FormGroup({
             show_location: new FormControl(false),
             show_birth_date: new FormControl(false),
-            show_name: new FormControl(false),
             show_email: new FormControl(false),
         });
     }
@@ -43,7 +42,6 @@ export class PrivacySettingsComponent implements OnInit {
                 this.privacyForm.patchValue({
                     show_location: data.show_location,
                     show_birth_date: data.show_birth_date,
-                    show_name: data.show_name,
                     show_email: data.show_email,
                 });
             },

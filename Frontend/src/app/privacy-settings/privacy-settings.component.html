@@ -61,26 +61,6 @@
                 </div>
             </section>
 
-            <section aria-labelledby="name-title">
-                <h3 id="name-title">NOMBRE Y APELLIDO</h3>
-                <div class="form-row">
-                    <label
-                        class="switch"
-                        aria-label="Activar o desactivar compartir mi nombre y apellido"
-                    >
-                        <input
-                            type="checkbox"
-                            formControlName="show_name"
-                            [attr.aria-checked]="
-                                privacyForm.get('show_name')?.value
-                            "
-                        />
-                        <span class="slider round"></span>
-                    </label>
-                    <p>Compartir mi nombre y apellido</p>
-                </div>
-            </section>
-
             <section aria-labelledby="email-title">
                 <h3 id="email-title">CORREO ELECTRÓNICO</h3>
                 <div class="form-row">

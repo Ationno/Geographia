@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class LocationService {
     private apiUrl = environment.apiUrl + '/locations';
+    private apiUrlComments = environment.apiUrl + '/comments';
     private token: string | null = null;
 
     constructor(private http: HttpClient, private authService: AuthService) {}
@@ -45,6 +46,31 @@ export class LocationService {
     deleteLocation(id: number): Observable<any> {
         this.token = this.authService.getToken();
         return this.http.delete(`${this.apiUrl}/location/${id}`, {
+            headers: { Authorization: `Bearer ${this.token}` },
+        });
+    }
+
+    addComment(
+        locationId: number,
+        comment_text: string,
+        comment_address: string
+    ): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.post(
+            `${this.apiUrlComments}/${locationId}`,
+            {
+                comment_text,
+                comment_address,
+            },
+            {
+                headers: { Authorization: `Bearer ${this.token}` },
+            }
+        );
+    }
+
+    getComments(locationId: number): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.get(`${this.apiUrlComments}/${locationId}`, {
             headers: { Authorization: `Bearer ${this.token}` },
         });
     }

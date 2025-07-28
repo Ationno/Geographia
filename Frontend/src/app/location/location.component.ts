@@ -16,6 +16,8 @@ import { UserService } from '../user.service';
 import { environment } from '../../environments/environment';
 import Swal from 'sweetalert2';
 import { ResetService } from '../reset.service';
+import { MapboxService } from '../mapbox.service';
+import { Comment } from '../models/comment.model';
 
 @Component({
     selector: 'app-location',
@@ -51,13 +53,15 @@ export class LocationComponent implements OnInit {
         private route: ActivatedRoute,
         private locationService: LocationService,
         private userService: UserService,
-        private resetService: ResetService
+        private resetService: ResetService,
+        private mapboxService: MapboxService
     ) {}
 
-    comments: { user: User | null; text: string; date: string }[] = [];
     userLoggedIn: User | null = null;
     userCreator: User | null = null;
     protected apiUrl = environment.apiUrl.slice(0, -4);
+
+    comments: Comment[] = [];
 
     ngOnInit(): void {
         this.commentForm = this.fb.group({
@@ -110,6 +114,34 @@ export class LocationComponent implements OnInit {
                     this.resetService.resetComponentTrigger();
                 },
             });
+
+            this.locationService.getComments(locationId).subscribe({
+                next: (comments) => {
+                    this.comments = comments.map((c: any) => ({
+                        ...c,
+                        createdAt: new Date(c.createdAt),
+                    }));
+                },
+                error: (error) => {
+                    if (error.status === 404) {
+                        this.comments = [];
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al cargar los comentarios',
+                            text: 'Ocurrió un error al cargar los comentarios. Por favor, intentá de nuevo más tarde.',
+                            timer: 4000,
+                            timerProgressBar: true,
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'montserrat-swal',
+                                closeButton: 'montserrat-close',
+                            },
+                        });
+                    }
+                },
+            });
         });
 
         this.userService.getCurrentUser().subscribe({
@@ -148,14 +180,96 @@ export class LocationComponent implements OnInit {
         const commentText = this.commentForm.value.text.trim();
         if (!commentText) return;
 
-        const newComment = {
-            user: this.userLoggedIn,
-            text: commentText,
-            date: new Date().toISOString().split('T')[0],
-        };
+        if (!navigator.geolocation) {
+            console.warn('Geolocalización no soportada');
+            this.saveComment(commentText, 'Ubicación no compartida');
+            return;
+        }
 
-        this.comments.unshift(newComment);
-        this.commentForm.reset();
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+
+                console.log('Coordenadas obtenidas:', latitude, longitude);
+
+                this.mapboxService
+                    .reverseGeocode(longitude, latitude)
+                    .subscribe({
+                        next: (response) => {
+                            if (response?.features?.length > 0) {
+                                const address =
+                                    response.features[0].properties.context
+                                        .place.name +
+                                    ', ' +
+                                    response.features[0].properties.context
+                                        .region.name;
+
+                                this.saveComment(commentText, address);
+                            } else {
+                                console.warn('No se pudo obtener la dirección');
+                                this.saveComment(
+                                    commentText,
+                                    'Ubicación no compartida'
+                                );
+                            }
+                        },
+                        error: (err) => {
+                            console.warn('Error obteniendo dirección:', err);
+                            this.saveComment(
+                                commentText,
+                                'Ubicación no compartida'
+                            );
+                        },
+                    });
+            },
+            (error) => {
+                console.warn('Ubicación no compartida o error:', error);
+                this.saveComment(commentText, 'Ubicación no compartida');
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+            }
+        );
+    }
+
+    saveComment(text: string, address: string) {
+        console.log('Guardando comentario:', text, address);
+        this.locationService
+            .addComment(this.location!.id, text, address)
+            .subscribe({
+                next: (comment) => {
+                    comment.createdAt = new Date(comment.createdAt);
+                    comment.user_first_name =
+                        this.userLoggedIn?.first_name || '';
+                    comment.user_last_name = this.userLoggedIn?.last_name || '';
+                    comment.user_profile_image_url =
+                        this.userLoggedIn?.profile_image_url.replace(
+                            this.apiUrl,
+                            ''
+                        ) || '';
+                    if (!this.userLoggedIn?.show_location) {
+                        comment.comment_address = 'Ubicación no compartida';
+                    }
+                    this.comments.push(comment);
+                },
+                error: (err) => {
+                    console.error('Error al agregar comentario:', err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al agregar comentario',
+                        text: 'Ocurrió un error al agregar el comentario. Por favor, intentá de nuevo más tarde.',
+                        timer: 4000,
+                        timerProgressBar: true,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'montserrat-swal',
+                            closeButton: 'montserrat-close',
+                        },
+                    });
+                },
+            });
     }
 
     cancel() {

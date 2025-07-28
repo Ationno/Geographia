@@ -54,18 +54,14 @@ const getProfile = async (req, res) => {
 	}
 
 	if (!userWithoutPassword.show_location) {
-		delete userWithoutPassword.latitude;
-		delete userWithoutPassword.longitude;
+		userWithoutPassword.address = "Ubicación no compartida";
 	}
+
 	if (!userWithoutPassword.show_email) {
 		delete userWithoutPassword.email;
 	}
 	if (!userWithoutPassword.show_birth_date) {
 		delete userWithoutPassword.birth_date;
-	}
-	if (!userWithoutPassword.show_name) {
-		delete userWithoutPassword.first_name;
-		delete userWithoutPassword.last_name;
 	}
 
 	res.json(userWithoutPassword);
@@ -120,12 +116,7 @@ const updateProfile = async (req, res) => {
 };
 
 const updatePrivacy = async (req, res) => {
-	const existingFields = [
-		"show_name",
-		"show_email",
-		"show_birth_date",
-		"show_location",
-	];
+	const existingFields = ["show_email", "show_birth_date", "show_location"];
 
 	const updateFields = {};
 
@@ -147,22 +138,18 @@ const updatePrivacy = async (req, res) => {
 };
 
 const updateLocation = async (req, res) => {
-	const { latitude, longitude } = req.body;
+	const { address } = req.body;
 
-	const user = await User.update(
-		{ latitude, longitude },
-		{ where: { id: req.userId } }
-	);
+	const user = await User.update({ address }, { where: { id: req.userId } });
 
 	if (!user[0]) {
 		return res.status(404).json({ error: "User not found" });
 	}
 
 	res.status(200).json({
-		message: "Location updated successfully",
-		location: {
-			latitude,
-			longitude,
+		message: "Address updated successfully",
+		address: {
+			...address,
 		},
 	});
 };
@@ -212,7 +199,9 @@ const deleteUser = async (req, res) => {
 		try {
 			await deleteLocationById(location.id, req.userId);
 		} catch (err) {
-			console.error(`Error deleting location ${location.id}: ${err.message}`);
+			console.error(
+				`Error deleting location ${location.id}: ${err.message}`
+			);
 		}
 	}
 

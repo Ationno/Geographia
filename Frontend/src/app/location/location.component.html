@@ -156,30 +156,33 @@
 
             <div class="comment" *ngFor="let c of comments">
                 <img
-                    [src]="c.user?.profile_image_url"
+                    [src]="apiUrl + c.user_profile_image_url"
                     [alt]="
                         'Foto de perfil de ' +
-                        c.user?.first_name +
+                        c.user_first_name +
                         ' ' +
-                        c.user?.last_name
+                        c.user_last_name
                     "
                     class="comment-pic"
                 />
                 <div class="comment-body">
                     <div class="comment-meta">
                         <strong tabindex="0" aria-label="Usuario">{{
-                            c.user?.first_name + " " + c.user?.last_name
+                            c.user_first_name + " " + c.user_last_name
                         }}</strong>
                         <small tabindex="0" aria-label="Ubicación y fecha"
-                            >{{ c.user?.latitude }} • {{ c.date }}</small
-                        >
+                            >{{ c.comment_address }} •
+                            {{
+                            c.createdAt.toLocaleDateString('es-AR', { year:
+                            'numeric', month: 'long', day: 'numeric', })}}
+                        </small>
                     </div>
                     <p
                         class="comment-text"
                         tabindex="0"
                         aria-label="Comentario"
                     >
-                        {{ c.text }}
+                        {{ c.comment_text }}
                     </p>
                 </div>
             </div>

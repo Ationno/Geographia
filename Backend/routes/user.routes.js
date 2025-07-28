@@ -5,7 +5,7 @@ const { validateRequest } = require("../middlewares/validate.middleware");
 const {
 	updateProfileSchema,
 	updatePrivacySchema,
-	updateLocationSchema,
+	updateAddressSchema,
 	updatePasswordSchema,
 } = require("../validators/user.validator");
 const {
@@ -40,7 +40,7 @@ router.put(
 router.put(
 	"/me/location",
 	authorization,
-	validateRequest(updateLocationSchema),
+	validateRequest(updateAddressSchema),
 	asyncHandler(updateLocation)
 );
 router.put(

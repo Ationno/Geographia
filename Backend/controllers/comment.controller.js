@@ -1,8 +1,9 @@
 const { Comment } = require("../database/models");
 const { Location } = require("../database/models");
+const { User } = require("../database/models");
 
 const addComment = async (req, res) => {
-	const { comment_text, location_shared, location_comment } = req.body;
+	const { comment_text, comment_address } = req.body;
 	const { locationId } = req.params;
 
 	const location = await Location.findByPk(locationId);
@@ -13,8 +14,7 @@ const addComment = async (req, res) => {
 
 	const comment = await Comment.create({
 		comment_text,
-		location_shared,
-		location_comment,
+		comment_address,
 		UserId: req.userId,
 		LocationId: locationId,
 	});
@@ -33,17 +33,39 @@ const getCommentsByLocation = async (req, res) => {
 
 	const comments = await Comment.findAll({ where: { locationId } });
 
-	const formattedComments = comments.map((comment) => {
-		const result = { ...(comment.toJSON?.() ?? comment) };
+	if (!comments || comments.length === 0) {
+		return res
+			.status(404)
+			.json({ error: "No comments found for this location" });
+	}
 
-		if (!result.location_shared) {
-			delete result.location_comment;
-		}
+	const commentsWithUser = await Promise.all(
+		comments.map(async (comment) => {
+			const user = await User.findByPk(comment.UserId, {
+				attributes: [
+					"first_name",
+					"last_name",
+					"profile_image_url",
+					"show_location",
+				],
+			});
 
-		return result;
-	});
+			const commentData = comment.toJSON();
 
-	res.json(formattedComments);
+			if (!user.show_location) {
+				commentData.comment_address = "Ubicación no compartida";
+			}
+
+			return {
+				...commentData,
+				user_first_name: user.first_name,
+				user_last_name: user.last_name,
+				user_profile_image_url: user.profile_image_url,
+			};
+		})
+	);
+
+	res.json(commentsWithUser);
 };
 
 module.exports = {

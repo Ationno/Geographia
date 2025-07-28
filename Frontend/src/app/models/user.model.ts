@@ -11,7 +11,6 @@ export interface User {
     show_birth_date: boolean;
     show_email: boolean;
     show_location: boolean;
-    show_name: boolean;
     updatedAt: Date;
     lastLocation: string;
 }

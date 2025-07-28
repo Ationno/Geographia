@@ -1,5 +1,5 @@
 const express = require("express");
-
+const fs = require("fs");
 const cors = require("cors");
 const app = express();
 const path = require("path");
@@ -25,6 +25,22 @@ const locationRoutes = require("./routes/location.routes");
 const commentRoutes = require("./routes/comment.routes");
 
 if (process.env.NODE_ENV === "reset") {
+	const uploadsPath = path.join(__dirname, "uploads");
+	fs.readdir(uploadsPath, (err, files) => {
+		if (err) {
+			console.error("Error reading uploads directory:", err);
+			return;
+		}
+		files.forEach((file) => {
+			if (file !== "404_error.png" && file !== "default_profile.jpg") {
+				fs.unlink(path.join(uploadsPath, file), (err) => {
+					if (err) {
+						console.error("Error deleting file:", err);
+					}
+				});
+			}
+		});
+	});
 	sequelize.sync({ force: true }).then(() => {
 		console.log("Database reset and synced successfully");
 	});

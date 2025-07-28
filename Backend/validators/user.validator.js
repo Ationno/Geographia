@@ -8,6 +8,7 @@ const registerSchema = Joi.object({
 	email: Joi.string().email().required(),
 	birth_date: Joi.date().iso().required(),
 	password: Joi.string().min(8).required(),
+	address: Joi.string().min(5).max(100).required(),
 });
 
 const loginSchema = Joi.object({
@@ -24,15 +25,13 @@ const updateProfileSchema = Joi.object({
 }).min(1);
 
 const updatePrivacySchema = Joi.object({
-	show_name: Joi.boolean().optional(),
 	show_email: Joi.boolean().optional(),
 	show_birth_date: Joi.boolean().optional(),
 	show_location: Joi.boolean().optional(),
 }).min(1);
 
-const updateLocationSchema = Joi.object({
-	latitude: Joi.number().min(-90).max(90).required(),
-	longitude: Joi.number().min(-180).max(180).required(),
+const updateAddressSchema = Joi.object({
+	address: Joi.string().min(5).max(100).required(),
 });
 
 const updatePasswordSchema = Joi.object({
@@ -45,6 +44,6 @@ module.exports = {
 	loginSchema,
 	updateProfileSchema,
 	updatePrivacySchema,
-	updateLocationSchema,
+	updateAddressSchema,
 	updatePasswordSchema,
 };

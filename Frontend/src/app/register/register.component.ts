@@ -131,7 +131,10 @@ export class RegisterComponent {
 
     onSubmit() {
         if (this.registerForm.valid) {
-            const data = { ...this.registerForm.value };
+            const data = {
+                address: 'Ubicación no compartida',
+                ...this.registerForm.value,
+            };
             delete data.repeatPassword;
             this.authService.register(data).subscribe({
                 next: () => {
