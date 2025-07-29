@@ -13,6 +13,7 @@ const {
 	deleteLocation,
 	addRating,
 	updateRating,
+	getMyRating,
 	searchLocations,
 } = require("../controllers/location.controller");
 
@@ -56,6 +57,7 @@ router.put(
 	validateRequest(ratingSchema),
 	asyncHandler(updateRating)
 );
+router.get("/location/:id/rate", authorization, asyncHandler(getMyRating));
 router.get("/rural/", asyncHandler(getRuralLocations));
 router.get("/geographic/", asyncHandler(getGeographicLocations));
 router.get("/historical/", asyncHandler(getHistoricalLocations));

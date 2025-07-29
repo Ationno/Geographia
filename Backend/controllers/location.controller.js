@@ -661,6 +661,25 @@ const searchLocations = async (req, res) => {
 	res.status(200).json(formattedLocations);
 };
 
+const getMyRating = async (req, res) => {
+	const location = await Location.findByPk(req.params.id);
+	if (!location) {
+		return res.status(404).json({ error: "Location not found" });
+	}
+	const rating = await Rating.findOne({
+		where: {
+			UserId: req.userId,
+			LocationId: location.id,
+		},
+	});
+
+	if (!rating) {
+		return res.status(404).json({ error: "Rating not found" });
+	}
+
+	res.status(200).json(rating);
+};
+
 module.exports = {
 	createLocation,
 	updateLocation,
@@ -675,4 +694,5 @@ module.exports = {
 	updateRating,
 	searchLocations,
 	deleteLocationById,
+	getMyRating,
 };
