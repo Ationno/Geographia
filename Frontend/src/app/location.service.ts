@@ -74,4 +74,33 @@ export class LocationService {
             headers: { Authorization: `Bearer ${this.token}` },
         });
     }
+
+    getMyRating(locationId: number): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.get(`${this.apiUrl}/location/${locationId}/rate`, {
+            headers: { Authorization: `Bearer ${this.token}` },
+        });
+    }
+
+    addRating(locationId: number, score: number): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.post(
+            `${this.apiUrl}/location/${locationId}/rate`,
+            { score },
+            {
+                headers: { Authorization: `Bearer ${this.token}` },
+            }
+        );
+    }
+
+    updateRating(locationId: number, score: number): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.put(
+            `${this.apiUrl}/location/${locationId}/rate`,
+            { score: score },
+            {
+                headers: { Authorization: `Bearer ${this.token}` },
+            }
+        );
+    }
 }

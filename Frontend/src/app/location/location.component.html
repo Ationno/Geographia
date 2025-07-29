@@ -8,6 +8,7 @@
         aria-modal="true"
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
+        #PATCH
     >
         <div class="info-left">
             <p tabindex="0" #firstFocusElement class="date">
@@ -62,18 +63,26 @@
                     'Calificación de ' +
                     location?.name +
                     ' es ' +
-                    location?.rating
+                    location?.averageRating
                 "
             >
                 <span
-                    *ngFor="let star of [1, 2, 3, 4, 5]"
+                    *ngFor="let star of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
                     class="material-symbols-outlined"
-                    [class.filled]="star <= (location?.rating ?? 0)"
+                    [class.filled]="star <= (location?.averageRating ?? 0)"
                     tabindex="-1"
                     aria-hidden="true"
                 >
                     star
                 </span>
+                <p>{{ location?.averageRating }}/10</p>
+                <button
+                    (click)="rateLocation()"
+                    (keydown.enter)="rateLocation()"
+                    class="button"
+                >
+                    Puntuar
+                </button>
             </div>
 
             <div class="carousel">
@@ -153,40 +162,46 @@
                 <h3 tabindex="0">COMENTARIOS</h3>
                 <span class="material-symbols-outlined"> chat </span>
             </div>
-
-            <div class="comment" *ngFor="let c of comments">
-                <img
-                    [src]="apiUrl + c.user_profile_image_url"
-                    [alt]="
-                        'Foto de perfil de ' +
-                        c.user_first_name +
-                        ' ' +
-                        c.user_last_name
-                    "
-                    class="comment-pic"
-                />
-                <div class="comment-body">
-                    <div class="comment-meta">
-                        <strong tabindex="0" aria-label="Usuario">{{
-                            c.user_first_name + " " + c.user_last_name
-                        }}</strong>
-                        <small tabindex="0" aria-label="Ubicación y fecha"
-                            >{{ c.comment_address }} •
-                            {{
+            <div class="comments-list" #commentsContainer>
+                <div class="comment" *ngFor="let c of comments">
+                    <img
+                        [src]="apiUrl + c.user_profile_image_url"
+                        [alt]="
+                            'Foto de perfil de ' +
+                            c.user_first_name +
+                            ' ' +
+                            c.user_last_name
+                        "
+                        class="comment-pic"
+                    />
+                    <div class="comment-body">
+                        <div class="comment-meta">
+                            <strong
+                                style="line-height: 12px"
+                                tabindex="0"
+                                aria-label="Usuario"
+                                >{{
+                                    c.user_first_name + " " + c.user_last_name
+                                }}</strong
+                            >
+                            <br />
+                            <small tabindex="0" aria-label="Ubicación y fecha"
+                                >{{ c.comment_address }} •
+                                {{
                             c.createdAt.toLocaleDateString('es-AR', { year:
                             'numeric', month: 'long', day: 'numeric', })}}
-                        </small>
+                            </small>
+                        </div>
+                        <p
+                            class="comment-text"
+                            tabindex="0"
+                            aria-label="Comentario"
+                        >
+                            {{ c.comment_text }}
+                        </p>
                     </div>
-                    <p
-                        class="comment-text"
-                        tabindex="0"
-                        aria-label="Comentario"
-                    >
-                        {{ c.comment_text }}
-                    </p>
                 </div>
             </div>
-
             <form
                 [formGroup]="commentForm"
                 (ngSubmit)="onSubmitComment()"

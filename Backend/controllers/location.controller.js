@@ -217,7 +217,9 @@ const updateLocation = async (req, res) => {
 
 	if (req.files && req.files.length > 0) {
 		deleteOldImages(location.images);
-		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
+		updateFields.images = req.files.map(
+			(file) => `/uploads/${file.filename}`
+		);
 	}
 
 	await location.update(updateFields);
@@ -534,7 +536,7 @@ const deleteLocation = async (req, res) => {
 };
 
 const addRating = async (req, res) => {
-	const { rating } = req.body;
+	const { score } = req.body;
 	const location = await Location.findByPk(req.params.id);
 
 	const user = await User.findByPk(req.userId);
@@ -562,14 +564,14 @@ const addRating = async (req, res) => {
 	const ratingData = await Rating.create({
 		UserId: req.userId,
 		LocationId: location.id,
-		score: rating,
+		score: score,
 	});
 
 	res.status(201).json(ratingData);
 };
 
 const updateRating = async (req, res) => {
-	const { rating } = req.body;
+	const { score } = req.body;
 	const location = await Location.findByPk(req.params.id);
 
 	const user = await User.findByPk(req.userId);
@@ -595,11 +597,11 @@ const updateRating = async (req, res) => {
 			.json({ error: "You have not rated this location yet" });
 	}
 
-	await existingRating.update({ score: rating });
+	await existingRating.update({ score: score });
 
 	res.status(200).json({
 		message: "Rating updated successfully",
-		rating: existingRating,
+		score: existingRating,
 	});
 };
 

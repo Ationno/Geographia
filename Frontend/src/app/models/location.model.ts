@@ -9,7 +9,7 @@ export interface Location {
     type: LocationType;
     tags?: string[];
     createdAt: Date;
-    rating: number;
+    averageRating: number;
     UserId: number;
 }
 

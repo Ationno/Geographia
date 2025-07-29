@@ -23,7 +23,7 @@ const updateLocationSchema = Joi.object({
 }).min(1);
 
 const ratingSchema = Joi.object({
-	rating: Joi.number().min(0).max(5).required(),
+	score: Joi.number().min(1).max(10).required(),
 });
 
 module.exports = {

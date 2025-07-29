@@ -17,6 +17,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { CodeVerificationComponent } from './code-verification/code-verification.component';
 import { RecoverPasswordComponent } from './recover-password/recover-password.component';
 import { DeleteLocationConfirmationComponent } from './delete-location-confirmation/delete-location-confirmation.component';
+import { RateLocationComponent } from './rate-location/rate-location.component';
 
 export const routes: Routes = [
     {
@@ -83,6 +84,12 @@ export const routes: Routes = [
                 path: 'deleteLocationConfirmation',
                 outlet: 'modal',
                 component: DeleteLocationConfirmationComponent,
+            },
+
+            {
+                path: 'rateLocation',
+                outlet: 'modal',
+                component: RateLocationComponent,
             },
             {
                 path: 'listLocations',

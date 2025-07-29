@@ -39,11 +39,14 @@ import { Comment } from '../models/comment.model';
 })
 export class LocationComponent implements OnInit {
     currentImageIndex = 0;
-
+    myRating: number = 0;
     commentForm!: FormGroup;
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
+
+    @ViewChild('commentsContainer')
+    commentsContainer!: ElementRef<HTMLDivElement>;
 
     location: Location | null = null;
 
@@ -76,6 +79,7 @@ export class LocationComponent implements OnInit {
             const locationId = +params['locationId'];
             this.locationService.getLocationById(locationId).subscribe({
                 next: (location) => {
+                    location.averageRating = Number(location.averageRating);
                     location.createdAt = new Date(location.createdAt);
                     this.location = location;
                     this.userService
@@ -142,6 +146,14 @@ export class LocationComponent implements OnInit {
                     }
                 },
             });
+
+            this.locationService
+                .getMyRating(locationId)
+                .subscribe((location) => {
+                    if (location && location.score) {
+                        this.myRating = location.score;
+                    }
+                });
         });
 
         this.userService.getCurrentUser().subscribe({
@@ -252,6 +264,15 @@ export class LocationComponent implements OnInit {
                         comment.comment_address = 'Ubicación no compartida';
                     }
                     this.comments.push(comment);
+                    this.commentForm.reset();
+
+                    setTimeout(() => {
+                        if (this.commentsContainer) {
+                            const container =
+                                this.commentsContainer.nativeElement;
+                            container.scrollTop = container.scrollHeight + 55;
+                        }
+                    }, 100);
                 },
                 error: (err) => {
                     console.error('Error al agregar comentario:', err);
@@ -284,6 +305,25 @@ export class LocationComponent implements OnInit {
                     outlets: {
                         popup: ['location'],
                         modal: ['deleteLocationConfirmation'],
+                    },
+                },
+            ],
+            {
+                queryParams: {
+                    locationId: this.location?.id,
+                },
+            }
+        );
+    }
+
+    rateLocation() {
+        this.router.navigate(
+            [
+                '/map',
+                {
+                    outlets: {
+                        popup: ['location'],
+                        modal: ['rateLocation'],
                     },
                 },
             ],

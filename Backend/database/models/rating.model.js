@@ -6,8 +6,8 @@ const Rating = sequelize.define("Rating", {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 		validate: {
-			min: 0,
-			max: 5,
+			min: 1,
+			max: 10,
 		},
 	},
 });
