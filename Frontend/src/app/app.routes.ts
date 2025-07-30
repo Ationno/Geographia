@@ -18,6 +18,7 @@ import { CodeVerificationComponent } from './code-verification/code-verification
 import { RecoverPasswordComponent } from './recover-password/recover-password.component';
 import { DeleteLocationConfirmationComponent } from './delete-location-confirmation/delete-location-confirmation.component';
 import { RateLocationComponent } from './rate-location/rate-location.component';
+import { ProfileResumeComponent } from './profile-resume/profile-resume.component';
 
 export const routes: Routes = [
     {
@@ -85,11 +86,15 @@ export const routes: Routes = [
                 outlet: 'modal',
                 component: DeleteLocationConfirmationComponent,
             },
-
             {
                 path: 'rateLocation',
                 outlet: 'modal',
                 component: RateLocationComponent,
+            },
+            {
+                path: 'profileResume',
+                outlet: 'modal',
+                component: ProfileResumeComponent,
             },
             {
                 path: 'listLocations',

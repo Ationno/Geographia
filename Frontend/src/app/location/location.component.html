@@ -47,6 +47,18 @@
                         "
                         class="profile-pic"
                         tabindex="0"
+                        (mouseenter)="
+                            handleProfileHoverEnter(
+                                $event,
+                                userCreator?.id || -1
+                            )
+                        "
+                        (keydown.enter)="
+                            handleProfileHoverEnter(
+                                $event,
+                                userCreator?.id || -1
+                            )
+                        "
                     />
                 </div>
             </div>
@@ -173,6 +185,11 @@
                             c.user_last_name
                         "
                         class="comment-pic"
+                        (mouseenter)="handleProfileHoverEnter($event, c.UserId)"
+                        (keydown.enter)="
+                            handleProfileHoverEnter($event, c.UserId)
+                        "
+                        tabindex="0"
                     />
                     <div class="comment-body">
                         <div class="comment-meta">

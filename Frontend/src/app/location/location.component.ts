@@ -41,6 +41,7 @@ export class LocationComponent implements OnInit {
     currentImageIndex = 0;
     myRating: number = 0;
     commentForm!: FormGroup;
+    handleProfileHover: ReturnType<typeof setTimeout> | null = null;
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
@@ -71,11 +72,10 @@ export class LocationComponent implements OnInit {
             text: ['', [Validators.required, Validators.maxLength(500)]],
         });
 
-        setTimeout(() => {
-            this.firstFocusElement.nativeElement.focus();
-        }, 0);
-
         this.route.queryParams.subscribe((params) => {
+            setTimeout(() => {
+                this.firstFocusElement.nativeElement.focus();
+            }, 0);
             const locationId = +params['locationId'];
             this.locationService.getLocationById(locationId).subscribe({
                 next: (location) => {
@@ -246,7 +246,6 @@ export class LocationComponent implements OnInit {
     }
 
     saveComment(text: string, address: string) {
-        console.log('Guardando comentario:', text, address);
         this.locationService
             .addComment(this.location!.id, text, address)
             .subscribe({
@@ -314,6 +313,44 @@ export class LocationComponent implements OnInit {
                 },
             }
         );
+    }
+
+    handleProfileHoverEnter(event: Event, userId: number) {
+        if (this.handleProfileHover) {
+            clearTimeout(this.handleProfileHover);
+            this.handleProfileHover = null;
+        }
+
+        this.handleProfileHover = setTimeout(() => {
+            const element = event.target as HTMLElement;
+
+            if (!element || typeof element.getBoundingClientRect !== 'function')
+                return;
+
+            const rect = element.getBoundingClientRect();
+            const elemX = rect.left + rect.width / 2;
+            const elemY = rect.top;
+
+            this.router.navigate(
+                [
+                    '/map',
+                    {
+                        outlets: {
+                            popup: ['location'],
+                            modal: ['profileResume'],
+                        },
+                    },
+                ],
+                {
+                    queryParams: {
+                        userId,
+                        locationId: this.location?.id,
+                        elemX,
+                        elemY,
+                    },
+                }
+            );
+        }, 500);
     }
 
     rateLocation() {

@@ -21,7 +21,15 @@
 .comment-pic,
 .profile-pic {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
 }
+
+.comment-pic:hover,
+.profile-pic:hover {
+    transform: scale(1.05);
+}
+
 .profile-section {
     display: flex;
     align-items: center;
@@ -213,6 +221,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+    margin: 8px 0 0 8px;
 }
 
 .comment-body {

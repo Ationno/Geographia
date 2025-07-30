@@ -12,5 +12,5 @@ export interface User {
     show_email: boolean;
     show_location: boolean;
     updatedAt: Date;
-    lastLocation: string;
+    address: string;
 }
