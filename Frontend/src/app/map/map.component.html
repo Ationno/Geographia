@@ -10,7 +10,7 @@
 <router-outlet name="modal"></router-outlet>
 <mgl-map
     *ngIf="isBrowser"
-    [style]="'mapbox://styles/mapbox/standard'"
+    [style]="mapStyle"
     [zoom]="[4]"
     [center]="[-64.0, -34.0]"
     (mapClick)="onMapClick($event)"

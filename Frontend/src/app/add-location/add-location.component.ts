@@ -6,12 +6,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { MapboxService } from '../mapbox.service';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, of, Subject } from 'rxjs';
 import { ViewChild, ElementRef } from '@angular/core';
 import { A11yModule } from '@angular/cdk/a11y';
 import { LocationService } from '../location.service';
 import { ResetService } from '../reset.service';
 import Swal from 'sweetalert2';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-add-location',
@@ -58,6 +59,10 @@ export class AddLocationComponent {
     isEditingTags = false;
     tagInputControl = new FormControl('');
 
+    addressSuggestions: any[] = [];
+    showSuggestions: boolean = false;
+    private addressInput$ = new Subject<string>();
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -97,6 +102,26 @@ export class AddLocationComponent {
             latitude: this.lat,
             longitude: this.lng,
         });
+
+        if (this.isAccesibility) {
+            this.addressInput$
+                .pipe(
+                    debounceTime(300),
+                    switchMap((query) => {
+                        if (!query.trim()) return of([]);
+                        return this.mapboxService.forwardGeocode(query);
+                    }),
+                    catchError(() => of([]))
+                )
+                .subscribe((res: any) => {
+                    this.addressSuggestions = res?.features || [];
+                    console.log(
+                        'Address suggestions:',
+                        this.addressSuggestions
+                    );
+                    this.showSuggestions = true;
+                });
+        }
     }
 
     handleKeyPress(event: KeyboardEvent) {
@@ -268,5 +293,30 @@ export class AddLocationComponent {
         setTimeout(() => {
             this.tagInputElement.nativeElement.focus();
         }, 0);
+    }
+
+    onAddressInput() {
+        const value = this.addLocationForm.get('address')?.value;
+        if (this.isAccesibility && value) {
+            this.addressInput$.next(value);
+        }
+    }
+
+    onAddressFocus() {
+        this.showSuggestions = true;
+    }
+
+    onAddressBlur() {
+        setTimeout(() => (this.showSuggestions = false), 200);
+    }
+
+    selectSuggestion(suggestion: any) {
+        const { full_address, coordinates } = suggestion.properties;
+        this.addLocationForm.patchValue({
+            address: full_address,
+            latitude: coordinates['latitude'],
+            longitude: coordinates['longitude'],
+        });
+        this.showSuggestions = false;
     }
 }

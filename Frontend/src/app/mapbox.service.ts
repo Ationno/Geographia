@@ -17,4 +17,16 @@ export class MapboxService {
             `${this.baseUrl}/reverse?longitude=${lng}&latitude=${lat}&access_token=${this.accessToken}&limit=1&language=es`
         );
     }
+
+    forwardGeocode(query: string): Observable<any> {
+        const encodedQuery = encodeURIComponent(query);
+        const url =
+            `${this.baseUrl}/forward` +
+            `?q=${encodedQuery}` +
+            `&access_token=${this.accessToken}` +
+            `&limit=5` +
+            `&language=es` +
+            `&country=AR`;
+        return this.http.get(url);
+    }
 }

@@ -100,6 +100,7 @@ export class MapComponent {
     selectedType: LocationType = LocationType.SATELITE;
     locations: Location[] = [];
     filteredLocations: Location[] = [];
+    mapStyle: string = 'mapbox://styles/mapbox/standard';
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLDivElement>;
@@ -201,6 +202,26 @@ export class MapComponent {
         this.typeSub = this.typeService.getCurrentType().subscribe((type) => {
             this.selectedType = type;
             this.filterLocations(type);
+
+            switch (type) {
+                case LocationType.SATELITE:
+                    this.mapStyle = 'mapbox://styles/mapbox/outdoors-v12';
+                    break;
+                case LocationType.RURAL:
+                    this.mapStyle =
+                        'mapbox://styles/mapbox/satellite-streets-v12';
+                    break;
+                case LocationType.GEOGRAFICA:
+                    this.mapStyle =
+                        'mapbox://styles/ationno/cmdrr2mla000801s2hxgn57r0';
+                    break;
+                case LocationType.HISTORICA:
+                    this.mapStyle =
+                        'mapbox://styles/ationno/cmdrr5wsp00lm01qpbjfrfhsl';
+                    break;
+                default:
+                    this.mapStyle = 'mapbox://styles/mapbox/standard';
+            }
         });
 
         this.http.get('argentina-mask.geojson').subscribe((argentina: any) => {

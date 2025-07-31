@@ -51,15 +51,37 @@
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" style="position: relative">
                     <label for="address">DIRECCIÓN*</label>
                     <input
                         [readOnly]="!isAccesibility"
                         id="address"
                         type="text"
                         formControlName="address"
+                        (input)="onAddressInput()"
+                        (blur)="onAddressBlur()"
+                        (focus)="onAddressFocus()"
+                        autocomplete="off"
                         [class]="isAccesibility ? '' : 'readonly-input'"
                     />
+
+                    <ul
+                        *ngIf="
+                            isAccesibility &&
+                            showSuggestions &&
+                            addressSuggestions.length
+                        "
+                        class="address-suggestions"
+                    >
+                        <li
+                            *ngFor="let suggestion of addressSuggestions"
+                            (mousedown)="selectSuggestion(suggestion)"
+                            tabindex="0"
+                        >
+                            {{ suggestion.properties.full_address }}
+                        </li>
+                    </ul>
+
                     <div
                         *ngIf="
                             addLocationForm.get('address')?.touched &&
