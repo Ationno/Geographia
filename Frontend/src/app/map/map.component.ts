@@ -42,6 +42,8 @@ import { environment } from '../../environments/environment';
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { TypeService } from '../type.service';
+import { UserService } from '../user.service';
+import { MapboxService } from '../mapbox.service';
 
 @Component({
     selector: 'app-map',
@@ -113,7 +115,9 @@ export class MapComponent {
         private authService: AuthService,
         private locationService: LocationService,
         @Inject(PLATFORM_ID) private platformId: Object,
-        private typeService: TypeService
+        private typeService: TypeService,
+        private userService: UserService,
+        private mapboxService: MapboxService
     ) {
         this.isBrowser = isPlatformBrowser(this.platformId);
     }
@@ -122,6 +126,72 @@ export class MapComponent {
         this.authSub = this.authService.isLoggedIn$.subscribe((loggedIn) => {
             this.isLoggedIn = loggedIn;
         });
+
+        if (
+            this.isLoggedIn &&
+            this.isBrowser &&
+            !sessionStorage.getItem('location-sent')
+        ) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    this.mapboxService
+                        .reverseGeocode(longitude, latitude)
+                        .subscribe({
+                            next: (response) => {
+                                if (
+                                    response?.features?.length > 0 &&
+                                    response.features[0].properties?.context
+                                        ?.place?.name
+                                ) {
+                                    const place =
+                                        response.features[0].properties.context
+                                            .place.name;
+                                    const region =
+                                        response.features[0].properties.context
+                                            .region?.name || '';
+                                    const address = `${place}, ${region}`;
+
+                                    this.userService
+                                        .saveCurrentLocation(address)
+                                        .subscribe({
+                                            next: () => {
+                                                sessionStorage.setItem(
+                                                    'location-sent',
+                                                    'true'
+                                                );
+                                            },
+                                            error: (err) => {
+                                                console.error(
+                                                    'Error al enviar ubicación:',
+                                                    err
+                                                );
+                                            },
+                                        });
+                                } else {
+                                    console.warn(
+                                        'No se pudo obtener dirección'
+                                    );
+                                }
+                            },
+                            error: (err) => {
+                                console.error(
+                                    'Error obteniendo dirección:',
+                                    err
+                                );
+                            },
+                        });
+                },
+                (error) => {
+                    console.warn('Ubicación no disponible:', error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                }
+            );
+        }
 
         this.locationService.getAllLocations().subscribe((locations) => {
             this.locations = locations;

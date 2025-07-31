@@ -49,6 +49,11 @@ export class ProfileResumeComponent {
         private route: ActivatedRoute
     ) {}
 
+    parseLocalDate(dateString: string): Date {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    }
+
     ngOnInit(): void {
         this.route.queryParams.subscribe((params) => {
             const x = +params['elemX'];
@@ -58,7 +63,10 @@ export class ProfileResumeComponent {
 
             this.userService.getUserById(userId).subscribe((user) => {
                 user.createdAt = new Date(user.createdAt);
-                user.birth_date = new Date(user.birth_date);
+
+                if (user.show_birth_date) {
+                    user.birth_date = this.parseLocalDate(user.birth_date);
+                }
                 this.user = user;
             });
 

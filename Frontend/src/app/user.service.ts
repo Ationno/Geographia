@@ -61,4 +61,17 @@ export class UserService {
             headers: { Authorization: `Bearer ${this.token}` },
         });
     }
+
+    saveCurrentLocation(address: string): Observable<any> {
+        this.token = this.authService.getToken();
+        return this.http.put(
+            this.apiUrl + '/me/location',
+            { address },
+            {
+                headers: {
+                    Authorization: `Bearer ${this.token}`,
+                },
+            }
+        );
+    }
 }

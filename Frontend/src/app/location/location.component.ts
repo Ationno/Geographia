@@ -79,7 +79,9 @@ export class LocationComponent implements OnInit {
             const locationId = +params['locationId'];
             this.locationService.getLocationById(locationId).subscribe({
                 next: (location) => {
-                    location.averageRating = Number(location.averageRating);
+                    location.averageRating = Math.ceil(
+                        Number(location.averageRating)
+                    );
                     location.createdAt = new Date(location.createdAt);
                     this.location = location;
                     this.userService

@@ -46,7 +46,9 @@ export class AuthService {
             typeof sessionStorage !== 'undefined'
         ) {
             sessionStorage.removeItem('token');
+            sessionStorage.removeItem('location-sent');
         }
+
         this.loggedIn.next(false);
     }
 
