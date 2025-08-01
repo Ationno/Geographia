@@ -13,6 +13,9 @@ const { console } = require("inspector");
 
 const turf = require("@turf/turf");
 
+const cloudinary = require("../services/cloudinary.service");
+const streamifier = require("streamifier");
+
 const argentinaMaskPath = path.join(
 	__dirname,
 	"../utils/argentina-mask.geojson"
@@ -78,18 +81,41 @@ const isPointInArgentina = (lat, lng) => {
 	);
 };
 
-const deleteOldImages = async (images) => {
-	if (!images || images.length === 0) {
-		return;
-	}
-	images.forEach((imageUrl) => {
-		const oldImagePath = path.join(__dirname, "..", imageUrl);
-		fs.unlink(oldImagePath, (err) => {
-			if (err) {
-				console.error("Error deleting an old image:", err.message);
+const uploadToCloudinary = (fileBuffer) => {
+	return new Promise((resolve, reject) => {
+		const stream = cloudinary.uploader.upload_stream(
+			{ folder: "geographia" },
+			(error, result) => {
+				if (result) resolve(result);
+				else reject(error);
 			}
-		});
+		);
+		streamifier.createReadStream(fileBuffer).pipe(stream);
 	});
+};
+
+const deleteOldImages = async (imagesUrls, imagesPublicIds) => {
+	if (process.env.NODE_ENV === "production") {
+		if (imagesPublicIds && imagesPublicIds.length > 0) {
+			for (const publicId of imagesPublicIds) {
+				try {
+					await cloudinary.uploader.destroy(publicId);
+				} catch (error) {
+					console.error("Error deleting Cloudinary image:", error);
+				}
+			}
+		}
+	} else {
+		if (!imagesUrls || imagesUrls.length === 0) return;
+		imagesUrls.forEach((imageUrl) => {
+			const oldImagePath = path.join(__dirname, "..", imageUrl);
+			fs.unlink(oldImagePath, (err) => {
+				if (err) {
+					console.error("Error deleting old image:", err.message);
+				}
+			});
+		});
+	}
 };
 
 const deleteLocationById = async (locationId, userId) => {
@@ -105,7 +131,7 @@ const deleteLocationById = async (locationId, userId) => {
 		};
 	}
 
-	deleteOldImages(location.images);
+	await deleteOldImages(location.images, location.images_public_ids);
 
 	await Comment.destroy({ where: { locationId: location.id } });
 	await Rating.destroy({ where: { locationId: location.id } });
@@ -116,6 +142,8 @@ const deleteLocationById = async (locationId, userId) => {
 
 const createLocation = async (req, res) => {
 	let tags = [];
+	let images = [];
+	let imagesPublicIds = [];
 	const { name, address, latitude, longitude, details, type } = req.body;
 	tags = req.body.tags ? JSON.parse(req.body.tags) : [];
 
@@ -136,7 +164,21 @@ const createLocation = async (req, res) => {
 	}
 
 	if (req.files && req.files.length > 0) {
-		images = req.files.map((file) => `/uploads/${file.filename}`);
+		if (process.env.NODE_ENV === "production") {
+			for (const file of req.files) {
+				try {
+					const result = await uploadToCloudinary(file.buffer);
+					images.push(result.secure_url);
+					imagesPublicIds.push(result.public_id);
+				} catch (error) {
+					return res
+						.status(500)
+						.json({ error: "Error uploading image to Cloudinary" });
+				}
+			}
+		} else {
+			images = req.files.map((file) => `/uploads/${file.filename}`);
+		}
 	} else {
 		return res.status(400).json({ error: "No images provided" });
 	}
@@ -150,6 +192,7 @@ const createLocation = async (req, res) => {
 		details,
 		type,
 		images,
+		images_public_ids: imagesPublicIds.length ? imagesPublicIds : [],
 	});
 
 	if (tags && tags.length > 0) {
@@ -165,9 +208,12 @@ const createLocation = async (req, res) => {
 		await location.addTags(tagInstances);
 	}
 
-	const imagesURL = images.map((image) => {
-		return `${req.protocol}://${req.get("host")}${image}`;
-	});
+	let imagesURL = images;
+	if (process.env.NODE_ENV !== "production") {
+		imagesURL = images.map(
+			(img) => `${req.protocol}://${req.get("host")}${img}`
+		);
+	}
 	res.status(201).json({
 		message: "Location created successfully",
 		location: {
@@ -176,7 +222,6 @@ const createLocation = async (req, res) => {
 			address: location.address,
 			latitude: location.latitude,
 			longitude: location.longitude,
-			images: location.images,
 			details: location.details,
 			tags: tags ? tags : [],
 			type: location.type,
@@ -222,6 +267,15 @@ const updateLocation = async (req, res) => {
 		});
 	}
 
+	if (
+		(req.body.latitude || req.body.longitude) &&
+		(!updateFields.latitude || !updateFields.longitude)
+	) {
+		return res
+			.status(400)
+			.json({ error: "Both latitude and longitude must be provided" });
+	}
+
 	if (req.body.latitude || req.body.longitude) {
 		if (!isPointInArgentina(latitude, longitude)) {
 			return res.status(400).json({ error: "Location is outside Argentina" });
@@ -239,11 +293,35 @@ const updateLocation = async (req, res) => {
 	}
 
 	if (req.files && req.files.length > 0) {
-		deleteOldImages(location.images);
-		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
+		await deleteOldImages(location.images, location.images_public_ids);
+
+		let images = [];
+		let imagesPublicIds = [];
+
+		if (process.env.NODE_ENV === "production") {
+			for (const file of req.files) {
+				try {
+					const result = await uploadToCloudinary(file.buffer);
+					images.push(result.secure_url);
+					imagesPublicIds.push(result.public_id);
+				} catch (error) {
+					return res
+						.status(500)
+						.json({ error: "Error uploading image to Cloudinary" });
+				}
+			}
+		} else {
+			images = req.files.map((file) => `/uploads/${file.filename}`);
+		}
+
+		updateFields.images = images;
+		updateFields.images_public_ids = imagesPublicIds.length
+			? imagesPublicIds
+			: null;
 	}
 
 	await location.update(updateFields);
+
 	if (updateFields.tags) {
 		const tagInstances = await Promise.all(
 			updateFields.tags.map(async (tagName) => {
@@ -257,16 +335,18 @@ const updateLocation = async (req, res) => {
 		await location.setTags(tagInstances);
 	}
 
-	if (updateFields.images) {
-		updateFields.images = updateFields.images.map((image) => {
-			return `${req.protocol}://${req.get("host")}${image}`;
-		});
+	let imagesURL = updateFields.images;
+	if (process.env.NODE_ENV !== "production" && imagesURL) {
+		imagesURL = imagesURL.map(
+			(img) => `${req.protocol}://${req.get("host")}${img}`
+		);
 	}
 
 	res.status(200).json({
 		message: "Location updated successfully",
 		location: {
 			...updateFields,
+			images: imagesURL,
 		},
 	});
 };

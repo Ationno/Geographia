@@ -7,6 +7,11 @@ const Location = sequelize.define("Location", {
 	latitude: { type: DataTypes.FLOAT, allowNull: false },
 	longitude: { type: DataTypes.FLOAT, allowNull: false },
 	images: { type: DataTypes.JSON, allowNull: false },
+	images_public_ids: {
+		type: DataTypes.JSON,
+		allowNull: false,
+		defaultValue: [],
+	},
 	details: { type: DataTypes.TEXT, allowNull: true, defaultValue: "" },
 	type: {
 		type: DataTypes.ENUM("RURAL", "GEOGRÁFICA", "HISTÓRICA"),

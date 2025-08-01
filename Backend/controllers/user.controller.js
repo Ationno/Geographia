@@ -6,10 +6,10 @@ const bcrypt = require("bcrypt");
 const defaultImage = "/uploads/default_profile.jpg";
 const fs = require("fs");
 const path = require("path");
-
+const cloudinary = require("../services/cloudinary.service");
 const { deleteLocationById } = require("./location.controller");
 
-const deleteOldImage = (imageUrl) => {
+const deleteOldLocalImage = (imageUrl) => {
 	if (imageUrl && imageUrl !== defaultImage) {
 		const oldImagePath = path.join(__dirname, "..", imageUrl);
 		fs.unlink(oldImagePath, (err) => {
@@ -17,6 +17,16 @@ const deleteOldImage = (imageUrl) => {
 				console.error("Error deleting old image:", err.message);
 			}
 		});
+	}
+};
+
+const deleteOldCloudinaryImage = async (publicId) => {
+	if (!publicId) return;
+	try {
+		await cloudinary.uploader.destroy(publicId);
+		console.log(`Deleted Cloudinary image: ${publicId}`);
+	} catch (error) {
+		console.error("Error deleting Cloudinary image:", error);
 	}
 };
 
@@ -29,12 +39,6 @@ const getMyProfile = async (req, res) => {
 
 	const { password, ...userWithoutPassword } = user.toJSON();
 
-	if (userWithoutPassword.profile_image_url) {
-		userWithoutPassword.profile_image_url = `${req.protocol}://${req.get(
-			"host"
-		)}${userWithoutPassword.profile_image_url}`;
-	}
-
 	res.json(userWithoutPassword);
 };
 
@@ -46,12 +50,6 @@ const getProfile = async (req, res) => {
 	}
 
 	const { password, ...userWithoutPassword } = user.toJSON();
-
-	if (userWithoutPassword.profile_image_url) {
-		userWithoutPassword.profile_image_url = `${req.protocol}://${req.get(
-			"host"
-		)}${userWithoutPassword.profile_image_url}`;
-	}
 
 	if (!userWithoutPassword.show_location) {
 		userWithoutPassword.address = "Ubicación no compartida";
@@ -94,24 +92,69 @@ const updateProfile = async (req, res) => {
 	}
 
 	if (req.file) {
-		deleteOldImage(user.profile_image_url);
-		updateFields.profile_image_url = `/uploads/${req.file.filename}`;
+		if (process.env.NODE_ENV === "production") {
+			if (user.profile_image_public_id) {
+				await deleteOldCloudinaryImage(user.profile_image_public_id);
+			}
+			const streamUpload = (reqFile) => {
+				return new Promise((resolve, reject) => {
+					const stream = cloudinary.uploader.upload_stream(
+						{ folder: "geographia" },
+						(error, result) => {
+							if (result) {
+								resolve(result);
+							} else {
+								reject(error);
+							}
+						}
+					);
+					stream.end(reqFile.buffer);
+				});
+			};
+
+			try {
+				const result = await streamUpload(req.file);
+				updateFields.profile_image_url = result.secure_url;
+				updateFields.profile_image_public_id = result.public_id;
+			} catch (error) {
+				return res
+					.status(500)
+					.json({ error: "Error uploading image to Cloudinary" });
+			}
+		} else {
+			deleteOldLocalImage(user.profile_image_url);
+			updateFields.profile_image_url = `/uploads/${req.file.filename}`;
+			updateFields.profile_image_public_id = null;
+		}
 	} else if (req.body.remove_profile_image) {
-		deleteOldImage(user.profile_image_url);
+		if (process.env.NODE_ENV === "production" && user.profile_image_public_id) {
+			await deleteOldCloudinaryImage(user.profile_image_public_id);
+		} else {
+			deleteOldLocalImage(user.profile_image_url);
+		}
 		updateFields.profile_image_url = defaultImage;
+		updateFields.profile_image_public_id = null;
 	}
 
 	await User.update(updateFields, { where: { id: req.userId } });
 
-	if (updateFields.profile_image_url) {
-		updateFields.profile_image_url = `${req.protocol}://${req.get("host")}${
-			updateFields.profile_image_url
-		}`;
+	let responseImageUrl = updateFields.profile_image_url;
+	if (
+		process.env.NODE_ENV !== "production" &&
+		responseImageUrl &&
+		!responseImageUrl.startsWith("http")
+	) {
+		responseImageUrl = `${req.protocol}://${req.get(
+			"host"
+		)}${responseImageUrl}`;
 	}
 
 	res.status(200).json({
 		message: "Profile updated successfully",
-		updateFields,
+		updatedFields: {
+			...updateFields,
+			profile_image_url: responseImageUrl,
+		},
 	});
 };
 
@@ -188,7 +231,11 @@ const deleteUser = async (req, res) => {
 		return res.status(404).json({ error: "User not found" });
 	}
 
-	deleteOldImage(user.profile_image_url);
+	if (process.env.NODE_ENV === "production" && user.profile_image_public_id) {
+		await deleteOldCloudinaryImage(user.profile_image_public_id);
+	} else {
+		deleteOldLocalImage(user.profile_image_url);
+	}
 
 	await Comment.destroy({ where: { UserId: req.userId } });
 	await Rating.destroy({ where: { UserId: req.userId } });
@@ -199,9 +246,7 @@ const deleteUser = async (req, res) => {
 		try {
 			await deleteLocationById(location.id, req.userId);
 		} catch (err) {
-			console.error(
-				`Error deleting location ${location.id}: ${err.message}`
-			);
+			console.error(`Error deleting location ${location.id}: ${err.message}`);
 		}
 	}
 

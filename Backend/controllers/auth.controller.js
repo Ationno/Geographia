@@ -101,11 +101,9 @@ const resetPassword = async (req, res) => {
 		}
 
 		if (await bcrypt.compare(newPassword, user.password)) {
-			return res
-				.status(400)
-				.json({
-					error: "New password cannot be the same as the old one",
-				});
+			return res.status(400).json({
+				error: "New password cannot be the same as the old one",
+			});
 		}
 
 		const hashed = await bcrypt.hash(newPassword, 10);

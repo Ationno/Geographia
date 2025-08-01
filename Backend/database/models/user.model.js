@@ -9,6 +9,10 @@ const User = sequelize.define("User", {
 	birth_date: { type: DataTypes.DATEONLY, allowNull: false },
 	address: { type: DataTypes.STRING, allowNull: false },
 	profile_image_url: { type: DataTypes.TEXT, allowNull: true },
+	profile_image_public_id: {
+		type: DataTypes.STRING,
+		allowNull: true,
+	},
 	show_email: { type: DataTypes.BOOLEAN, defaultValue: true },
 	show_birth_date: { type: DataTypes.BOOLEAN, defaultValue: true },
 	show_location: { type: DataTypes.BOOLEAN, defaultValue: true },
