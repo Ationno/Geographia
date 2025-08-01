@@ -20,25 +20,13 @@
                         tabindex="0">
                         delete
                     </span>
-                    <img role="button" [src]="
-                            this.userCreator?.profile_image_url ||
-                            this.apiUrl + '/uploads/default_profile.jpg'
-                        " [alt]="
-                            'Icono de ' +
-                            this.userCreator?.first_name +
-                            ' ' +
-                            this.userCreator?.last_name
-                        " class="profile-pic" tabindex="0" (mouseenter)="
-                            handleProfileHoverEnter(
-                                $event,
-                                userCreator?.id || -1
-                            )
-                        " (keydown.enter)="
-                            handleProfileHoverEnter(
-                                $event,
-                                userCreator?.id || -1
-                            )
-                        " />
+                    <button class="profile-button" (click)="handleProfileHoverEnter($event, userCreator?.id || -1)"
+                        [attr.aria-label]="'Ver perfil de ' + userCreator?.first_name + ' ' + userCreator?.last_name">
+                        <img [src]="userCreator?.profile_image_url || apiUrl + '/uploads/default_profile.jpg'"
+                            [alt]="'Foto de ' + userCreator?.first_name + ' ' + userCreator?.last_name"
+                            class="profile-pic" />
+                    </button>
+
                 </div>
             </div>
 
@@ -102,14 +90,13 @@
             </div>
             <div class="comments-list" #commentsContainer>
                 <div class="comment" *ngFor="let c of comments">
-                    <img role="button" [src]="apiUrl + c.user_profile_image_url" [alt]="
-                            'Foto de perfil de ' +
-                            c.user_first_name +
-                            ' ' +
-                            c.user_last_name
-                        " class="comment-pic" (mouseenter)="handleProfileHoverEnter($event, c.UserId)" (keydown.enter)="
-                            handleProfileHoverEnter($event, c.UserId)
-                        " tabindex="0" />
+                    <button class="profile-button" (click)="handleProfileHoverEnter($event, c.UserId)"
+                        [attr.aria-label]="'Ver perfil de ' + c.user_first_name + ' ' + c.user_last_name">
+                        <img [src]="apiUrl + c.user_profile_image_url"
+                            [alt]="'Foto de perfil de ' + c.user_first_name + ' ' + c.user_last_name"
+                            class="comment-pic" />
+                    </button>
+
                     <div class="comment-body">
                         <div class="comment-meta">
                             <strong style="line-height: 12px" tabindex="0" aria-label="Usuario">{{
