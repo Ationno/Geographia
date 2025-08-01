@@ -28,7 +28,7 @@ export class RateLocationComponent {
     update: boolean = false;
 
     @ViewChild('firstFocusElement', { static: true })
-    firstFocusElement!: ElementRef<HTMLParagraphElement>;
+    firstFocusElement!: ElementRef<HTMLHeadElement>;
 
     constructor(
         private router: Router,
