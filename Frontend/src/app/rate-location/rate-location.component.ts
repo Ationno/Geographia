@@ -1,17 +1,11 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    ViewChild,
-    ElementRef,
-} from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
 import { LocationService } from '../location.service';
 import Swal from 'sweetalert2';
 import { ResetService } from '../reset.service';
+import { trigger, style, transition, animate } from '@angular/animations';
 
 @Component({
     standalone: true,
@@ -19,6 +13,24 @@ import { ResetService } from '../reset.service';
     imports: [CommonModule, A11yModule],
     templateUrl: './rate-location.component.html',
     styleUrls: ['./rate-location.component.css'],
+    animations: [
+        trigger('fadeInOut', [
+            transition(':enter', [
+                style({
+                    opacity: 0,
+                }),
+                animate('400ms ease-out', style({ opacity: 1 })),
+            ]),
+            transition(':leave', [
+                animate(
+                    '400ms ease-in',
+                    style({
+                        opacity: 0,
+                    })
+                ),
+            ]),
+        ]),
+    ],
 })
 export class RateLocationComponent {
     hoveredRating: number | null = null;

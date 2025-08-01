@@ -11,7 +11,9 @@
             <ng-container *ngFor="let star of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
                 <span class="material-symbols-outlined star" [class.filled]="isFilled(star)"
                     (mouseenter)="setRating(star)" (keydown.enter)="confirmRating()" (focus)="setRating(star)"
-                    (click)="clickedRating(star)" tabindex="0" [attr.aria-label]="'Establecer calificación en ' + star">
+                    (click)="clickedRating(star)" tabindex="0"
+                    [attr.aria-label]="'Al presionar enter se establecerá la calificación en ' + star + ' estrellas'"
+                    role="button">
                     star
                 </span>
             </ng-container>
