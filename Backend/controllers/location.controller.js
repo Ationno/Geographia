@@ -11,6 +11,14 @@ const fs = require("fs");
 const { Op } = require("sequelize");
 const { console } = require("inspector");
 
+const turf = require("@turf/turf");
+
+const argentinaMaskPath = path.join(
+	__dirname,
+	"../utils/argentina-mask.geojson"
+);
+const argentinaMask = JSON.parse(fs.readFileSync(argentinaMaskPath, "utf8"));
+
 const EARTH_RADIUS_METERS = 6371000;
 
 const toRadians = (degrees) => degrees * (Math.PI / 180);
@@ -63,6 +71,13 @@ const isLocationNearby = async (
 	return false;
 };
 
+const isPointInArgentina = (lat, lng) => {
+	const point = turf.point([lng, lat]);
+	return argentinaMask.features.some((feature) =>
+		turf.booleanPointInPolygon(point, feature)
+	);
+};
+
 const deleteOldImages = async (images) => {
 	if (!images || images.length === 0) {
 		return;
@@ -108,6 +123,10 @@ const createLocation = async (req, res) => {
 
 	if (!user) {
 		return res.status(404).json({ error: "User not found" });
+	}
+
+	if (!isPointInArgentina(latitude, longitude)) {
+		return res.status(400).json({ error: "Location is outside Argentina" });
 	}
 
 	const exists = await isLocationNearby(latitude, longitude);
@@ -204,6 +223,10 @@ const updateLocation = async (req, res) => {
 	}
 
 	if (req.body.latitude || req.body.longitude) {
+		if (!isPointInArgentina(latitude, longitude)) {
+			return res.status(400).json({ error: "Location is outside Argentina" });
+		}
+
 		const exists = await isLocationNearby(
 			updateFields.latitude,
 			updateFields.longitude,
@@ -217,9 +240,7 @@ const updateLocation = async (req, res) => {
 
 	if (req.files && req.files.length > 0) {
 		deleteOldImages(location.images);
-		updateFields.images = req.files.map(
-			(file) => `/uploads/${file.filename}`
-		);
+		updateFields.images = req.files.map((file) => `/uploads/${file.filename}`);
 	}
 
 	await location.update(updateFields);
