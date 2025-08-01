@@ -67,6 +67,7 @@ export class DeleteLocationConfirmationComponent {
                 queryParams: { locationId: this.locationId },
             }
         );
+        this.resetService.resetComponentTrigger();
     }
 
     deleteLocation() {

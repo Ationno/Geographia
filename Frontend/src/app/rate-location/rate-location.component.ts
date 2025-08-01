@@ -10,7 +10,7 @@ import { trigger, style, transition, animate } from '@angular/animations';
 @Component({
     standalone: true,
     selector: 'app-rate-location',
-    imports: [CommonModule, A11yModule],
+    imports: [A11yModule, CommonModule],
     templateUrl: './rate-location.component.html',
     styleUrls: ['./rate-location.component.css'],
     animations: [
@@ -176,5 +176,6 @@ export class RateLocationComponent {
                 queryParams: { locationId: this.locationId },
             }
         );
+        this.resetService.resetComponentTrigger();
     }
 }

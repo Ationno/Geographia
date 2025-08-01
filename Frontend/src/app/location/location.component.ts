@@ -73,6 +73,7 @@ export class LocationComponent implements OnInit {
         });
 
         this.route.queryParams.subscribe((params) => {
+            console.log('Query Params:', params);
             setTimeout(() => {
                 this.firstFocusElement.nativeElement.focus();
             }, 0);

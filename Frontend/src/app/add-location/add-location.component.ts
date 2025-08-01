@@ -50,8 +50,8 @@ export class AddLocationComponent {
 
     addLocationForm: FormGroup;
     selectedImages: File[] = [];
-    lat!: number;
-    lng!: number;
+    lat!: number | null;
+    lng!: number | null;
     selectedImagePreviews: string[] = [];
     isAccesibility: boolean = false;
 
@@ -62,6 +62,7 @@ export class AddLocationComponent {
     addressSuggestions: any[] = [];
     showSuggestions: boolean = false;
     private addressInput$ = new Subject<string>();
+    isAddressSelected = false;
 
     constructor(
         private router: Router,
@@ -93,6 +94,8 @@ export class AddLocationComponent {
 
             if (this.lat === -1 || this.lng === -1) {
                 this.isAccesibility = true;
+                this.lat = null;
+                this.lng = null;
             }
         });
 
@@ -133,6 +136,10 @@ export class AddLocationComponent {
     }
 
     fetchAddress(): void {
+        if (!this.lat || !this.lng) {
+            return;
+        }
+
         this.mapboxService
             .reverseGeocode(this.lng, this.lat)
             .pipe(
@@ -176,6 +183,17 @@ export class AddLocationComponent {
     }
 
     onSubmit() {
+        const lat = this.addLocationForm.get('latitude')?.value;
+        const lng = this.addLocationForm.get('longitude')?.value;
+        console.log('Lat:', lat, 'Lng:', lng);
+        if (!lat || !lng) {
+            console.error('Latitud y longitud son obligatorias');
+            this.addLocationForm.get('address')?.setErrors({
+                invalidLocation: true,
+            });
+            return;
+        }
+
         if (this.addLocationForm.valid) {
             const data: FormData = new FormData();
             data.append('name', this.addLocationForm.get('name')?.value);
@@ -307,7 +325,29 @@ export class AddLocationComponent {
     }
 
     onAddressBlur() {
-        setTimeout(() => (this.showSuggestions = false), 200);
+        setTimeout(() => {
+            const activeEl = document.activeElement;
+
+            const suggestionList = document.querySelector(
+                '.address-suggestions'
+            );
+            if (suggestionList?.contains(activeEl)) {
+                return;
+            }
+
+            this.showSuggestions = false;
+
+            const lat = this.addLocationForm.get('latitude')?.value;
+            const lng = this.addLocationForm.get('longitude')?.value;
+
+            if (!lat || !lng) {
+                this.addLocationForm.get('address')?.setErrors({
+                    invalidLocation: true,
+                });
+            } else {
+                this.addLocationForm.get('address')?.setErrors(null);
+            }
+        }, 150);
     }
 
     selectSuggestion(suggestion: any) {
@@ -318,5 +358,23 @@ export class AddLocationComponent {
             longitude: coordinates['longitude'],
         });
         this.showSuggestions = false;
+        this.isAddressSelected = true; // ✅ Importante
+    }
+
+    clearSelectedAddress() {
+        this.addLocationForm.patchValue({
+            address: '',
+            latitude: null,
+            longitude: null,
+        });
+
+        this.isAddressSelected = false;
+        this.showSuggestions = false;
+        setTimeout(() => {
+            const addressInput = document.getElementById(
+                'address'
+            ) as HTMLInputElement;
+            addressInput?.focus();
+        }, 0);
     }
 }
