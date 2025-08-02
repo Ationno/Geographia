@@ -129,5 +129,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-Frontend/src/environment/environment.development.ts
-Frontend/src/environment/environment.ts
+Frontend/src/environments/environment.development.ts
+Frontend/src/environments/environment.ts
