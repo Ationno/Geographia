@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+Frontend/src/environment/environment.development.ts
+Frontend/src/environment/environment.ts
