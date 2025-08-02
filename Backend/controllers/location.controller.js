@@ -99,7 +99,8 @@ const deleteOldImages = async (imagesUrls, imagesPublicIds) => {
 		if (imagesPublicIds && imagesPublicIds.length > 0) {
 			for (const publicId of imagesPublicIds) {
 				try {
-					await cloudinary.uploader.destroy(publicId);
+					await cloudinary.uploader.destroy(publicId, { invalidate: true });
+					console.log(`Deleted Cloudinary image: ${publicId}`);
 				} catch (error) {
 					console.error("Error deleting Cloudinary image:", error);
 				}

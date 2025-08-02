@@ -8,6 +8,7 @@ import { LocationService } from '../location.service';
 import { UserService } from '../user.service';
 import { User } from '../models/user.model';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-profile-resume',
@@ -36,6 +37,7 @@ import { CommonModule } from '@angular/common';
 export class ProfileResumeComponent {
     user: User | null = null;
     locationId!: number;
+    apiUrl = environment.apiUrl.slice(0, -4);
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
@@ -67,7 +69,15 @@ export class ProfileResumeComponent {
                 if (user.show_birth_date) {
                     user.birth_date = this.parseLocalDate(user.birth_date);
                 }
-                this.user = user;
+                this.user = {
+                    ...user,
+                    profile_image_url:
+                        !environment.production ||
+                        user?.profile_image_url.includes('default_profile.jpg')
+                            ? this.apiUrl + user.profile_image_url
+                            : user.profile_image_url,
+                };
+                console.log('User data:', this.user);
             });
 
             if (this.resumeProfileContainer) {

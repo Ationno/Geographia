@@ -68,7 +68,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                         .searchLocations(term)
                         .subscribe((results) => {
                             console.log('Search results:', results);
-                            this.searchResults = results;
+                            this.searchResults = results.map(
+                                (location: Location) => ({
+                                    ...location,
+                                    images: !environment.production
+                                        ? location.images.map(
+                                              (image) => this.apiUrl + image
+                                          )
+                                        : location.images,
+                                })
+                            );
                         });
                 } else {
                     this.searchResults = [];

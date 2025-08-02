@@ -4,6 +4,7 @@ import { trigger, style, transition, animate } from '@angular/animations';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { User } from '../models/user.model';
+import { environment } from '../../environments/environment';
 @Component({
     selector: 'app-profile-icon',
     imports: [CommonModule],
@@ -38,7 +39,7 @@ import { User } from '../models/user.model';
 export class ProfileIconComponent {
     visibleMenu = false;
     user: User | null = null;
-
+    apiUrl = environment.apiUrl.slice(0, -4);
     constructor(
         private elementRef: ElementRef,
         private router: Router,
@@ -48,7 +49,14 @@ export class ProfileIconComponent {
     ngOnInit() {
         this.userService.getCurrentUser().subscribe({
             next: (user) => {
-                this.user = user;
+                this.user = {
+                    ...user,
+                    profile_image_url:
+                        !environment.production ||
+                        user?.profile_image_url.includes('default_profile.jpg')
+                            ? this.apiUrl + user.profile_image_url
+                            : user.profile_image_url,
+                };
             },
             error: (error) => {
                 console.error('Error fetching user data:', error);

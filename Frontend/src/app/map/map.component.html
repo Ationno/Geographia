@@ -8,54 +8,27 @@
 <app-button-add-location></app-button-add-location>
 <router-outlet name="popup"></router-outlet>
 <router-outlet name="modal"></router-outlet>
-<mgl-map
-    *ngIf="isBrowser"
-    [style]="mapStyle"
-    [zoom]="[4]"
-    [center]="[-64.0, -34.0]"
-    (mapClick)="onMapClick($event)"
-    [maxBounds]="argentinaBounds"
-    [logoPosition]="'bottom-right'"
-    [lang]="'es'"
-    [tabindex]="-1"
->
+<mgl-map *ngIf="isBrowser" [style]="mapStyle" [zoom]="[4]" [center]="[-64.0, -34.0]" (mapClick)="onMapClick($event)"
+    [maxBounds]="argentinaBounds" [logoPosition]="'bottom-right'" [lang]="'es'" [tabindex]="-1">
     <mgl-geojson-source id="mask" [data]="maskGeoJSON"> </mgl-geojson-source>
 
-    <mgl-layer
-        id="mask-layer"
-        type="fill"
-        source="mask"
-        [paint]="{
+    <mgl-layer id="mask-layer" type="fill" source="mask" [paint]="{
             'fill-color': '#999999',
             'fill-opacity': 0.5
-        }"
-    ></mgl-layer>
+        }"></mgl-layer>
 
     <mgl-control mglAttribution />
     <mgl-control mglFullscreen />
     <mgl-control mglGeolocate />
     <mgl-control mglNavigation />
 
-    <mgl-popup
-        *ngFor="let loc of filteredLocations"
-        [lngLat]="[loc.longitude, loc.latitude]"
-        [closeOnClick]="false"
-    >
+    <mgl-popup *ngFor="let loc of filteredLocations" [lngLat]="[loc.longitude, loc.latitude]" [closeOnClick]="false">
         <div class="popup-bubble popup-location" (click)="goToLocation(loc.id)">
-            <img
-                [src]="this.apiUrl + loc.images[0]"
-                alt="Locación"
-                class="popup-image"
-            />
+            <img [src]="loc.images[0] || this.apiUrl + '/uploads/404_error.png'" alt="Locación" class="popup-image" />
         </div>
     </mgl-popup>
 
-    <mgl-popup
-        *ngIf="popup"
-        [lngLat]="popup.coordinates"
-        [closeOnClick]="false"
-        (close)="popup = null"
-    >
+    <mgl-popup *ngIf="popup" [lngLat]="popup.coordinates" [closeOnClick]="false" (close)="popup = null">
         <div class="popup-bubble" (click)="addLocation()">
             <span class="material-symbols-outlined plus-icon"> close </span>
         </div>

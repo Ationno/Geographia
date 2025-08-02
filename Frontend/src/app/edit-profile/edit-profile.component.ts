@@ -14,6 +14,7 @@ import { UserService } from '../user.service';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ResetService } from '../reset.service';
 import Swal from 'sweetalert2';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-edit-profile',
@@ -38,6 +39,7 @@ export class EditProfileComponent implements OnInit {
     selectedImagePreview: string | null = null;
     selectedImageFile: File | null = null;
     imageError: string | null = null;
+    apiUrl: string = environment.apiUrl.slice(0, -4);
 
     @ViewChild('firstFocusElement', { static: true })
     firstFocusElement!: ElementRef<HTMLParagraphElement>;
@@ -110,7 +112,15 @@ export class EditProfileComponent implements OnInit {
                 });
 
                 if (data.profile_image_url) {
-                    this.selectedImagePreview = data.profile_image_url;
+                    if (
+                        !environment.production ||
+                        data.profile_image_url.includes('default_profile.jpg')
+                    ) {
+                        this.selectedImagePreview =
+                            this.apiUrl + data.profile_image_url;
+                    } else {
+                        this.selectedImagePreview = data.profile_image_url;
+                    }
                 }
             },
             error: (err) => {

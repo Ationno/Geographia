@@ -16,7 +16,7 @@
                 (keydown.enter)="selectItem(recent)" tabindex="0" role="option" [attr.aria-label]="
                     'Ubicación reciente: ' + recent.name + ', ' + recent.address
                 ">
-                <img [src]="this.apiUrl + recent.images[0]" alt="Ícono de ubicación reciente" class="recent-icon" />
+                <img [src]="recent.images[0]" alt="Ícono de ubicación reciente" class="recent-icon" />
                 <p class="recent-title">{{ recent.name }}</p>
                 <p class="recent-location">{{ recent.address }}</p>
             </div>
@@ -32,7 +32,8 @@
                 (keydown.enter)="selectItem(result)" tabindex="0" role="option" [attr.aria-label]="
                     'Resultado: ' + result.name + ', ' + result.address
                 ">
-                <img [src]="this.apiUrl + result.images[0]" alt="Ícono de resultado" class="recent-icon" />
+                <img [src]="result.images[0] || this.apiUrl + '/uploads/404_error.png'" alt="Ícono de resultado"
+                    class="recent-icon" />
                 <p class="recent-title">{{ result.name }}</p>
                 <p class="recent-location">{{ result.address }}</p>
             </div>

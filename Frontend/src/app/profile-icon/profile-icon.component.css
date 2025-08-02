@@ -136,8 +136,7 @@
 }
 
 .profile-container button.icon:focus-visible {
-    outline: 3px solid var(--color-primario);
-    outline-offset: 2px;
+    transform: scale(1.05);
 }
 
 .profile-avatar:focus-visible {

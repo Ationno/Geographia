@@ -195,7 +195,14 @@ export class MapComponent {
         }
 
         this.locationService.getAllLocations().subscribe((locations) => {
-            this.locations = locations;
+            this.locations = locations.map((location: Location) => ({
+                ...location,
+                images: !environment.production
+                    ? location.images.map((img) => {
+                          return this.apiUrl + img;
+                      })
+                    : location.images,
+            }));
             this.filterLocations(this.selectedType);
         });
 

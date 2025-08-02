@@ -23,7 +23,7 @@ const deleteOldLocalImage = (imageUrl) => {
 const deleteOldCloudinaryImage = async (publicId) => {
 	if (!publicId) return;
 	try {
-		await cloudinary.uploader.destroy(publicId);
+		await cloudinary.uploader.destroy(publicId, { invalidate: true });
 		console.log(`Deleted Cloudinary image: ${publicId}`);
 	} catch (error) {
 		console.error("Error deleting Cloudinary image:", error);

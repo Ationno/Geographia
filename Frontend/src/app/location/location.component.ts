@@ -85,10 +85,33 @@ export class LocationComponent implements OnInit {
                     );
                     location.createdAt = new Date(location.createdAt);
                     this.location = location;
+
+                    if (
+                        !environment.production &&
+                        this.location &&
+                        this.location.images
+                    ) {
+                        this.location.images = this.location.images.map(
+                            (image) => this.apiUrl + image
+                        );
+                    }
+
                     this.userService
                         .getUserById(location.UserId)
                         .subscribe((user) => {
                             this.userCreator = user;
+                            if (this.userCreator) {
+                                if (
+                                    !environment.production ||
+                                    this.userCreator.profile_image_url.includes(
+                                        'default_profile.jpg'
+                                    )
+                                ) {
+                                    this.userCreator.profile_image_url =
+                                        this.apiUrl +
+                                        this.userCreator.profile_image_url;
+                                }
+                            }
                         });
                 },
                 error: () => {
@@ -126,6 +149,13 @@ export class LocationComponent implements OnInit {
                 next: (comments) => {
                     this.comments = comments.map((c: any) => ({
                         ...c,
+                        user_profile_image_url:
+                            !environment.production ||
+                            c.user_profile_image_url.includes(
+                                'default_profile.jpg'
+                            )
+                                ? this.apiUrl + c.user_profile_image_url
+                                : c.user_profile_image_url,
                         createdAt: new Date(c.createdAt),
                     }));
                 },
@@ -161,7 +191,14 @@ export class LocationComponent implements OnInit {
 
         this.userService.getCurrentUser().subscribe({
             next: (user) => {
-                this.userLoggedIn = user;
+                this.userLoggedIn = {
+                    ...user,
+                    profile_image_url:
+                        !environment.production ||
+                        user?.profile_image_url.includes('default_profile.jpg')
+                            ? this.apiUrl + user?.profile_image_url
+                            : user?.profile_image_url,
+                };
             },
             error: () => {
                 this.userLoggedIn = null;
@@ -249,6 +286,22 @@ export class LocationComponent implements OnInit {
     }
 
     saveComment(text: string, address: string) {
+        if (!this.userLoggedIn) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Inicio de sesión requerido',
+                text: 'Para realizar esta acción, por favor, inicie sesión.',
+                timerProgressBar: true,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'montserrat-swal',
+                    closeButton: 'montserrat-close',
+                },
+            });
+            return;
+        }
+
         this.locationService
             .addComment(this.location!.id, text, address)
             .subscribe({
@@ -258,10 +311,7 @@ export class LocationComponent implements OnInit {
                         this.userLoggedIn?.first_name || '';
                     comment.user_last_name = this.userLoggedIn?.last_name || '';
                     comment.user_profile_image_url =
-                        this.userLoggedIn?.profile_image_url.replace(
-                            this.apiUrl,
-                            ''
-                        ) || '';
+                        this.userLoggedIn?.profile_image_url;
                     if (!this.userLoggedIn?.show_location) {
                         comment.comment_address = 'Ubicación no compartida';
                     }
