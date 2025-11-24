@@ -7,7 +7,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
-      
     ports:
       - "3307:3306"
     volumes:
@@ -35,15 +34,13 @@ services:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
+      args:
+        API_URL: ${API_URL}	
+        MAPBOX_TOKEN: ${MAPBOX_TOKEN}
     container_name: geographia-frontend
     restart: always
     ports:
       - "4200:4200"
-    env_file:
-      - .env
-    environment:
-      MAPBOX_TOKEN: ${MAPBOX_TOKEN}
-      API_URL: ${API_URL}
     depends_on:
       - backend
 

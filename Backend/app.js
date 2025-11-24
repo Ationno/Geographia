@@ -6,6 +6,7 @@ const path = require("path");
 require("dotenv").config();
 
 const sequelize = require("./database/db");
+require("./database/models");
 
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",");
 
@@ -40,13 +41,12 @@ if (process.env.NODE_ENV === "reset") {
 		files.forEach((file) => {
 			if (file !== "404_error.png" && file !== "default_profile.jpg") {
 				fs.unlink(path.join(uploadsPath, file), (err) => {
-					if (err) {
-						console.error("Error deleting file:", err);
-					}
+					if (err) console.error("Error deleting file:", err);
 				});
 			}
 		});
 	});
+
 	sequelize.sync({ force: true }).then(() => {
 		console.log("Database reset and synced successfully");
 	});
